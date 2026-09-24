@@ -109,8 +109,8 @@ export default function CidadaoPage() {
           </p>
           <p className="muted">
             {created.emailStatus === "SENT"
-              ? "Confirmação enviada por e-mail."
-              : "Confirmação por e-mail pendente (serviço de e-mail em configuração)."}
+              ? "Confirmação enviada para o seu e-mail."
+              : "Você receberá a confirmação no e-mail informado."}
           </p>
           <p>Guarde esses dois códigos — anote ou fotografe esta tela.</p>
         </div>

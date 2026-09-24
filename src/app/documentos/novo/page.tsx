@@ -73,7 +73,7 @@ export default function NovoMemorando() {
 
   return (
     <div>
-      <h1>Novo memorando</h1>
+      <h1>Novo documento</h1>
       {err && (
         <p className="alert alert-error" role="alert">
           {err}

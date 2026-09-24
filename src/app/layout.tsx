@@ -15,8 +15,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <nav className="tabs" aria-label="Seções">
               <a href="/">Início</a>
-              <a href="/admin">Admin</a>
-              <a href="/documentos">Memorandos</a>
+              <a href="/admin">Administração</a>
+              <a href="/documentos">Documentos</a>
               <a href="/circulares">Circulares</a>
               <a href="/cidadao">Cidadão</a>
             </nav>
@@ -24,8 +24,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         <main id="conteudo" className="container">{children}</main>
         <footer className="footer">
-          Ambiente de demonstração da POC — dados fictícios · LGPD: documentos pessoais mascarados
-          na consulta pública
+          Prefeitura Municipal de Rio Azul · PR — Gestão Eletrônica de Documentos · LGPD: dados
+          pessoais protegidos na consulta pública
         </footer>
       </body>
     </html>

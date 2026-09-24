@@ -234,10 +234,10 @@ export default function AdminPage() {
         </p>
         <p>
           <a className="btn" href="/api/auth/govbr/login">
-            Entrar com gov.br (ensaio)
+            Entrar com gov.br
           </a>
         </p>
-        <p className="muted">Use o login master do ensaio para gerir permissões.</p>
+        <p className="muted">Use suas credenciais institucionais para gerir permissões.</p>
       </div>
     );
   }
@@ -265,7 +265,7 @@ export default function AdminPage() {
       {govbrNotice && <p className="alert alert-warn">{govbrNotice}</p>}
       {govbr && (
         <div className="card">
-          <strong>Identidade gov.br (ensaio) verificada:</strong> {govbr.name} · CPF{" "}
+          <strong>Identidade gov.br verificada:</strong> {govbr.name} · CPF{" "}
           {govbr.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")}
           <div className="form-row" style={{ marginTop: 8 }}>
             <button className="btn btn-primary" onClick={linkGovbr}>

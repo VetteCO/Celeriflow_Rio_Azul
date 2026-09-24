@@ -8,5 +8,5 @@ export async function GET(req: Request) {
     return NextResponse.redirect(govbrLoginUrl(state));
   }
   const url = new URL(req.url);
-  return NextResponse.redirect(new URL(`/govbr-simulado?state=${state}`, url.origin));
+  return NextResponse.redirect(new URL(`/login-govbr?state=${state}`, url.origin));
 }

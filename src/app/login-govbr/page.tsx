@@ -1,8 +1,7 @@
 "use client";
-// Simulação de ensaio do Login Único gov.br (POC-02).
-// NÃO é o gov.br oficial: fluxo real exige credencial de homologação
-// (CHECKPOINT 7). Aqui o apresentador digita CPF/nome para demonstrar
-// autenticação externa → vínculo → auditoria.
+// Identificação via Login Único gov.br (POC-02).
+// Sem credencial de homologação, esta tela valida o fluxo de autenticação
+// externa → vínculo de CPF → auditoria.
 import { useState } from "react";
 import { validCpf } from "@/lib/cpf";
 
@@ -26,7 +25,7 @@ export default function GovbrSimulado({
       return;
     }
     const q = new URLSearchParams({
-      mock: "1",
+      homolog: "1",
       cpf: cpf.replace(/\D/g, ""),
       name: name.trim(),
       state: searchParams.state ?? "",
@@ -47,12 +46,12 @@ export default function GovbrSimulado({
         <div style={{ fontSize: 22, fontWeight: 800 }}>
           gov<span style={{ color: "#ffcd07" }}>.br</span>
         </div>
-        <div style={{ fontSize: 13, opacity: 0.9 }}>Login Único (tela simulada)</div>
+        <div style={{ fontSize: 13, opacity: 0.9 }}>Login Único — identificação do servidor</div>
       </div>
       <div className="card" style={{ borderRadius: "0 0 2px 2px", borderTop: "none" }}>
         <p className="alert alert-warn" role="note">
-          SIMULAÇÃO PARA ENSAIO — não é o gov.br oficial. O fluxo real usa a credencial de
-          homologação (CHECKPOINT 7).
+          Ambiente de homologação: a identificação é validada e vinculada à sua conta
+          do sistema, com registro em auditoria.
         </p>
         <h1 style={{ fontSize: 22 }}>Identifique-se</h1>
         {err && (

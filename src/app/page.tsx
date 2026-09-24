@@ -1,56 +1,71 @@
 import Link from "next/link";
 
-// Painel objetivo: 9 requisitos da POC com situação atual.
-const ITEMS: Array<{ poc: string; titulo: string; status: "Pronto" | "Em obra" | "Planejado"; href: string }> = [
-  { poc: "POC-01", titulo: "Usuários e níveis de acesso", status: "Pronto", href: "/admin" },
-  { poc: "POC-02", titulo: "Login Gov.br / ICP-Brasil", status: "Pronto", href: "/govbr-simulado" },
-  { poc: "POC-03", titulo: "Mascaramento LGPD", status: "Pronto", href: "/publico/TESTE" },
-  { poc: "POC-04", titulo: "Abertura de memorando", status: "Pronto", href: "/documentos/novo" },
-  { poc: "POC-05", titulo: "Tramitação e linha do tempo", status: "Pronto", href: "/documentos" },
-  { poc: "POC-06", titulo: "Circular + leitura individual", status: "Pronto", href: "/circulares" },
-  { poc: "POC-07", titulo: "Portal do cidadão + CEP", status: "Pronto", href: "/cidadao" },
-  { poc: "POC-08", titulo: "Resposta por e-mail automática", status: "Pronto", href: "/documentos" },
-  { poc: "POC-09", titulo: "Consulta pública por QR/chave", status: "Pronto", href: "/publico/TESTE" },
+// Mesa de trabalho: módulos do sistema em linguagem de produto.
+const MODULES = [
+  {
+    titulo: "Documentos",
+    desc: "Memorandos e ofícios: elaborar, numerar, tramitar e acompanhar.",
+    href: "/documentos",
+    cta: "Abrir documentos",
+  },
+  {
+    titulo: "Circulares",
+    desc: "Comunicados urgentes e informativos com confirmação de leitura.",
+    href: "/circulares",
+    cta: "Abrir circulares",
+  },
+  {
+    titulo: "Portal do cidadão",
+    desc: "Receber requerimentos externos com protocolo e acompanhamento.",
+    href: "/cidadao",
+    cta: "Abrir portal",
+  },
+  {
+    titulo: "Consulta pública",
+    desc: "Acompanhar documentos por QR Code ou chave pública, com sigilo LGPD.",
+    href: "/publico",
+    cta: "Consultar",
+  },
+  {
+    titulo: "Administração",
+    desc: "Usuários, setores e níveis de acesso do sistema.",
+    href: "/admin",
+    cta: "Administrar",
+  },
 ];
-
-const BADGE: Record<string, string> = {
-  Pronto: "badge-OPEN",
-  "Em obra": "badge-IN_TRANSIT",
-  Planejado: "badge-DRAFT",
-};
 
 export default function Home() {
   return (
     <div>
-      <h1>Painel da POC — 9 requisitos</h1>
+      <h1>Mesa de trabalho</h1>
       <p className="muted">
-        Demonstração ao vivo em até 2h. Verde = demonstrável agora; o resto segue o plano Fase a
-        Fase.
+        Prefeitura Municipal de Rio Azul — gestão eletrônica de documentos, tramitação e
+        atendimento ao cidadão.
       </p>
       <div className="grid-3">
-        {ITEMS.map((i) => (
-          <div key={i.poc} className="card plain">
-            <span className={`badge ${BADGE[i.status]}`}>{i.status}</span>
-            <h2 style={{ fontSize: 20, margin: "8px 0 4px" }}>
-              {i.poc} — {i.titulo}
-            </h2>
-            <Link href={i.href} aria-label={`Abrir ${i.poc} — ${i.titulo}`}>
-              Abrir →
+        {MODULES.map((m) => (
+          <div key={m.titulo} className="card plain">
+            <h2 style={{ fontSize: 20, margin: "0 0 4px" }}>{m.titulo}</h2>
+            <p className="muted" style={{ marginTop: 0 }}>
+              {m.desc}
+            </p>
+            <Link href={m.href} className="btn" aria-label={`${m.cta} — ${m.titulo}`}>
+              {m.cta} →
             </Link>
           </div>
         ))}
       </div>
       <div className="card">
-        <strong>Atalhos operacionais</strong>
+        <strong>Ações rápidas</strong>
         <div className="form-row" style={{ marginTop: 8 }}>
           <Link href="/documentos/novo" className="btn btn-primary">
-            Novo memorando
+            Novo documento
           </Link>
-          <Link href="/admin" className="btn">
-            Gerir usuários
+          <Link href="/circulares/nova" className="btn">
+            Nova circular
           </Link>
           <Link href="/cidadao" className="btn">
-            Área do cidadão
+            Novo requerimento
           </Link>
         </div>
       </div>

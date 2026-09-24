@@ -32,16 +32,16 @@ export default function DocumentosPage() {
   if (!user)
     return (
       <div className="card">
-        <h1>Memorandos</h1>
+        <h1>Documentos</h1>
         <p>
-          Faça login em <Link href="/admin">/admin</Link> para ver os memorandos.
+          Faça login em <Link href="/admin">/admin</Link> para ver os documentos.
         </p>
       </div>
     );
 
   return (
     <div>
-      <h1>Memorandos</h1>
+      <h1>Documentos</h1>
       {err && (
         <p className="alert alert-error" role="alert">
           {err}

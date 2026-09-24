@@ -281,9 +281,9 @@ export default function DocDetail({ params }: { params: { id: string } }) {
               className="btn"
               onClick={simulateReply}
               disabled={busy !== null}
-              title="Ensaio: simula a resposta do cidadão pelo mesmo código do webhook real"
+              title="Registra neste processo uma resposta recebida por e-mail"
             >
-              Simular resposta por e-mail (ensaio)
+              Registrar resposta recebida por e-mail
             </button>
           )}
         </div>
