@@ -104,6 +104,8 @@ export const document = pgTable("document", {
     () => department.id
   ),
   createdById: uuid("created_by_id").references(() => appUser.id),
+  // Só usado em CIRCULAR: URGENT | INFORMATIVE
+  urgency: text("urgency"),
   publicKey: text("public_key").notNull().unique(),
   createdAt: timestamp("created_at").notNull().defaultNow()
 },
@@ -136,16 +138,23 @@ export const documentRecipient = pgTable("document_recipient", {
   recipientType: text("recipient_type").notNull().default("TO")
 });
 
-export const documentReadReceipt = pgTable("document_read_receipt", {
-  documentId: uuid("document_id")
-    .notNull()
-    .references(() => document.id),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => appUser.id),
-  firstReadAt: timestamp("first_read_at").notNull().defaultNow(),
-  lastReadAt: timestamp("last_read_at")
-});
+export const documentReadReceipt = pgTable(
+  "document_read_receipt",
+  {
+    documentId: uuid("document_id")
+      .notNull()
+      .references(() => document.id),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => appUser.id),
+    // Imutável: só INSERT (onConflictDoNothing). Nunca UPDATE.
+    firstReadAt: timestamp("first_read_at").notNull().defaultNow(),
+    lastReadAt: timestamp("last_read_at")
+  },
+  (t) => ({
+    docUserUnique: uniqueIndex("read_receipt_doc_user_unique").on(t.documentId, t.userId)
+  })
+);
 
 export const documentMovement = pgTable("document_movement", {
   id: uuid("id").primaryKey().defaultRandom(),
