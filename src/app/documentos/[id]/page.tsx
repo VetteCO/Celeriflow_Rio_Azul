@@ -36,6 +36,7 @@ export default function DocDetail({ params }: { params: { id: string } }) {
   const [note, setNote] = useState("");
   const [nTitle, setNTitle] = useState("");
   const [nDue, setNDue] = useState("");
+  const [busy, setBusy] = useState<"forward" | "receive" | "deadline" | null>(null);
   const canEdit = role === "ADMIN_GERAL";
 
   const load = useCallback(() => {
@@ -49,13 +50,25 @@ export default function DocDetail({ params }: { params: { id: string } }) {
     load();
   }, [user, load]);
 
-  if (user === undefined) return <p>Carregando…</p>;
-  if (!user) return <p>Faça login em <Link href="/admin">/admin</Link>.</p>;
-  if (err) return <p style={{ color: "crimson" }}>{err}</p>;
-  if (!data) return <p>Carregando documento…</p>;
+  if (user === undefined) return <p role="status">Carregando…</p>;
+  if (!user)
+    return (
+      <p>
+        Faça login em <Link href="/admin">/admin</Link>.
+      </p>
+    );
+  if (err && !data)
+    return (
+      <p className="alert alert-error" role="alert">
+        {err}
+      </p>
+    );
+  if (!data) return <p role="status">Carregando documento…</p>;
 
   async function forward() {
+    if (busy) return;
     setErr(null);
+    setBusy("forward");
     try {
       await api(`/api/documents/${params.id}/forward`, {
         method: "POST",
@@ -65,19 +78,27 @@ export default function DocDetail({ params }: { params: { id: string } }) {
       load();
     } catch (e) {
       setErr((e as Error).message);
+    } finally {
+      setBusy(null);
     }
   }
   async function receive() {
+    if (busy) return;
     setErr(null);
+    setBusy("receive");
     try {
       await api(`/api/documents/${params.id}/receive`, { method: "POST" });
       load();
     } catch (e) {
       setErr((e as Error).message);
+    } finally {
+      setBusy(null);
     }
   }
   async function addDeadline() {
+    if (busy) return;
     setErr(null);
+    setBusy("deadline");
     try {
       await api(`/api/documents/${params.id}/deadlines`, {
         method: "POST",
@@ -88,6 +109,8 @@ export default function DocDetail({ params }: { params: { id: string } }) {
       load();
     } catch (e) {
       setErr((e as Error).message);
+    } finally {
+      setBusy(null);
     }
   }
   async function upload(file: File) {
@@ -110,55 +133,82 @@ export default function DocDetail({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div style={{ maxWidth: 860 }}>
+    <div>
       <p>
         <Link href="/documentos">← memorandos</Link>
       </p>
-      <h2>
+      <h1>
         {data.document.displayNumber} — {data.document.subject}
-      </h2>
+      </h1>
       <p>
-        Status: <strong>{data.document.status}</strong> · Origem: {data.document.origin} ·
-        Criado em {new Date(data.document.createdAt).toLocaleString("pt-BR")}
+        <span className={`badge badge-${data.document.status}`}>{data.document.status}</span>{" "}
+        <span className="muted">
+          Origem: {data.document.origin} · Criado em{" "}
+          {new Date(data.document.createdAt).toLocaleString("pt-BR")}
+        </span>
       </p>
-      <article
-        style={{ border: "1px solid #ddd", padding: 12, background: "#fff" }}
-        dangerouslySetInnerHTML={{ __html: data.document.body }}
-      />
-      {err && <p style={{ color: "crimson" }}>{err}</p>}
+      <div className="doc-body" dangerouslySetInnerHTML={{ __html: data.document.body }} />
+      {err && (
+        <p className="alert alert-error" role="alert">
+          {err}
+        </p>
+      )}
 
       <h3>Prazos</h3>
-      <ul>
-        {data.deadlines.map((d) => (
-          <li key={d.id}>
-            {d.title} — {new Date(d.dueAt).toLocaleString("pt-BR")} ({d.status})
-          </li>
-        ))}
-        {data.deadlines.length === 0 && <li>Nenhum prazo.</li>}
-      </ul>
+      {data.deadlines.length > 0 ? (
+        <ul>
+          {data.deadlines.map((d) => (
+            <li key={d.id}>
+              {d.title} — {new Date(d.dueAt).toLocaleString("pt-BR")} ({d.status})
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="muted">Nenhum prazo.</p>
+      )}
       {canEdit && (
-        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-          <input placeholder="novo prazo — título" value={nTitle} onChange={(e) => setNTitle(e.target.value)} />
-          <input type="datetime-local" value={nDue} onChange={(e) => setNDue(e.target.value)} />
-          <button onClick={addDeadline}>Adicionar</button>
+        <div className="form-row">
+          <input
+            style={{ flex: 2 }}
+            placeholder="novo prazo — título"
+            aria-label="Título do novo prazo"
+            value={nTitle}
+            onChange={(e) => setNTitle(e.target.value)}
+          />
+          <input
+            style={{ flex: 1 }}
+            type="datetime-local"
+            aria-label="Data do novo prazo"
+            value={nDue}
+            onChange={(e) => setNDue(e.target.value)}
+          />
+          <button className="btn" onClick={addDeadline} disabled={busy !== null}>
+            Adicionar
+          </button>
         </div>
       )}
 
       <h3>Anexos</h3>
-      <ul>
-        {data.attachments.map((a) => (
-          <li key={a.id}>
-            <a href={a.url} target="_blank" rel="noreferrer">
-              {a.filename}
-            </a>{" "}
-            ({a.size ? `${Math.round(a.size / 1024)} KB` : "—"})
-          </li>
-        ))}
-        {data.attachments.length === 0 && <li>Nenhum anexo.</li>}
-      </ul>
+      {data.attachments.length > 0 ? (
+        <ul>
+          {data.attachments.map((a) => (
+            <li key={a.id}>
+              <a href={a.url} target="_blank" rel="noreferrer">
+                {a.filename}
+              </a>{" "}
+              <span className="muted">
+                ({a.size ? `${new Intl.NumberFormat("pt-BR").format(Math.round(a.size / 1024))} KB` : "—"})
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="muted">Nenhum anexo.</p>
+      )}
       {canEdit && (
         <input
           type="file"
+          aria-label="Anexar arquivo"
           onChange={(e) => {
             const f = e.target.files?.[0];
             if (f) upload(f);
@@ -167,40 +217,55 @@ export default function DocDetail({ params }: { params: { id: string } }) {
       )}
 
       <h3>Tramitação</h3>
-      {canEdit ? (
-        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-          <select value={toDept} onChange={(e) => setToDept(e.target.value)}>
-            <option value="">destino…</option>
-            {data.departments.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </select>
-          <input placeholder="despacho" value={note} onChange={(e) => setNote(e.target.value)} />
-          <button onClick={forward} disabled={!toDept}>
-            Despachar
+      <div className="card plain">
+        <div className="form-row">
+          {canEdit && (
+            <>
+              <select
+                style={{ flex: 1 }}
+                value={toDept}
+                onChange={(e) => setToDept(e.target.value)}
+                aria-label="Setor de destino"
+              >
+                <option value="">destino…</option>
+                {data.departments.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                style={{ flex: 2 }}
+                placeholder="despacho"
+                aria-label="Texto do despacho"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+              <button
+                className="btn btn-primary"
+                onClick={forward}
+                disabled={!toDept || busy !== null}
+              >
+                {busy === "forward" ? "Despachando…" : "Despachar"}
+              </button>
+            </>
+          )}
+          <button className="btn" onClick={receive} disabled={busy !== null}>
+            {busy === "receive" ? "Registrando…" : "Marcar recebido"}
           </button>
-          <button onClick={receive}>Marcar recebido</button>
         </div>
-      ) : (
-        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-          <button onClick={receive}>Marcar recebido</button>
-        </div>
-      )}
+      </div>
 
       <h3>Linha do tempo</h3>
-      <ol>
+      <ol className="timeline">
         {data.timeline.map((t) => (
-          <li key={t.id} style={{ marginBottom: 6 }}>
-            <strong>{t.action}</strong> — {t.from} → {t.to} · por {t.actor} ·{" "}
-            {new Date(t.at).toLocaleString("pt-BR")}
-            {t.note && (
-              <>
-                <br />
-                <em>{t.note}</em>
-              </>
-            )}
+          <li key={t.id}>
+            <span className="t-action">{t.action}</span>
+            <div className="t-meta">
+              {t.from} → {t.to} · por {t.actor} ·{" "}
+              {new Date(t.at).toLocaleString("pt-BR")}
+            </div>
+            {t.note && <div className="t-note">{t.note}</div>}
           </li>
         ))}
       </ol>

@@ -30,10 +30,19 @@ export default function NovoMemorando() {
       .catch((e) => setErr((e as Error).message));
   }, [user]);
 
-  if (user === undefined) return <p>Carregando…</p>;
-  if (!user) return <p>Faça login em <Link href="/admin">/admin</Link>.</p>;
+  if (user === undefined) return <p role="status">Carregando…</p>;
+  if (!user)
+    return (
+      <p>
+        Faça login em <Link href="/admin">/admin</Link>.
+      </p>
+    );
   if (role !== "ADMIN_GERAL")
-    return <p>Bloqueado: somente ADMIN_GERAL cria memorando (a API retorna 403).</p>;
+    return (
+      <p className="alert alert-warn">
+        Bloqueado: somente ADMIN_GERAL cria memorando (a API retorna 403).
+      </p>
+    );
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
@@ -61,65 +70,90 @@ export default function NovoMemorando() {
   }
 
   return (
-    <div style={{ maxWidth: 720 }}>
-      <h2>Novo memorando</h2>
-      {err && <p style={{ color: "crimson" }}>{err}</p>}
-      <form onSubmit={save} style={{ display: "grid", gap: 10 }}>
-        <input
-          placeholder="Assunto"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-        />
+    <div>
+      <h1>Novo memorando</h1>
+      {err && (
+        <p className="alert alert-error" role="alert">
+          {err}
+        </p>
+      )}
+      <form onSubmit={save} className="form" style={{ maxWidth: 720 }}>
+        <label>
+          Assunto
+          <input
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            name="subject"
+            autoComplete="off"
+          />
+        </label>
         <label>
           Corpo (editor da plataforma)
           <RichText value={body} onChange={setBody} />
         </label>
-        <div style={{ display: "flex", gap: 8 }}>
-          <select value={origin} onChange={(e) => setOrigin(e.target.value)}>
-            <option value="">origem…</option>
-            {depts.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </select>
-          <select value={dest} onChange={(e) => setDest(e.target.value)}>
-            <option value="">destino…</option>
-            {depts.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </select>
+        <div className="form-row">
+          <label style={{ flex: 1 }}>
+            Origem
+            <select value={origin} onChange={(e) => setOrigin(e.target.value)}>
+              <option value="">—</option>
+              {depts.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label style={{ flex: 1 }}>
+            Destino
+            <select value={dest} onChange={(e) => setDest(e.target.value)}>
+              <option value="">—</option>
+              {depts.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
-        <fieldset>
-          <legend>Prazos (múltiplos, calendário)</legend>
+        <fieldset className="card plain">
+          <legend>
+            <strong>Prazos (múltiplos, calendário)</strong>
+          </legend>
           {deadlines.map((d, i) => (
-            <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
+            <div key={i} className="form-row" style={{ marginBottom: 6 }}>
               <input
+                style={{ flex: 2 }}
                 placeholder={`Prazo ${i + 1} — título`}
+                aria-label={`Título do prazo ${i + 1}`}
                 value={d.title}
                 onChange={(e) =>
-                  setDeadlines((all) => all.map((x, j) => (j === i ? { ...x, title: e.target.value } : x)))
+                  setDeadlines((all) =>
+                    all.map((x, j) => (j === i ? { ...x, title: e.target.value } : x))
+                  )
                 }
               />
               <input
+                style={{ flex: 1 }}
                 type="datetime-local"
+                aria-label={`Data do prazo ${i + 1}`}
                 value={d.dueAt}
                 onChange={(e) =>
-                  setDeadlines((all) => all.map((x, j) => (j === i ? { ...x, dueAt: e.target.value } : x)))
+                  setDeadlines((all) =>
+                    all.map((x, j) => (j === i ? { ...x, dueAt: e.target.value } : x))
+                  )
                 }
               />
             </div>
           ))}
           <button
             type="button"
+            className="btn"
             onClick={() => setDeadlines((all) => [...all, { title: "", dueAt: "" }])}
           >
             + prazo
           </button>
         </fieldset>
-        <button type="submit" disabled={saving}>
+        <button type="submit" className="btn btn-primary" disabled={saving}>
           {saving ? "Salvando…" : "Salvar (gera número automático)"}
         </button>
       </form>

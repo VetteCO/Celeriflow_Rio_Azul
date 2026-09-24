@@ -27,47 +27,65 @@ export default function DocumentosPage() {
       .catch((e) => setErr((e as Error).message));
   }, [user]);
 
-  if (user === undefined) return <p>Carregando…</p>;
-  if (!user) return <p>Faça login em <Link href="/admin">/admin</Link> para ver os memorandos.</p>;
+  if (user === undefined) return <p role="status">Carregando…</p>;
+  if (!user)
+    return (
+      <div className="card">
+        <h1>Memorandos</h1>
+        <p>
+          Faça login em <Link href="/admin">/admin</Link> para ver os memorandos.
+        </p>
+      </div>
+    );
 
   return (
-    <div style={{ maxWidth: 860 }}>
-      <h2>Memorandos (POC-04/05)</h2>
-      {err && <p style={{ color: "crimson" }}>{err}</p>}
+    <div>
+      <h1>Memorandos</h1>
+      {err && (
+        <p className="alert alert-error" role="alert">
+          {err}
+        </p>
+      )}
       {canCreate && (
         <p>
-          <Link href="/documentos/novo">
-            <button>+ Novo memorando</button>
+          <Link href="/documentos/novo" className="btn btn-primary">
+            + Novo memorando
           </Link>
         </p>
       )}
-      <table cellPadding={6} style={{ borderCollapse: "collapse", width: "100%" }}>
-        <thead>
-          <tr style={{ textAlign: "left", borderBottom: "2px solid #ccc" }}>
-            <th>Número</th>
-            <th>Assunto</th>
-            <th>Status</th>
-            <th>Origem</th>
-          </tr>
-        </thead>
-        <tbody>
-          {docs.map((d) => (
-            <tr key={d.id} style={{ borderBottom: "1px solid #eee" }}>
-              <td>
-                <Link href={`/documentos/${d.id}`}>{d.displayNumber}</Link>
-              </td>
-              <td>{d.subject}</td>
-              <td>{d.status}</td>
-              <td>{d.origin}</td>
-            </tr>
-          ))}
-          {docs.length === 0 && (
+      <div className="table-wrap">
+        <table className="table">
+          <thead>
             <tr>
-              <td colSpan={4}>Nenhum memorando ainda.</td>
+              <th scope="col">Número</th>
+              <th scope="col">Assunto</th>
+              <th scope="col">Status</th>
+              <th scope="col">Origem</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {docs.map((d) => (
+              <tr key={d.id}>
+                <td>
+                  <Link href={`/documentos/${d.id}`}>{d.displayNumber}</Link>
+                </td>
+                <td>{d.subject}</td>
+                <td>
+                  <span className={`badge badge-${d.status}`}>{d.status}</span>
+                </td>
+                <td>{d.origin}</td>
+              </tr>
+            ))}
+            {docs.length === 0 && (
+              <tr>
+                <td colSpan={4} className="muted">
+                  Nenhum memorando ainda.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

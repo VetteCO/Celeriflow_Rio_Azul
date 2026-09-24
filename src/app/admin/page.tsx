@@ -45,6 +45,8 @@ export default function AdminPage() {
   const [err, setErr] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [loggingIn, setLoggingIn] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [nName, setNName] = useState("");
   const [nEmail, setNEmail] = useState("");
   const [nDept, setNDept] = useState("");
@@ -87,11 +89,15 @@ export default function AdminPage() {
 
   async function doLogin(e: React.FormEvent) {
     e.preventDefault();
+    if (loggingIn) return;
     setErr(null);
+    setLoggingIn(true);
     try {
       await signInWithEmailAndPassword(firebaseClient(), email, pass);
-    } catch (e) {
-      setErr("login_falhou: confira e-mail/senha e o provider Email/Password no Firebase Console");
+    } catch {
+      setErr("Login falhou: confira e-mail/senha.");
+    } finally {
+      setLoggingIn(false);
     }
   }
 
@@ -100,13 +106,15 @@ export default function AdminPage() {
     try {
       await signInWithPopup(firebaseClient(), new GoogleAuthProvider());
     } catch {
-      setErr("google_falhou: ative o provider Google no Firebase Console > Authentication");
+      setErr("Google falhou: ative o provider Google no Firebase Console > Authentication.");
     }
   }
 
   async function createUser(e: React.FormEvent) {
     e.preventDefault();
+    if (creating) return;
     setErr(null);
+    setCreating(true);
     try {
       const t = await fbUser!.getIdToken();
       await api("/api/admin/users", t, {
@@ -123,11 +131,15 @@ export default function AdminPage() {
       await refresh();
     } catch (e) {
       setErr((e as Error).message);
+    } finally {
+      setCreating(false);
     }
   }
 
   async function changeRole(id: string, next: string, firebaseUid: string | null) {
     setErr(null);
+    const target = next === "ADMIN_GERAL" ? "Admin Geral" : "Nível 3";
+    if (!window.confirm(`Confirmar troca de perfil para ${target}?`)) return;
     try {
       let uid = firebaseUid;
       if (!uid) {
@@ -150,111 +162,174 @@ export default function AdminPage() {
 
   if (!fbUser) {
     return (
-      <div style={{ maxWidth: 420 }}>
-        <h2>Admin — login</h2>
-        {err && <p style={{ color: "crimson" }}>{err}</p>}
-        <form onSubmit={doLogin} style={{ display: "grid", gap: 8 }}>
-          <input placeholder="e-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input
-            placeholder="senha"
-            type="password"
-            value={pass}
-            onChange={(e) => setPass(e.target.value)}
-          />
-          <button type="submit">Entrar com e-mail/senha</button>
+      <div className="card" style={{ maxWidth: 440 }}>
+        <h1>Admin — login</h1>
+        {err && (
+          <p className="alert alert-error" role="alert">
+            {err}
+          </p>
+        )}
+        <form onSubmit={doLogin} className="form">
+          <label>
+            E-mail
+            <input
+              type="email"
+              name="email"
+              spellCheck={false}
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
+          <label>
+            Senha
+            <input
+              type="password"
+              name="current-password"
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+              autoComplete="current-password"
+            />
+          </label>
+          <button type="submit" className="btn btn-primary" disabled={loggingIn}>
+            {loggingIn ? "Entrando…" : "Entrar com e-mail/senha"}
+          </button>
         </form>
         <p>
-          <button onClick={doGoogle}>Entrar com Google</button>
+          <button className="btn" onClick={doGoogle}>
+            Entrar com Google
+          </button>
         </p>
-        <p style={{ fontSize: 13, opacity: 0.8 }}>
-          Ative os providers em Firebase Console &gt; Authentication &gt; Sign-in method, e crie
-          os logins com os mesmos e-mails do seed.
-        </p>
+        <p className="muted">Use o login master do ensaio para gerir permissões.</p>
       </div>
     );
   }
 
   const isAdmin = role === "ADMIN_GERAL";
   return (
-    <div style={{ maxWidth: 860 }}>
-      <h2>Admin — usuários e permissões (POC-01)</h2>
-      <p>
-        Logado: <strong>{fbUser.email}</strong> — role (claim):{" "}
-        <strong>{role ?? "nenhuma (sem acesso — peça vínculo ao admin)"}</strong>{" "}
-        <button onClick={() => signOut(firebaseClient())}>Sair</button>
-      </p>
-      {err && <p style={{ color: "crimson" }}>{err}</p>}
+    <div>
+      <h1>Admin — usuários e permissões</h1>
+      <div className="card plain">
+        Logado: <strong>{fbUser.email}</strong> · role (claim):{" "}
+        <span className={`badge ${isAdmin ? "badge-role" : "badge-DRAFT"}`}>
+          {role ?? "sem vínculo"}
+        </span>{" "}
+        <button className="btn" onClick={() => signOut(firebaseClient())}>
+          Sair
+        </button>
+      </div>
+      {err && (
+        <p className="alert alert-error" role="alert">
+          {err}
+        </p>
+      )}
       {!isAdmin && (
-        <p style={{ background: "#fff3cd", padding: 8 }}>
-          Perfil somente leitura: a API bloqueia criação/troca de role com 403 (RBAC no backend,
-          não só botão escondido).
+        <p className="alert alert-warn">
+          Perfil somente leitura: a API bloqueia criação e troca de role com 403 (RBAC no
+          backend, não só botão escondido).
         </p>
       )}
       <h3>Usuários ({users.length})</h3>
-      <table cellPadding={6} style={{ borderCollapse: "collapse", width: "100%" }}>
-        <thead>
-          <tr style={{ textAlign: "left", borderBottom: "2px solid #ccc" }}>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Roles</th>
-            <th>Login vinculado</th>
-            {isAdmin && <th>Ação</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((u) => (
-            <tr key={u.id} style={{ borderBottom: "1px solid #eee" }}>
-              <td>{u.name}</td>
-              <td>{u.email}</td>
-              <td>{u.roles.join(", ") || "—"}</td>
-              <td>{u.firebaseUid ? "sim" : "não"}</td>
-              {isAdmin && (
-                <td>
-                  <button
-                    onClick={() =>
-                      changeRole(
-                        u.id,
-                        u.roles.includes("ADMIN_GERAL")
-                          ? "NIVEL_3_VISUALIZACAO"
-                          : "ADMIN_GERAL",
-                        u.firebaseUid
-                      )
-                    }
-                  >
-                    Tornar{" "}
-                    {u.roles.includes("ADMIN_GERAL") ? "Nível 3" : "Admin Geral"}
-                  </button>
-                </td>
-              )}
+      <div className="table-wrap">
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">Nome</th>
+              <th scope="col">E-mail</th>
+              <th scope="col">Roles</th>
+              <th scope="col">Login</th>
+              {isAdmin && <th scope="col">Ação</th>}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.map((u) => (
+              <tr key={u.id}>
+                <td>{u.name}</td>
+                <td>{u.email}</td>
+                <td>
+                  {u.roles.length > 0 ? (
+                    u.roles.map((r) => (
+                      <span key={r} className="badge badge-role" style={{ marginRight: 4 }}>
+                        {r}
+                      </span>
+                    ))
+                  ) : (
+                    "—"
+                  )}
+                </td>
+                <td>{u.firebaseUid ? "vinculado" : "não"}</td>
+                {isAdmin && (
+                  <td>
+                    <button
+                      className="btn"
+                      onClick={() =>
+                        changeRole(
+                          u.id,
+                          u.roles.includes("ADMIN_GERAL")
+                            ? "NIVEL_3_VISUALIZACAO"
+                            : "ADMIN_GERAL",
+                          u.firebaseUid
+                        )
+                      }
+                    >
+                      Tornar {u.roles.includes("ADMIN_GERAL") ? "Nível 3" : "Admin"}
+                    </button>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {isAdmin && (
-        <>
-          <h3>Criar usuário interno</h3>
-          <form onSubmit={createUser} style={{ display: "grid", gap: 8, maxWidth: 420 }}>
-            <input placeholder="nome" value={nName} onChange={(e) => setNName(e.target.value)} />
-            <input
-              placeholder="e-mail"
-              value={nEmail}
-              onChange={(e) => setNEmail(e.target.value)}
-            />
-            <select value={nDept} onChange={(e) => setNDept(e.target.value)}>
-              <option value="">setor…</option>
-              {depts.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name} ({d.acronym})
-                </option>
-              ))}
-            </select>
-            <select value={nRole} onChange={(e) => setNRole(e.target.value)}>
-              <option value="NIVEL_3_VISUALIZACAO">Nível 3 — visualização</option>
-              <option value="ADMIN_GERAL">Administrador Geral</option>
-            </select>
-            <button type="submit">Criar</button>
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Criar usuário interno</h3>
+          <form onSubmit={createUser} className="form">
+            <label>
+              Nome
+              <input
+                name="name"
+                autoComplete="off"
+                value={nName}
+                onChange={(e) => setNName(e.target.value)}
+              />
+            </label>
+            <label>
+              E-mail
+              <input
+                type="email"
+                name="email"
+                autoComplete="off"
+                spellCheck={false}
+                value={nEmail}
+                onChange={(e) => setNEmail(e.target.value)}
+              />
+            </label>
+            <div className="form-row">
+              <label style={{ flex: 1 }}>
+                Setor
+                <select value={nDept} onChange={(e) => setNDept(e.target.value)}>
+                  <option value="">—</option>
+                  {depts.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name} ({d.acronym})
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label style={{ flex: 1 }}>
+                Perfil
+                <select value={nRole} onChange={(e) => setNRole(e.target.value)}>
+                  <option value="NIVEL_3_VISUALIZACAO">Nível 3 — visualização</option>
+                  <option value="ADMIN_GERAL">Administrador Geral</option>
+                </select>
+              </label>
+            </div>
+            <button type="submit" className="btn btn-primary" disabled={creating}>
+              {creating ? "Criando…" : "Criar"}
+            </button>
           </form>
-        </>
+        </div>
       )}
     </div>
   );

@@ -1,16 +1,31 @@
+import "./globals.css";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body style={{ fontFamily: "system-ui, sans-serif", margin: 0 }}>
-        <header style={{ padding: 12, borderBottom: "1px solid #ddd" }}>
-          <strong>Celeriflow Rio Azul</strong> — POC Pregão 60/2026
-          <nav style={{ display: "inline", marginLeft: 16, fontSize: 14 }}>
-            <a href="/admin" style={{ marginRight: 12 }}>Admin</a>
-            <a href="/documentos" style={{ marginRight: 12 }}>Memorandos</a>
-            <a href="/cidadao" style={{ marginRight: 12 }}>Cidadão</a>
-          </nav>
+      <body>
+        <a href="#conteudo" className="skip-link">
+          Pular para o conteúdo
+        </a>
+        <header className="topbar">
+          <div className="topbar-inner">
+            <div>
+              <div className="mark">Celeriflow Rio Azul</div>
+              <div className="sub">Prefeitura Municipal de Rio Azul · PR — POC Pregão 60/2026</div>
+            </div>
+            <nav className="tabs" aria-label="Seções">
+              <a href="/">Início</a>
+              <a href="/admin">Admin</a>
+              <a href="/documentos">Memorandos</a>
+              <a href="/cidadao">Cidadão</a>
+            </nav>
+          </div>
         </header>
-        <main style={{ padding: 16 }}>{children}</main>
+        <main id="conteudo" className="container">{children}</main>
+        <footer className="footer">
+          Ambiente de demonstração da POC — dados fictícios · LGPD: documentos pessoais mascarados
+          na consulta pública
+        </footer>
       </body>
     </html>
   );
