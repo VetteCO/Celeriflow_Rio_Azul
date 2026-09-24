@@ -16,7 +16,7 @@ import {
   externalRequest,
 } from "@/db/schema";
 import { maskCpfCnpj } from "@/lib/mask";
-import { nextProtocolNumber } from "@/lib/numbering";
+import { createDocumentWithNumber, nextProtocolNumber } from "@/lib/numbering";
 import { sendProcessEmail } from "@/lib/email";
 
 const CreateSchema = z.object({
@@ -68,23 +68,15 @@ export async function POST(req: Request) {
     person = inserted[0]!;
   }
 
-  const publicKey = nanoid(21);
   const replyToken = nanoid(21);
-  const docs = await db
-    .insert(document)
-    .values({
-      type: "EXTERNAL_REQUEST",
-      number: 0, // protocolo usa externalRequest.protocolNumber, não a série documental
-      year,
-      subject: `${b.requestType} — ${b.name}`,
-      body: b.description,
-      status: "OPEN",
-      originDepartmentId: null,
-      createdById: null,
-      publicKey,
-    })
-    .returning();
-  const doc = docs[0]!;
+  const doc = await createDocumentWithNumber({
+    type: "EXTERNAL_REQUEST",
+    subject: `${b.requestType} — ${b.name}`,
+    body: b.description,
+    originDepartmentId: null,
+    createdById: null,
+  });
+  const publicKey = doc.publicKey;
 
   // Reserva o protocolo com retry em conflito de unique.
   let protocol = "";

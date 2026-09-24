@@ -45,6 +45,13 @@ const USERS: Array<{
     dept: "CPL",
     role: "NIVEL_3_VISUALIZACAO",
   },
+  // Elenco do ensaio (fictício, realista)
+  { name: "João da Silva", email: "joaodasilva@email.com", passwordEnv: "TEST_PASSWORD", dept: "ADM", role: "ADMIN_GERAL" },
+  { name: "Maria Oliveira", email: "mariaoliveira@email.com", passwordEnv: "TEST_PASSWORD", dept: "CPL", role: "NIVEL_3_VISUALIZACAO" },
+  { name: "Carlos Souza", email: "carlossouza@email.com", passwordEnv: "TEST_PASSWORD", dept: "JUR", role: "NIVEL_3_VISUALIZACAO" },
+  { name: "Ana Santos", email: "anasantos@email.com", passwordEnv: "TEST_PASSWORD", dept: "RH", role: "NIVEL_3_VISUALIZACAO" },
+  { name: "Paulo Ferreira", email: "pauloferreira@email.com", passwordEnv: "TEST_PASSWORD", dept: "TI", role: "NIVEL_3_VISUALIZACAO" },
+  { name: "Fernanda Lima", email: "fernandalima@email.com", passwordEnv: "TEST_PASSWORD", dept: "ADM", role: "NIVEL_3_VISUALIZACAO" },
 ];
 
 async function main() {
