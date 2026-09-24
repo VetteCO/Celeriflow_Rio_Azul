@@ -13,6 +13,7 @@ type Detail = {
     status: string;
     origin: string;
     createdAt: string;
+    publicKey: string;
   };
   deadlines: Array<{ id: string; title: string; dueAt: string; status: string }>;
   timeline: Array<{
@@ -75,6 +76,25 @@ export default function DocDetail({ params }: { params: { id: string } }) {
         body: JSON.stringify({ toDepartmentId: toDept, note }),
       });
       setNote("");
+      load();
+    } catch (e) {
+      setErr((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+  async function simulateReply() {
+    if (busy) return;
+    setErr(null);
+    setBusy("forward");
+    try {
+      const data = await api("/api/email/inbound/simulate", {
+        method: "POST",
+        body: JSON.stringify({ documentId: params.id }),
+      });
+      if (data.simulated) {
+        setErr(null);
+      }
       load();
     } catch (e) {
       setErr((e as Error).message);
@@ -148,6 +168,9 @@ export default function DocDetail({ params }: { params: { id: string } }) {
         </span>
       </p>
       <div className="doc-body" dangerouslySetInnerHTML={{ __html: data.document.body }} />
+      <p>
+        <Link href={`/publico/${data.document.publicKey}`}>Consulta pública / QR →</Link>
+      </p>
       {err && (
         <p className="alert alert-error" role="alert">
           {err}
@@ -253,6 +276,16 @@ export default function DocDetail({ params }: { params: { id: string } }) {
           <button className="btn" onClick={receive} disabled={busy !== null}>
             {busy === "receive" ? "Registrando…" : "Marcar recebido"}
           </button>
+          {canEdit && (
+            <button
+              className="btn"
+              onClick={simulateReply}
+              disabled={busy !== null}
+              title="Ensaio: simula a resposta do cidadão pelo mesmo código do webhook real"
+            >
+              Simular resposta por e-mail (ensaio)
+            </button>
+          )}
         </div>
       </div>
 

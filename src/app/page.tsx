@@ -9,8 +9,8 @@ const ITEMS: Array<{ poc: string; titulo: string; status: "Pronto" | "Em obra" |
   { poc: "POC-05", titulo: "Tramitação e linha do tempo", status: "Pronto", href: "/documentos" },
   { poc: "POC-06", titulo: "Circular + leitura individual", status: "Pronto", href: "/circulares" },
   { poc: "POC-07", titulo: "Portal do cidadão + CEP", status: "Pronto", href: "/cidadao" },
-  { poc: "POC-08", titulo: "Resposta por e-mail automática", status: "Planejado", href: "/documentos" },
-  { poc: "POC-09", titulo: "Consulta pública por QR/chave", status: "Em obra", href: "/publico/TESTE" },
+  { poc: "POC-08", titulo: "Resposta por e-mail automática", status: "Pronto", href: "/documentos" },
+  { poc: "POC-09", titulo: "Consulta pública por QR/chave", status: "Pronto", href: "/publico/TESTE" },
 ];
 
 const BADGE: Record<string, string> = {
