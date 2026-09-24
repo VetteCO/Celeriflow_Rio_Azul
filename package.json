@@ -1,0 +1,35 @@
+{
+  "name": "celeriflow-rio-azul",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.3",
+    "@vercel/blob": "^0.23.0",
+    "drizzle-orm": "^0.33.0",
+    "firebase": "^10.12.5",
+    "firebase-admin": "^12.3.0",
+    "nanoid": "^5.0.7",
+    "next": "14.2.5",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "resend": "^3.5.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "drizzle-kit": "^0.24.2",
+    "typescript": "^5.5.4"
+  }
+}
