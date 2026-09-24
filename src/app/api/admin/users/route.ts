@@ -32,6 +32,7 @@ export async function GET(req: Request) {
       active: u.active,
       firebaseUid: u.firebaseUid,
       departmentId: u.departmentId,
+      govbrLinked: !!u.externalAuthId,
       roles: byUser[u.id] ?? [],
     })),
     departments: depts,

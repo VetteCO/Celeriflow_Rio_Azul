@@ -3,7 +3,7 @@ import Link from "next/link";
 // Painel objetivo: 9 requisitos da POC com situação atual.
 const ITEMS: Array<{ poc: string; titulo: string; status: "Pronto" | "Em obra" | "Planejado"; href: string }> = [
   { poc: "POC-01", titulo: "Usuários e níveis de acesso", status: "Pronto", href: "/admin" },
-  { poc: "POC-02", titulo: "Login Gov.br / ICP-Brasil", status: "Planejado", href: "/admin" },
+  { poc: "POC-02", titulo: "Login Gov.br / ICP-Brasil", status: "Pronto", href: "/govbr-simulado" },
   { poc: "POC-03", titulo: "Mascaramento LGPD", status: "Pronto", href: "/publico/TESTE" },
   { poc: "POC-04", titulo: "Abertura de memorando", status: "Pronto", href: "/documentos/novo" },
   { poc: "POC-05", titulo: "Tramitação e linha do tempo", status: "Pronto", href: "/documentos" },

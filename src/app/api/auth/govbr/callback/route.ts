@@ -1,15 +1,42 @@
 import { NextResponse } from "next/server";
+import { db } from "@/db";
+import { auditLog } from "@/db/schema";
 
-// Callback Gov.br. Com MOCK (sem credencial) só registra evento para ensaio.
-// Com credencial (CHECKPOINT 7), trocar por troca code->token + vínculo CPF.
+// Callback Gov.br (POC-02).
+// - MOCK (ensaio, sem credencial): recebe cpf+name da tela simulada, valida,
+//   registra auditoria GOVBR_SIMULATED_LOGIN e devolve ao /admin para vínculo.
+// - error=cancelled: trata cancelamento/erro no provedor (volta com aviso).
+// - REAL (CHECKPOINT 7 preenchido): aqui entra troca code->token + vínculo CPF.
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  if (url.searchParams.get("mock")) {
-    return NextResponse.json({
-      ok: true,
-      mocked: true,
-      message: "Login Gov.br MOCK — configure CHECKPOINT 7 para fluxo real (POC-02)"
-    });
+  const err = url.searchParams.get("error");
+  if (err) {
+    return NextResponse.redirect(
+      new URL(`/admin?govbr=cancelled`, url.origin)
+    );
   }
-  return NextResponse.json({ ok: false, error: "Gov.br não configurado" }, { status: 501 });
+  if (!url.searchParams.get("mock")) {
+    return NextResponse.json(
+      { ok: false, error: "Gov.br real não configurado (CHECKPOINT 7)" },
+      { status: 501 }
+    );
+  }
+  const cpf = (url.searchParams.get("cpf") ?? "").replace(/\D/g, "");
+  const name = (url.searchParams.get("name") ?? "").trim();
+  if (!/^\d{11}$/.test(cpf) || name.length < 3) {
+    return NextResponse.redirect(new URL(`/admin?govbr=invalid`, url.origin));
+  }
+  await db.insert(auditLog).values({
+    actorType: "EXTERNAL",
+    actorId: cpf,
+    action: "GOVBR_SIMULATED_LOGIN",
+    entityType: "external_auth",
+    entityId: cpf,
+    metadata: { name, simulated: true },
+  });
+  const back = new URL("/admin", url.origin);
+  back.searchParams.set("govbr", "ok");
+  back.searchParams.set("cpf", cpf);
+  back.searchParams.set("name", name);
+  return NextResponse.redirect(back);
 }

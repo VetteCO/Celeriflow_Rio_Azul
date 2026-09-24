@@ -19,6 +19,7 @@ type AdminUser = {
   active: boolean;
   firebaseUid: string | null;
   departmentId: string | null;
+  govbrLinked?: boolean;
   roles: string[];
 };
 type Dept = { id: string; name: string; acronym: string | null };
@@ -47,6 +48,20 @@ export default function AdminPage() {
   const [pass, setPass] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [govbr, setGovbr] = useState<{ cpf: string; name: string } | null>(null);
+  const [govbrNotice, setGovbrNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Retorno do fluxo gov.br (query string), lido sem Suspense.
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("govbr") === "ok" && q.get("cpf")) {
+      setGovbr({ cpf: q.get("cpf")!, name: q.get("name") ?? "" });
+    } else if (q.get("govbr") === "cancelled") {
+      setGovbrNotice("Login gov.br cancelado — nenhum vínculo foi criado.");
+    } else if (q.get("govbr") === "invalid") {
+      setGovbrNotice("Dados do gov.br inválidos — tente novamente.");
+    }
+  }, []);
   const [nName, setNName] = useState("");
   const [nEmail, setNEmail] = useState("");
   const [nDept, setNDept] = useState("");
@@ -160,6 +175,23 @@ export default function AdminPage() {
     }
   }
 
+  async function linkGovbr() {
+    if (!govbr) return;
+    setErr(null);
+    try {
+      const t = await fbUser!.getIdToken();
+      await api("/api/auth/govbr/link", t, {
+        method: "POST",
+        body: JSON.stringify({ cpf: govbr.cpf, name: govbr.name }),
+      });
+      setGovbr(null);
+      window.history.replaceState(null, "", "/admin");
+      await refresh();
+    } catch (e) {
+      setErr((e as Error).message);
+    }
+  }
+
   if (!fbUser) {
     return (
       <div className="card" style={{ maxWidth: 440 }}>
@@ -200,12 +232,18 @@ export default function AdminPage() {
             Entrar com Google
           </button>
         </p>
+        <p>
+          <a className="btn" href="/api/auth/govbr/login">
+            Entrar com gov.br (ensaio)
+          </a>
+        </p>
         <p className="muted">Use o login master do ensaio para gerir permissões.</p>
       </div>
     );
   }
 
   const isAdmin = role === "ADMIN_GERAL";
+  const me = users.find((u) => u.email === fbUser.email);
   return (
     <div>
       <h1>Admin — usuários e permissões</h1>
@@ -214,6 +252,7 @@ export default function AdminPage() {
         <span className={`badge ${isAdmin ? "badge-role" : "badge-DRAFT"}`}>
           {role ?? "sem vínculo"}
         </span>{" "}
+        {me?.govbrLinked && <span className="badge badge-OPEN">gov.br verificada</span>}{" "}
         <button className="btn" onClick={() => signOut(firebaseClient())}>
           Sair
         </button>
@@ -222,6 +261,18 @@ export default function AdminPage() {
         <p className="alert alert-error" role="alert">
           {err}
         </p>
+      )}
+      {govbrNotice && <p className="alert alert-warn">{govbrNotice}</p>}
+      {govbr && (
+        <div className="card">
+          <strong>Identidade gov.br (ensaio) verificada:</strong> {govbr.name} · CPF{" "}
+          {govbr.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")}
+          <div className="form-row" style={{ marginTop: 8 }}>
+            <button className="btn btn-primary" onClick={linkGovbr}>
+              Vincular ao meu login
+            </button>
+          </div>
+        </div>
       )}
       {!isAdmin && (
         <p className="alert alert-warn">
@@ -257,7 +308,15 @@ export default function AdminPage() {
                     "—"
                   )}
                 </td>
-                <td>{u.firebaseUid ? "vinculado" : "não"}</td>
+                <td>
+                  {u.firebaseUid ? "vinculado" : "não"}
+                  {u.govbrLinked && (
+                    <>
+                      {" "}
+                      <span className="badge badge-OPEN">gov.br</span>
+                    </>
+                  )}
+                </td>
                 {isAdmin && (
                   <td>
                     <button
