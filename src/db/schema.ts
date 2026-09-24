@@ -6,7 +6,8 @@ import {
   timestamp,
   boolean,
   integer,
-  jsonb
+  jsonb,
+  uniqueIndex
 } from "drizzle-orm/pg-core";
 
 // Enums extensíveis (pós-POC: adicionar tipos sem quebrar POC)
@@ -105,7 +106,16 @@ export const document = pgTable("document", {
   createdById: uuid("created_by_id").references(() => appUser.id),
   publicKey: text("public_key").notNull().unique(),
   createdAt: timestamp("created_at").notNull().defaultNow()
-});
+},
+(t) => ({
+  // Numeração sequencial por tipo+ano (ex. MEM-000001/2026). O unique
+  // garante que nunca duplica mesmo com criação concorrente.
+  typeYearNumberUnique: uniqueIndex("document_type_year_number_unique").on(
+    t.type,
+    t.year,
+    t.number
+  )
+}));
 
 export const documentDeadline = pgTable("document_deadline", {
   id: uuid("id").primaryKey().defaultRandom(),
