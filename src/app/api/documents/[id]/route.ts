@@ -74,7 +74,7 @@ export async function GET(
     attachments: files.map((f) => ({
       id: f.id,
       filename: f.filename,
-      url: f.storageKey,
+      url: `/api/attachments/${f.id}`,
       size: f.size,
     })),
     departments: depts,
