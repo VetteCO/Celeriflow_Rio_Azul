@@ -8,6 +8,6 @@ export type Role = keyof typeof PERMS;
 
 export function can(role: Role | undefined, action: string): boolean {
   if (!role) return false;
-  const list = PERMS[role] ?? [];
-  return list.includes("*") || list.includes(action as never);
+  const list: readonly string[] = PERMS[role] ?? [];
+  return list.includes("*") || list.includes(action);
 }
