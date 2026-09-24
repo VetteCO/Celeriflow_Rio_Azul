@@ -12,6 +12,7 @@ export default function NovoMemorando() {
   const { user, role } = useSession();
   const router = useRouter();
   const [depts, setDepts] = useState<Dept[]>([]);
+  const [docType, setDocType] = useState("MEMORANDUM");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [origin, setOrigin] = useState("");
@@ -52,6 +53,7 @@ export default function NovoMemorando() {
       const data = await api("/api/documents", {
         method: "POST",
         body: JSON.stringify({
+          type: docType,
           subject,
           body,
           originDepartmentId: origin || null,
@@ -78,6 +80,13 @@ export default function NovoMemorando() {
         </p>
       )}
       <form onSubmit={save} className="form" style={{ maxWidth: 720 }}>
+        <label>
+          Tipo de documento
+          <select value={docType} onChange={(e) => setDocType(e.target.value)}>
+            <option value="MEMORANDUM">Memorando (MEM)</option>
+            <option value="OFICIO">Ofício eletrônico (OFI)</option>
+          </select>
+        </label>
         <label>
           Assunto
           <input

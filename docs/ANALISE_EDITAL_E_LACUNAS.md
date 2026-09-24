@@ -26,7 +26,7 @@ reunião, despachos internos/externos, pareceres técnicos e jurídicos.
 | Circulares | Pronto (POC-06) | `/circulares` |
 | Despachos internos/externos | Pronto (POC-05 + POC-08) | timeline + inbound |
 | Parecer / pareceres técnicos e jurídicos | **Ausente** (pós-POC) | novo `Document.type` + mesmo workflow |
-| Ofício eletrônico | **Ausente** (pós-POC) | novo `Document.type` + numeração `OFI-` |
+| Ofício eletrônico | Pronto (básico: tipo + série OFI + workflow, adicionado após leitura do TR) | `/documentos` |
 | Intimação | **Ausente** (pós-POC) | novo `Document.type` + prazo fatal |
 | Pauta de reunião | **Ausente** (pós-POC) | novo `Document.type` + lista de itens |
 

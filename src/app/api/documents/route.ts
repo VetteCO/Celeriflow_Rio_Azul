@@ -16,6 +16,7 @@ import { getSession, requirePerm } from "@/lib/auth";
 import { createDocumentWithNumber, formatNumber } from "@/lib/numbering";
 
 const CreateSchema = z.object({
+  type: z.enum(["MEMORANDUM", "OFICIO"]).optional().default("MEMORANDUM"),
   subject: z.string().min(3).max(300),
   body: z.string().min(1).max(100000),
   originDepartmentId: z.string().uuid().nullable().optional(),
@@ -45,9 +46,10 @@ export async function GET(req: Request) {
     depts.find((d) => d.id === id)?.acronym ?? "—";
   return NextResponse.json({
     documents: rows
-      .filter((d) => d.type === "MEMORANDUM")
+      .filter((d) => d.type === "MEMORANDUM" || d.type === "OFICIO")
       .map((d) => ({
         id: d.id,
+        type: d.type,
         displayNumber: formatNumber(d.type, d.number, d.year),
         subject: d.subject,
         status: d.status,
@@ -87,7 +89,7 @@ export async function POST(req: Request) {
     : null;
 
   const doc = await createDocumentWithNumber({
-    type: "MEMORANDUM",
+    type: body.type,
     subject: body.subject,
     body: body.body,
     originDepartmentId: body.originDepartmentId ?? null,

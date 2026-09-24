@@ -13,6 +13,7 @@ import {
 // Enums extensíveis (pós-POC: adicionar tipos sem quebrar POC)
 export const documentTypeEnum = pgEnum("document_type", [
   "MEMORANDUM",
+  "OFICIO",
   "CIRCULAR",
   "EXTERNAL_REQUEST",
   "DISPATCH",

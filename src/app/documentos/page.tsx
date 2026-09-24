@@ -6,6 +6,7 @@ import { api, useSession } from "@/components/session";
 
 type Doc = {
   id: string;
+  type: string;
   displayNumber: string;
   subject: string;
   status: string;
@@ -58,6 +59,7 @@ export default function DocumentosPage() {
           <thead>
             <tr>
               <th scope="col">Número</th>
+              <th scope="col">Tipo</th>
               <th scope="col">Assunto</th>
               <th scope="col">Status</th>
               <th scope="col">Origem</th>
@@ -69,6 +71,7 @@ export default function DocumentosPage() {
                 <td>
                   <Link href={`/documentos/${d.id}`}>{d.displayNumber}</Link>
                 </td>
+                <td>{d.type === "OFICIO" ? "Ofício" : "Memorando"}</td>
                 <td>{d.subject}</td>
                 <td>
                   <span className={`badge badge-${d.status}`}>{d.status}</span>
@@ -78,8 +81,8 @@ export default function DocumentosPage() {
             ))}
             {docs.length === 0 && (
               <tr>
-                <td colSpan={4} className="muted">
-                  Nenhum memorando ainda.
+                <td colSpan={5} className="muted">
+                  Nenhum documento ainda.
                 </td>
               </tr>
             )}

@@ -6,10 +6,11 @@ import { db } from "@/db";
 import { document, externalRequest } from "@/db/schema";
 import { nanoid } from "nanoid";
 
-export type DocumentType = "MEMORANDUM" | "CIRCULAR" | "EXTERNAL_REQUEST" | "DISPATCH" | "OTHER";
+export type DocumentType = "MEMORANDUM" | "OFICIO" | "CIRCULAR" | "EXTERNAL_REQUEST" | "DISPATCH" | "OTHER";
 
 const PREFIX: Record<DocumentType, string> = {
   MEMORANDUM: "MEM",
+  OFICIO: "OFI",
   CIRCULAR: "CIR",
   EXTERNAL_REQUEST: "REQ",
   DISPATCH: "DES",
