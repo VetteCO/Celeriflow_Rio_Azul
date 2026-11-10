@@ -500,6 +500,505 @@
           "outcome": "PASS"
         }
       ]
+    },
+    {
+      "directory": "C:\\Users\\trici\\AppData\\Local\\Temp\\opencode\\stages12-1794346567150",
+      "at": "2026-11-10T21:38:36.805Z",
+      "environment": "https://rioazul.celeriflow.com.br",
+      "passed": 119,
+      "failed": 0,
+      "artifacts": [
+        {
+          "file": "document-deadlines.png",
+          "sha256": "1a23d7e43023e8c630d8dbc3dac53cb37b84aa9db9e97a63ed7900193faf189a"
+        },
+        {
+          "file": "n3-document.png",
+          "sha256": "57f1b94b78748b145085be3db5962655b5237ee98d39b6a6dfe65af8aa1237f5"
+        },
+        {
+          "file": "results.json",
+          "sha256": "1641edeb3f318e2e16049f98b039e0756923ca61cf1f28faaddcab2d01a535b5"
+        }
+      ],
+      "assertions": [
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "password omitted generates private definition link without claiming delivery",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private recovery link defines real Firebase password",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "recovered account authenticates using defined password",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "failed creation rolls back both counters",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "external draft notification includes actual business code without SQL interpolation artifact",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "concurrent sequential numbers without gaps",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "business identifiers retain aaaammddxxxxx",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sanitized format survives reopen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "two deadlines and three independent sectors",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/deadlines?month=2030-01 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "both deadlines visible in calendar",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "concurrent forward has exactly one winner",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/forward => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "A to B to C preserves actual origin and destination",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/forward => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/deadlines/<id> => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/deadlines/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "deadline edits recorded in document timeline",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private attachment uploaded",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private attachment roundtrip hash",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private attachment without session denied",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=conclude => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "one sector conclusion does not close other pending sectors",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=archive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reopen => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/forward => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "local administrator manages designated subtree while based elsewhere",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id>/role => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "inactivity suspends without erasing account",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/me => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/me => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/departments => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "telephone directory honors individual visibility",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users/<id>/history => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "transfer history preserves before and after sector",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users/<id>/history => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents?q=47/2026&type=MEMORANDUM => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "number-year search and default twenty-page size",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "functional profile persists birth sex position preferences",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "leave period survives reopen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "department retirement reallocates staff and retains historical sector movement",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "new account signs in through browser email and password",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "basic editor preference has real toolbar effect",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "document created through browser with two deadlines",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "formatted document rendered by browser",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "two persisted deadlines available from document screen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "authenticated click downloads original bytes in browser",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "month grid opens persisted deadline and linked document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "calendar screen opens for same account",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "N3 browser view hides write actions",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "owned SQL and Firebase cleanup",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: app_user",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: attachment",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: citizen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_role",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original attachment bytes preserved after cleanup",
+          "outcome": "PASS"
+        }
+      ]
     }
   ],
   "sources": [

@@ -40,6 +40,7 @@ Referências: POC-P25-04/05; MEM-P52-02; ORG-P66-01/ORG-P67-01 no recorte de par
 - Build de produção concluído, com lint e tipos sem advertências.
 - **44 testes de domínio/formatos/perfis aprovados**.
 - **119 verificações integradas locais aprovadas**, incluindo Chrome real com contas temporárias, APIs reais Firebase/Neon/Blob e limpeza própria.
+- **119 verificações integradas no SaaS HTTPS aprovadas** após correção da ação de criação de branch do Neon; mesma suíte, com cadastro/login, documentos/calendário, anexos e preservação conferidos na versão publicada.
 - Reconstrução da migração aditiva 010 aprovada nos três bancos locais: **52 tabelas e 11 históricos** por banco novo, checksums/FKs/rollback aprovados. Banco existente: dez migrações aplicadas; baseline não reaplicada.
 - Snapshots privados anteriores à migração e às rodadas preservados; sete conjuntos de dados originais comparados por fingerprint após limpeza. Bytes do anexo original novamente conferidos por SHA-256.
 - Artefatos, cenários e hashes: `EVIDENCIAS_ETAPAS_1_2.json`. Dados privados, credenciais e arquivos originais ficam exclusivamente no diretório temporário protegido.
@@ -54,14 +55,16 @@ Referências: POC-P25-04/05; MEM-P52-02; ORG-P66-01/ORG-P67-01 no recorte de par
 5. Em interrupção de limpeza: `npm run validate:stages12 -- --cleanup --directory "<diretório>"`. Somente IDs de recursos criados pelo roteiro são removidos; a auditoria permanece.
 6. O SaaS exige `--allow-production --base https://rioazul.celeriflow.com.br`, além das opções explícitas anteriores; executar sequencialmente às demais suítes de escrita.
 
-## Versão e bloqueio de publicação
+## Versão e histórico do bloqueio de publicação
+
+**Bloqueio resolvido nesta mesma data:** [DIAGNOSTICO_VERCEL_2026-11-10.md](DIAGNOSTICO_VERCEL_2026-11-10.md). A ação Neon de criação de branch em cada deploy de produção foi desativada na conexão existente. Deployment `8vT9ccYuszhZmw8SdCrfnTJzjSBQ` publicado no alias público; 119/119 verificações HTTPS aprovadas. Os itens abaixo preservam o diagnóstico anterior à resolução.
 
 - Implementação e fechamento local: commit `381d54f6cbea38553abb6529bb867475d20936ef`.
 - O push pela CLI desta execução exigiu autenticação; depois, `origin/main` foi sincronizado por outra operação. A Vercel confirmou o mesmo SHA em um deployment de origem GitHub (`3vDS8k4gwcjTMVQYu9yC2NaeJED9`, repositório 1385843702, branch `main`). Portanto o código chegou ao remoto, apesar da falha da primeira tentativa da CLI.
-- **Publicação deste incremento bloqueada no provedor:** deployments CLI `A2fxaP9Mhrx5zHDz8VAorL9ZVji1` e `2DfmYuaave2t2Z4T9gR75jeq6amD`, e deployment GitHub `3vDS8k4gwcjTMVQYu9yC2NaeJED9`, todos com `BUILD_FAILED / Resource provisioning timed out`, antes da compilação remota.
+- **Bloqueio anterior:** deployments CLI `A2fxaP9Mhrx5zHDz8VAorL9ZVji1` e `2DfmYuaave2t2Z4T9gR75jeq6amD`, e deployment GitHub `3vDS8k4gwcjTMVQYu9yC2NaeJED9`, todos com `BUILD_FAILED / Resource provisioning timed out`, antes da compilação remota. Causa depois identificada na ação da integração Neon, com banco existente pronto.
 - Recuperação local de empacotamento também não produziu artefato publicável: CLI 65 exigiu privilégios de symlink do Windows; CLI 48 compilou a aplicação, mas o empacotador não encontrou a lambda de `/cidadao/conta/cadastro`. Nenhum desses artefatos foi promovido. A configuração privada original foi preservada; o arquivo gerado pela CLI teve seus placeholders restaurados.
-- Produção continua no deployment anterior `4rCT9aejbqj2eorMQKR9sGFiyYgN`. Os 119 cenários finais são locais com os provedores reais compartilhados; não registrar como validação desta versão no SaaS.
-- Pendência de release: quando o provisionamento da Vercel voltar a funcionar, publicar o commit pela CLI ou integração Git e executar o roteiro HTTPS. A migração 010 já aplicada é aditiva e compatível com a versão anterior.
+- Durante o bloqueio, produção permaneceu no deployment anterior `4rCT9aejbqj2eorMQKR9sGFiyYgN`. As verificações locais desse momento não foram contadas como publicação.
+- Release concluída após a correção: commit funcional `381d54f`, deployment `8vT9ccYuszhZmw8SdCrfnTJzjSBQ`. A migração 010 aditiva continua compatível com a versão anterior. Homologação humana permanece pendente.
 
 ## Roteiro curto para conferência do proprietário
 

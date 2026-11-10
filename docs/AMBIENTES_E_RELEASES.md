@@ -4,7 +4,7 @@
 
 | Ambiente | Destino | Estado e uso |
 |---|---|---|
-| SaaS publicado | `https://rioazul.celeriflow.com.br` | Deployment `4rCT9aejbqj2eorMQKR9sGFiyYgN`; Vercel `celeriflow-hub`, conta autorizada `celeriflow@gmail.com`. Histórico em `DEPLOY_2026-11-10.md`. |
+| SaaS publicado | `https://rioazul.celeriflow.com.br` | Deployment `8vT9ccYuszhZmw8SdCrfnTJzjSBQ`, commit `381d54f`; Vercel `celeriflow-hub`, conta autorizada `celeriflow@gmail.com`. Diagnóstico e publicação em `DIAGNOSTICO_VERCEL_2026-11-10.md`; versões anteriores em `DEPLOY_2026-11-10.md`. |
 | Execução web local anterior | `http://localhost:3100` | Build local; `.env.local` aponta a serviços reais compartilhados com a publicação. Não é isolamento de dados. Servidor encerrado após os ensaios. |
 | Preparação de desenvolvimento | `rio_desenvolvimento`, PostgreSQL local, porta 55439 | Banco novo, massa fictícia própria, arquivos privados em diretório exclusivo. |
 | Preparação de homologação | `rio_homologacao`, mesmo cluster local | Banco independente, UUIDs/e-mails próprios, sem cópia da produção. |
@@ -35,7 +35,7 @@ Os três bancos locais são reprodutíveis por `stage0:databases`, permanecem pr
 
 ## Release e reversão
 
-- Referência publicada: deployment acima, código de implementação `7645173`, fechamento `98d9a5a`, registro de publicação `a528d58`. Há complementos locais posteriores; consultar `git status` e seus dossiês antes de publicar.
+- Referência publicada atual: commit funcional `381d54f`, deployment acima. Referência anterior: implementação `7645173`, fechamento `98d9a5a`, registro `a528d58`. Consultar `git status` e os dossiês para os registros documentais posteriores.
 - Roteiro: conferir diff → testes afetados → build/lint/tipos → registrar commit e artefatos → push → conferir remoto → publicar com CLI Vercel autenticada → smoke HTTPS e conferência visual → registrar URL/ID e resultado.
 - Publicação direta pela CLI foi usada anteriormente; não presumir que um deployment sincroniza o GitHub. Remoto desejado: `https://github.com/Celeriflow-Hub/Celeriflow_Rio_Azul`.
 - Se o push falhar, preservar código/commit local e registrar bloqueio; não pedir tokens em conversa nem gravá-los em arquivos versionados.
@@ -50,3 +50,5 @@ Os três bancos locais são reprodutíveis por `stage0:databases`, permanecem pr
 - 119 verificações integradas locais/Chrome e 44 testes de domínio aprovados. Evidências e limites em `FECHAMENTO_ETAPAS_1_2.md` e `EVIDENCIAS_ETAPAS_1_2.json`.
 - Duas publicações CLI e uma GitHub falharam antes do build remoto com `Resource provisioning timed out`. Tentativa de empacotamento local no Windows também não gerou artefato publicável. Não promover saídas incompletas de `.vercel/output`.
 - O alias SaaS permanece no deployment `4rCT9aejbqj2eorMQKR9sGFiyYgN`; o incremento das etapas 1/2 e o complemento local de formulários ainda aguardam publicação e validação HTTPS.
+
+**Atualização posterior nesta mesma data — resolvido:** o bloqueio estava na ação Neon `Create database branch for deployment`, obrigatória e habilitada em produção; banco existente pronto. A conexão passou a usar a branch existente, com `deployments.required=false` e `actions=[]`, mantendo variáveis/ambientes. Commit `381d54f` publicado como `8vT9ccYuszhZmw8SdCrfnTJzjSBQ`, incluindo formulários e etapas 1/2. Suite HTTPS: 119/119 aprovadas, preservação e limpeza conferidas. O parágrafo anterior registra apenas o estado durante o bloqueio. Detalhes e reprodução em `DIAGNOSTICO_VERCEL_2026-11-10.md`.

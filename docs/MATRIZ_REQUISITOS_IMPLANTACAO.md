@@ -76,6 +76,8 @@ Preservação após limpeza: fingerprints dos sete conjuntos originais e bytes d
 
 Publicação deste complemento bloqueada: dois deployments CLI e um GitHub falharam em provisionamento da Vercel, `Resource provisioning timed out`. O deployment GitHub confirma o commit `381d54f` no remoto; produção permanece na versão anterior `4rCT9aejbqj2eorMQKR9sGFiyYgN`. A validação publicada deste incremento não foi executada. IDs e tentativas de recuperação em `FECHAMENTO_ETAPAS_1_2.md`.
 
+**Atualização posterior — publicação concluída:** [DIAGNOSTICO_VERCEL_2026-11-10.md](DIAGNOSTICO_VERCEL_2026-11-10.md) identifica o timeout na ação Neon de criar branch em cada deploy de produção. Após ajuste da conexão para utilizar o banco existente, commit `381d54f` publicado no deployment `8vT9ccYuszhZmw8SdCrfnTJzjSBQ`, alias `rioazul.celeriflow.com.br`. **119/119 verificações API/Chrome HTTPS aprovadas**, com os mesmos cenários de usuários/perfis/documentos/calendário/tramitação/anexos e preservação após limpeza. Este resultado substitui o bloqueio do parágrafo anterior; homologação humana dos requisitos permanece pendente. Inventário das rodadas local/publicada em `EVIDENCIAS_ETAPAS_1_2.json`.
+
 ## 3. Acesso, contas e identidade
 
 | ID / fonte | Subrequisitos preservados | Escopo / E | Verificação e critério de aceitação |
