@@ -8,6 +8,8 @@ Data: 10/11/2026. Ambiente conferido: **http://localhost:3200**. Next.js **15.5.
 
 **Fechamento dos roteiros:** 307 núcleo/módulos + 86 contatos + 101 EAD/suporte + 92 operação = **586 verificações integradas aprovadas**, sem falhas nas rodadas finais. Há ainda 50 verificações HTTP de leitura/recusa do build, 34 testes de domínio/formatos, cenários SQL isolados, conferência visual, exportação/restauração e ensaio de 60 sessões. Permanecem as dependências operacionais, integrações finais e homologação formal explicitadas neste documento.
 
+**Complemento publicado:** deployment `4rCT9aejbqj2eorMQKR9sGFiyYgN`, ativo em **https://rioazul.celeriflow.com.br**, com 50 verificações HTTP e conferência visual pós-publicação aprovadas. Código commitado localmente; sincronização GitHub bloqueada por autenticação interativa, conforme `DEPLOY_2026-11-10.md`.
+
 ## Resultado executivo
 
 Foi entregue um incremento amplo e persistente cobrindo o núcleo e as famílias das etapas 0–9, com cinco migrações aplicadas e build de produção aprovado. A entrega permite iniciar a validação pelas telas. **Não constitui homologação integral das etapas, da POC ou de todo o escopo de implantação.** Permanecem complementos funcionais detalhados, configurações e aceites específicos descritos abaixo; a existência de um módulo não comprova todos os seus subrequisitos.
