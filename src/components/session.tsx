@@ -17,6 +17,14 @@ const messages: Record<string, string> = {
   provisioning_pending_recovery: "O cadastro foi salvo com acesso suspenso. Reabra o servidor para concluir a ativação.",
   invalid_transition: "A situação atual do documento não permite esta operação.",
   conflict: "O registro foi atualizado por outra pessoa. Atualize a página antes de continuar.",
+  authorization_changed: "As permissões ou o estado do registro mudaram. Atualize a página antes de continuar.",
+  invalid_sector_transition: "A situação deste setor não permite a operação selecionada.",
+  administrative_department_required: "Selecione ao menos um setor administrado para o Administrador Local.",
+  active_reallocation_required: "Selecione um setor ativo para receber os servidores e atividades.",
+  reallocate_subdepartments_first: "Realoque primeiro os subsetores ativos.",
+  global_admin_required: "Esta alteração exige um Administrador Geral.",
+  empty_document: "Informe o conteúdo do documento.",
+  reply_required: "Informe o texto da resposta.",
 };
 
 export async function api(path: string, init?: RequestInit) {
@@ -73,7 +81,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     window.addEventListener("focus", focus);
     document.addEventListener("visibilitychange", focus);
     window.addEventListener("session:refresh", focus);
-    return () => { epoch.current++; unsubscribe(); window.removeEventListener("focus", focus); document.removeEventListener("visibilitychange", focus); window.removeEventListener("session:refresh", focus); };
+    const heartbeat = window.setInterval(focus, 60000);
+    return () => { epoch.current++; window.clearInterval(heartbeat); unsubscribe(); window.removeEventListener("focus", focus); document.removeEventListener("visibilitychange", focus); window.removeEventListener("session:refresh", focus); };
   }, [refresh]);
   return <SessionContext.Provider value={{ user, role, permissions, refresh }}>{children}</SessionContext.Provider>;
 }

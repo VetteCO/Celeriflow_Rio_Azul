@@ -18,6 +18,8 @@ export default function NovoMemorando() {
   const [body, setBody] = useState("");
   const [origin, setOrigin] = useState("");
   const [dest, setDest] = useState("");
+  const [copies, setCopies] = useState<string[]>([]);
+  const [advancedEditor, setAdvancedEditor] = useState(true);
   const [deadlines, setDeadlines] = useState<Array<{ title: string; dueAt: string }>>([
     { title: "", dueAt: "" },
     { title: "", dueAt: "" },
@@ -35,7 +37,8 @@ export default function NovoMemorando() {
       if (raw) {
         const draft = JSON.parse(raw);
         setSubject(draft.subject ?? ""); setBody(draft.body ?? ""); setDocType(draft.docType ?? "MEMORANDUM");
-        setOrigin(draft.origin ?? ""); setDest(draft.dest ?? ""); setAccessLevel(draft.accessLevel ?? "INTERNAL");
+         setOrigin(draft.origin ?? ""); setDest(draft.dest ?? ""); setAccessLevel(draft.accessLevel ?? "INTERNAL");
+         if (Array.isArray(draft.copies)) setCopies(draft.copies);
         if (Array.isArray(draft.deadlines)) setDeadlines(draft.deadlines);
         setDraftNotice("Rascunho recuperado desta sessão do navegador.");
       }
@@ -45,16 +48,16 @@ export default function NovoMemorando() {
   useEffect(() => {
     if (!user || !draftReady || saving) return;
     const timer = window.setTimeout(() => {
-      try { sessionStorage.setItem(`document-draft:${user.uid}`, JSON.stringify({ subject, body, docType, origin, dest, deadlines, accessLevel })); setDraftNotice("Rascunho salvo nesta sessão do navegador."); }
+      try { sessionStorage.setItem(`document-draft:${user.uid}`, JSON.stringify({ subject, body, docType, origin, dest, copies, deadlines, accessLevel })); setDraftNotice("Rascunho salvo nesta sessão do navegador."); }
       catch { setDraftNotice("O armazenamento local está indisponível. Salve o documento para preservar o conteúdo."); }
     }, 600);
     return () => window.clearTimeout(timer);
-  }, [user, draftReady, saving, subject, body, docType, origin, dest, deadlines, accessLevel]);
+  }, [user, draftReady, saving, subject, body, docType, origin, dest, copies, deadlines, accessLevel]);
 
   useEffect(() => {
     if (!user) return;
-     api("/api/admin/departments")
-       .then((d) => { setDepts(d.departments.filter((s: Dept) => s.active !== false)); setMyDepartmentIds(d.myDepartmentIds ?? []); })
+     Promise.all([api("/api/admin/departments"), api("/api/admin/me")])
+       .then(([d, account]) => { setDepts(d.departments.filter((s: Dept) => s.active !== false)); setMyDepartmentIds(d.myDepartmentIds ?? []); setAdvancedEditor(account.profile?.details?.editor !== "BASICO"); })
       .catch((e) => setErr((e as Error).message));
   }, [user]);
 
@@ -89,6 +92,7 @@ export default function NovoMemorando() {
           accessLevel,
           originDepartmentId: origin || null,
           toDepartmentId: dest || null,
+          toDepartmentIds: copies,
           deadlines: deadlines
             .filter((d) => d.title && d.dueAt)
             .map((d) => ({ title: d.title, dueAt: new Date(d.dueAt).toISOString() })),
@@ -137,7 +141,7 @@ export default function NovoMemorando() {
         </label>
         <label>
           Corpo (editor da plataforma)
-          <RichText value={body} onChange={setBody} />
+           <RichText value={body} onChange={setBody} advanced={advancedEditor} />
         </label>
         <div className="form-row">
           <label style={{ flex: 1 }}>
@@ -163,6 +167,7 @@ export default function NovoMemorando() {
             </select>
           </label>
         </div>
+        <label>Cópia para outros setores<select multiple value={copies} onChange={e => setCopies(Array.from(e.target.selectedOptions).map(option => option.value))}>{depts.filter(d => d.id !== origin && d.id !== dest).map(d => <option key={d.id} value={d.id}>{d.name}</option>)}</select></label>
         <fieldset className="card plain">
           <legend>
             <strong>Prazos (múltiplos, calendário)</strong>

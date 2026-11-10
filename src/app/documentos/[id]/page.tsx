@@ -2,6 +2,7 @@
 // POC-05 — detalhe + timeline cronológica + tramitar + receber + prazos + anexos.
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { api, getToken, useSession } from "@/components/session";
 import { DataTable } from "@/components/DataTable";
@@ -10,6 +11,8 @@ type Detail = {
   document: {
     id: string;
     displayNumber: string;
+    sequentialNumber: number;
+    year: number;
     subject: string;
     body: string;
     status: string;
@@ -27,10 +30,11 @@ type Detail = {
     from: string;
     to: string;
     note: string | null;
-    actor: string;
+     actor: string;
+     actorPhoto?: string | null;
     at: string;
   }>;
-  attachments: Array<{ id: string; filename: string; url: string; size: number | null; citizenVisible?: boolean }>;
+  attachments: Array<{ id: string; filename: string; url: string; size: number | null; citizenVisible?: boolean; downloads?: number }>;
   departments: Array<{ id: string; name: string; acronym: string | null; active?: boolean }>;
   participation?: Array<{ departmentId: string; state: string }>;
 };
@@ -41,6 +45,8 @@ export default function DocDetail() {
   const [data, setData] = useState<Detail | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [toDept, setToDept] = useState("");
+  const [copyDepartments, setCopyDepartments] = useState<string[]>([]);
+  const [attachmentPreview, setAttachmentPreview] = useState(false);
   const [note, setNote] = useState("");
   const [nTitle, setNTitle] = useState("");
   const [nDue, setNDue] = useState("");
@@ -57,10 +63,10 @@ export default function DocDetail() {
   const canEdit = allowed("doc:edit");
 
   const load = useCallback(() => {
-    Promise.all([api(`/api/documents/${params.id}`), api("/api/admin/departments")])
-      .then(async ([detail, departments]) => {
+    Promise.all([api(`/api/documents/${params.id}`), api("/api/admin/departments"), api("/api/admin/me")])
+      .then(async ([detail, departments, account]) => {
         if (detail.document.type === "CIRCULAR") { const circular = await api(`/api/circulars/${params.id}`); detail.document.urgency = circular.circular.urgency; }
-        setData(detail); setMyDepartmentIds(departments.myDepartmentIds ?? []); setErr(null);
+        setData(detail); setMyDepartmentIds(departments.myDepartmentIds ?? []); setErr(null); setAttachmentPreview(account.profile?.details?.attachmentView === "PREVIA");
       })
       .catch((e) => setErr((e as Error).message));
   }, [params.id]);
@@ -85,6 +91,7 @@ export default function DocDetail() {
     );
   if (!data) return <p role="status">Carregando documento…</p>;
   const sectorState = data.participation?.find((p) => p.departmentId === (actingDepartment || myDepartmentIds[0]))?.state;
+  const canEditActivities = canEdit && data.participation?.some(p => myDepartmentIds.includes(p.departmentId) && ["OPEN", "PENDING"].includes(p.state));
 
   async function forward() {
     if (busy) return;
@@ -93,7 +100,7 @@ export default function DocDetail() {
     try {
       await api(`/api/documents/${params.id}/forward`, {
         method: "POST",
-         body: JSON.stringify({ toDepartmentId: toDept, departmentId: actingDepartment || undefined, note, visibility: "INTERNAL" }),
+         body: JSON.stringify({ toDepartmentId: toDept || undefined, toDepartmentIds: copyDepartments, departmentId: actingDepartment || undefined, note, visibility: "INTERNAL" }),
       });
       setNote("");
       load();
@@ -103,18 +110,22 @@ export default function DocDetail() {
       setBusy(null);
     }
   }
-   async function download(id: string, filename: string) {
-     setErr(null);
+   async function download(id: string, filename: string, preview = false) {
+      setErr(null);
+      const target = preview ? window.open("about:blank", "_blank") : null;
+      if (target) target.opener = null;
      try {
        const token = await getToken();
        if (!token) throw new Error("Entre novamente para baixar o arquivo.");
        const response = await fetch(`/api/attachments/${id}`, { headers: { authorization: `Bearer ${token}` } });
        if (!response.ok) throw new Error("Não foi possível baixar o anexo.");
-       const url = URL.createObjectURL(await response.blob());
+        const url = URL.createObjectURL(await response.blob());
+        if (target && /^(application\/pdf|image\/(png|jpeg|webp))(;|$)/i.test(response.headers.get("content-type") ?? "")) { target.location.href = url; window.setTimeout(() => URL.revokeObjectURL(url), 60000); return; }
+        target?.close();
        const anchor = document.createElement("a"); anchor.href = url; anchor.download = filename;
        document.body.appendChild(anchor); anchor.click(); anchor.remove();
        window.setTimeout(() => URL.revokeObjectURL(url), 60000);
-     } catch (e) { setErr((e as Error).message); }
+      } catch (e) { target?.close(); setErr((e as Error).message); }
    }
   async function receive() {
     if (busy) return;
@@ -187,15 +198,16 @@ export default function DocDetail() {
   }
   const navigation = <><Link className="btn" href="/documentos">Documentos</Link><button className="btn" aria-pressed={view === "document"} onClick={() => setView("document")}>Documento</button><button className="btn" aria-pressed={view === "deadlines"} onClick={() => setView("deadlines")}>Prazos</button><button className="btn" aria-pressed={view === "attachments"} onClick={() => setView("attachments")}>Anexos</button></>;
 
-   if (view === "attachments") return <DataTable id="document-attachments" title={`Anexos — ${data.document.displayNumber}`} rows={data.attachments} rowKey={(a) => a.id} error={err} actions={<>{navigation}{canEdit && <><button className="btn btn-primary" disabled={!!busy} onClick={() => uploadRef.current?.click()}>Anexar arquivo</button><input type="file" hidden ref={uploadRef} onChange={(e) => { if (e.target.files?.[0]) void upload(e.target.files[0]); }} /></>}</>} columns={[
-      { key: "name", label: "Arquivo", value: (a) => a.filename }, { key: "size", label: "Tamanho (KB)", value: (a) => a.size === null ? "—" : Math.ceil(a.size / 1024), align: "right" }, { key: "download", label: "Ação", value: () => "Baixar", render: (a) => <button className="btn" onClick={() => download(a.id, a.filename)}>Baixar</button> },
-      { key: "visibility", label: "Acesso do requerente", value: (a) => a.citizenVisible === undefined ? "Não informado" : a.citizenVisible ? "Liberado" : "Interno", render: (a) => canEdit && data.document.type === "EXTERNAL_REQUEST" ? <select aria-label={`Acesso do requerente ao arquivo ${a.filename}`} value={a.citizenVisible === undefined ? "" : String(a.citizenVisible)} disabled={!!busy} onChange={(e) => releaseFile(a.id, e.target.value === "true")}><option value="" disabled>Selecionar</option><option value="false">Interno</option><option value="true">Liberado ao requerente</option></select> : a.citizenVisible === undefined ? "Não informado" : a.citizenVisible ? "Liberado" : "Interno" },
+    if (view === "attachments") return <DataTable id="document-attachments" title={`Anexos — ${data.document.displayNumber}`} rows={data.attachments} rowKey={(a) => a.id} error={err} actions={<>{navigation}{canEditActivities && <><button className="btn btn-primary" disabled={!!busy} onClick={() => uploadRef.current?.click()}>Anexar arquivo</button><input type="file" hidden ref={uploadRef} onChange={(e) => { if (e.target.files?.[0]) void upload(e.target.files[0]); }} /></>}</>} columns={[
+      { key: "name", label: "Arquivo", value: (a) => a.filename }, { key: "size", label: "Tamanho (KB)", value: (a) => a.size === null ? "—" : Math.ceil(a.size / 1024), align: "right" }, { key: "download", label: "Ação", value: () => attachmentPreview ? "Prévia / Baixar" : "Baixar", render: (a) => <>{attachmentPreview && /\.(pdf|png|jpe?g|webp)$/i.test(a.filename) && <button className="btn" onClick={() => download(a.id, a.filename, true)}>Prévia</button>}<button className="btn" onClick={() => download(a.id, a.filename)}>Baixar</button></> },
+      { key: "visibility", label: "Acesso do requerente", value: (a) => a.citizenVisible === undefined ? "Não informado" : a.citizenVisible ? "Liberado" : "Interno", render: (a) => canEditActivities && data.document.type === "EXTERNAL_REQUEST" ? <select aria-label={`Acesso do requerente ao arquivo ${a.filename}`} value={a.citizenVisible === undefined ? "" : String(a.citizenVisible)} disabled={!!busy} onChange={(e) => releaseFile(a.id, e.target.value === "true")}><option value="" disabled>Selecionar</option><option value="false">Interno</option><option value="true">Liberado ao requerente</option></select> : a.citizenVisible === undefined ? "Não informado" : a.citizenVisible ? "Liberado" : "Interno" },
+      { key: "downloads", label: "Downloads", value: a => a.downloads ?? 0 },
    ]} />;
-   if (view === "deadlines") return <DataTable id="document-deadlines" title={`Prazos — ${data.document.displayNumber}`} rows={data.deadlines.filter((d) => !deadlineFilter || d.status === deadlineFilter)} rowKey={(d) => d.id} error={err} actions={<>{navigation}<Link className="btn" href="/calendario">Calendário</Link>{canEdit && <button className="btn btn-primary" onClick={() => { setEditingDeadline(null); setNTitle(""); setNDue(""); setView("deadline-form"); }}>Novo prazo</button>}</>} filters={<label>Situação<select value={deadlineFilter} onChange={(e) => setDeadlineFilter(e.target.value)}><option value="">Todas</option><option value="PENDING">Pendente</option><option value="COMPLETED">Concluído</option><option value="CANCELLED">Cancelado</option></select></label>} columns={[
+    if (view === "deadlines") return <DataTable id="document-deadlines" title={`Prazos — ${data.document.displayNumber}`} rows={data.deadlines.filter((d) => !deadlineFilter || d.status === deadlineFilter)} rowKey={(d) => d.id} error={err} actions={<>{navigation}<Link className="btn" href="/calendario">Calendário</Link>{canEditActivities && <button className="btn btn-primary" onClick={() => { setEditingDeadline(null); setNTitle(""); setNDue(""); setView("deadline-form"); }}>Novo prazo</button>}</>} filters={<label>Situação<select value={deadlineFilter} onChange={(e) => setDeadlineFilter(e.target.value)}><option value="">Todas</option><option value="PENDING">Pendente</option><option value="COMPLETED">Concluído</option><option value="CANCELLED">Cancelado</option></select></label>} columns={[
      { key: "title", label: "Atividade", value: (d) => d.title }, { key: "due", label: "Vencimento", value: (d) => new Date(d.dueAt).toLocaleString("pt-BR") }, { key: "status", label: "Situação", value: (d) => d.status },
-      { key: "actions", label: "Ação", value: () => canEdit ? "Editar" : "—", render: (d) => canEdit ? <button className="btn" onClick={() => { setEditingDeadline(d.id); setNTitle(d.title); const date = new Date(d.dueAt); setNDue(new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16)); setDeadlineStatus(d.status); setView("deadline-form"); }}>Editar</button> : "—" },
+       { key: "actions", label: "Ação", value: () => canEditActivities ? "Editar" : "—", render: (d) => canEditActivities ? <button className="btn" onClick={() => { setEditingDeadline(d.id); setNTitle(d.title); const date = new Date(d.dueAt); setNDue(new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16)); setDeadlineStatus(d.status); setView("deadline-form"); }}>Editar</button> : "—" },
    ]} />;
-   if (view === "deadline-form" && canEdit) return <section className="card"><h1>{editingDeadline ? "Editar prazo" : "Novo prazo"}</h1>{err && <p role="alert" className="alert alert-error">{err}</p>}<form className="form" onSubmit={(e) => { e.preventDefault(); void addDeadline(); }}><label>Título<input required maxLength={200} value={nTitle} onChange={(e) => setNTitle(e.target.value)} /></label><label>Vencimento<input required type="datetime-local" value={nDue} onChange={(e) => setNDue(e.target.value)} /></label>{editingDeadline && <label>Situação<select value={deadlineStatus} onChange={(e) => setDeadlineStatus(e.target.value)}><option value="PENDING">Pendente</option><option value="COMPLETED">Concluído</option><option value="CANCELLED">Cancelado</option></select></label>}<div className="form-row"><button className="btn btn-primary" disabled={!!busy}>{busy ? "Salvando…" : "Salvar prazo"}</button><button type="button" className="btn" disabled={!!busy} onClick={() => setView("deadlines")}>Voltar aos prazos</button></div></form></section>;
+    if (view === "deadline-form" && canEditActivities) return <section className="card"><h1>{editingDeadline ? "Editar prazo" : "Novo prazo"}</h1>{err && <p role="alert" className="alert alert-error">{err}</p>}<form className="form" onSubmit={(e) => { e.preventDefault(); void addDeadline(); }}><label>Título<input required maxLength={200} value={nTitle} onChange={(e) => setNTitle(e.target.value)} /></label><label>Vencimento<input required type="datetime-local" value={nDue} onChange={(e) => setNDue(e.target.value)} /></label>{editingDeadline && <label>Situação<select value={deadlineStatus} onChange={(e) => setDeadlineStatus(e.target.value)}><option value="PENDING">Pendente</option><option value="COMPLETED">Concluído</option><option value="CANCELLED">Cancelado</option></select></label>}<div className="form-row"><button className="btn btn-primary" disabled={!!busy}>{busy ? "Salvando…" : "Salvar prazo"}</button><button type="button" className="btn" disabled={!!busy} onClick={() => setView("deadlines")}>Voltar aos prazos</button></div></form></section>;
    return (
      <div>
        <div className="form-row" aria-label="Navegação do documento">{navigation}</div>
@@ -204,7 +216,8 @@ export default function DocDetail() {
       </h1>
       <p>
         <span className={`badge badge-${data.document.status}`}>{data.document.status}</span>{" "}
-        <span className="muted">
+       <span className="muted">
+         Sequência documental: {data.document.sequentialNumber}/{data.document.year} ·
           Origem: {data.document.origin} · Criado em{" "}
           {new Date(data.document.createdAt).toLocaleString("pt-BR")}
         </span>
@@ -238,7 +251,8 @@ export default function DocDetail() {
                     {d.name}
                   </option>
                 ))}
-              </select>
+               </select>
+               <label>Cópia para setores<select multiple value={copyDepartments} onChange={e => setCopyDepartments(Array.from(e.target.selectedOptions).map(option => option.value))}>{data.departments.filter(d => d.active !== false && d.id !== (actingDepartment || myDepartmentIds[0]) && d.id !== toDept).map(d => <option key={d.id} value={d.id}>{d.name}</option>)}</select></label>
                <textarea
                 style={{ flex: 2 }}
                 placeholder="despacho"
@@ -249,7 +263,7 @@ export default function DocDetail() {
               <button
                 className="btn btn-primary"
                 onClick={forward}
-                 disabled={!allowed("doc:forward") || !toDept || busy !== null || sectorState !== "OPEN" || data.document.urgency === "INFORMATIVE"}
+                 disabled={!allowed("doc:forward") || (!toDept && !copyDepartments.length) || busy !== null || sectorState !== "OPEN" || data.document.urgency === "INFORMATIVE"}
               >
                 {busy === "forward" ? "Despachando…" : "Despachar"}
               </button>
@@ -267,7 +281,8 @@ export default function DocDetail() {
       <h3>Linha do tempo</h3>
       <ol className="timeline">
         {data.timeline.map((t) => (
-          <li key={t.id}>
+           <li key={t.id}>
+             {t.actorPhoto && <Image unoptimized src={t.actorPhoto} alt={`Foto de ${t.actor}`} width={32} height={32} />}
             <span className="t-action">{t.action}</span>
             <div className="t-meta">
               {t.from} → {t.to} · por {t.actor} ·{" "}

@@ -1,0 +1,951 @@
+{
+  "version": 1,
+  "purpose": "Fechamento técnico das etapas 1 e 2; evidência automatizada não equivale a homologação municipal.",
+  "runs": [
+    {
+      "directory": "C:\\Users\\trici\\AppData\\Local\\Temp\\opencode\\stages12-1794343527758",
+      "at": "2026-11-10T20:47:10.195Z",
+      "environment": "http://localhost:3100",
+      "passed": 119,
+      "failed": 0,
+      "artifacts": [
+        {
+          "file": "document-deadlines.png",
+          "sha256": "84c160418d5517e59611214535b65188df65e31f88d3152b59671ae645bdbb12"
+        },
+        {
+          "file": "n3-document.png",
+          "sha256": "d35a3dfbbfd8b8a98fd542950415b37d6629328fc7c457593ed302a1e55d8801"
+        },
+        {
+          "file": "results.json",
+          "sha256": "0d642ef5225b45ab03a29bc4b3ef8b4ec22d332bf0ba750977a800585195da0d"
+        }
+      ],
+      "assertions": [
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "password omitted generates private definition link without claiming delivery",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private recovery link defines real Firebase password",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "recovered account authenticates using defined password",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "failed creation rolls back both counters",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "external draft notification includes actual business code without SQL interpolation artifact",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "concurrent sequential numbers without gaps",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "business identifiers retain aaaammddxxxxx",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sanitized format survives reopen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "two deadlines and three independent sectors",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/deadlines?month=2030-01 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "both deadlines visible in calendar",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "concurrent forward has exactly one winner",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/forward => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "A to B to C preserves actual origin and destination",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/forward => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/deadlines/<id> => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/deadlines/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "deadline edits recorded in document timeline",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private attachment uploaded",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private attachment roundtrip hash",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private attachment without session denied",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=conclude => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "one sector conclusion does not close other pending sectors",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=archive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reopen => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/forward => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "local administrator manages designated subtree while based elsewhere",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id>/role => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "inactivity suspends without erasing account",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/me => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/me => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/departments => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "telephone directory honors individual visibility",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users/<id>/history => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "transfer history preserves before and after sector",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users/<id>/history => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents?q=39/2026&type=MEMORANDUM => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "number-year search and default twenty-page size",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "functional profile persists birth sex position preferences",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "leave period survives reopen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "department retirement reallocates staff and retains historical sector movement",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "new account signs in through browser email and password",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "basic editor preference has real toolbar effect",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "document created through browser with two deadlines",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "formatted document rendered by browser",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "two persisted deadlines available from document screen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "authenticated click downloads original bytes in browser",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "month grid opens persisted deadline and linked document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "calendar screen opens for same account",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "N3 browser view hides write actions",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "owned SQL and Firebase cleanup",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: app_user",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: attachment",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: citizen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_role",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original attachment bytes preserved after cleanup",
+          "outcome": "PASS"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "file": "scripts/validate-stages-1-2.ts",
+      "sha256": "386851cbceece75c66a1746a65c062f8715d923f18f63ea50614ed9c68b4171f"
+    },
+    {
+      "file": "src/db/schema.ts",
+      "sha256": "d12b0892826fc63a9fa04bcdc2b90fc0cbbf38798088401f30d679c30a56bb4c"
+    },
+    {
+      "file": "src/app/admin/page.tsx",
+      "sha256": "a509684baeaeda68568f3a2322bfa108a69d3be98a9c3920ff8a747d9f469bd2"
+    },
+    {
+      "file": "src/app/api/admin/departments/[id]/route.ts",
+      "sha256": "6f9cf723395374847a3eee41f429ecbfcd8d44c6f938e546f07fc8f7b1c8aeda"
+    },
+    {
+      "file": "src/app/api/admin/departments/route.ts",
+      "sha256": "5db854d68cbb33f8df5150c916d44d74f28c5cf289d2f3489788d7d03586afbb"
+    },
+    {
+      "file": "src/app/api/admin/holidays/route.ts",
+      "sha256": "c44dc197411e14a0e9add621d256d161c45505e6e0881a4445a6f583d5226f1b"
+    },
+    {
+      "file": "src/app/api/admin/me/route.ts",
+      "sha256": "907266866dfcf41e28f89105535be834a926b6f913cabf6d14355cfe36e7b7ea"
+    },
+    {
+      "file": "src/app/api/admin/users/[id]/history/route.ts",
+      "sha256": "1f635b3d59e7ce14861b5402543e508c99fc8884fac131e4f04d5331596b109c"
+    },
+    {
+      "file": "src/app/api/admin/users/[id]/role/route.ts",
+      "sha256": "5b12094441fc24b483d64cead660a2b652c9b621d6f21ee4e8b687017e82c677"
+    },
+    {
+      "file": "src/app/api/admin/users/[id]/route.ts",
+      "sha256": "e4bb2e09c3b898bf71eb4173ff3f7fed66fd733ed6cfb7089bb04985a7de5b5c"
+    },
+    {
+      "file": "src/app/api/admin/users/route.ts",
+      "sha256": "8fc590c15a9c6dc653d1a94890f2f315bf4d441e3c6ff04553abdaf89890cb19"
+    },
+    {
+      "file": "src/app/api/attachments/[id]/route.ts",
+      "sha256": "040259b109860132750674021bb3e295d522d04d0e7a472d0b4acc289a25dd65"
+    },
+    {
+      "file": "src/app/api/deadlines/[id]/route.ts",
+      "sha256": "58a6a0de8c3fe4c91a0daa73d039d876466bcdf1fc60aad3df8c4d1393d99092"
+    },
+    {
+      "file": "src/app/api/deadlines/calculate/route.ts",
+      "sha256": "c874595a838ce6811e02b5e3191ab4141bfa27f9697a1ace380866291bd16625"
+    },
+    {
+      "file": "src/app/api/deadlines/route.ts",
+      "sha256": "fe3400d2f737d9cf6b21cb5ac4afbead88d2440768bfee15fcef1350df6b56c1"
+    },
+    {
+      "file": "src/app/api/documents/[id]/actions/route.ts",
+      "sha256": "2a84838f07f9e6c714d52a6e95da961dd7de30ff9734c1d6640e92ecc59bd0be"
+    },
+    {
+      "file": "src/app/api/documents/[id]/attachments/route.ts",
+      "sha256": "05cdcb240ec573fd7a796e32c7615e9c00ea9c5cf08f83302c0c7af263d48b46"
+    },
+    {
+      "file": "src/app/api/documents/[id]/deadlines/route.ts",
+      "sha256": "bfe498ddf2994f585a5985bb8e65f96114a6206c091230df635a1892f166ace9"
+    },
+    {
+      "file": "src/app/api/documents/[id]/forward/route.ts",
+      "sha256": "ef2b4a61798192d5738e45ba14eaeca897391e36153365769564e2326e9d3ada"
+    },
+    {
+      "file": "src/app/api/documents/[id]/receive/route.ts",
+      "sha256": "4961baa8b25138c6a24192299a1057949a658fb2138eb7605bf01abe3ab605bc"
+    },
+    {
+      "file": "src/app/api/documents/[id]/route.ts",
+      "sha256": "ce85770489788d124bf2e39640617e53eabd93b387309473bce41f4b6af9d083"
+    },
+    {
+      "file": "src/app/api/documents/route.ts",
+      "sha256": "88011405e91415c3272e55c8cf491822ed8580a51b7ab76469f8cb1fc8b23f9a"
+    },
+    {
+      "file": "src/app/calendario/page.tsx",
+      "sha256": "a15f978021c5d1e65d4aa758df0a02f256253971e627a5c66b156c905cfb1406"
+    },
+    {
+      "file": "src/app/documentos/[id]/page.tsx",
+      "sha256": "b7349032ae0e993955ba3cc7ac725ee41f7185a18ebd65812a4908bc272f608b"
+    },
+    {
+      "file": "src/app/documentos/novo/page.tsx",
+      "sha256": "af52a3dcc3e6551b11202f18a3d5f6fe8faa5c98778d532414792ac448735c41"
+    },
+    {
+      "file": "src/app/documentos/page.tsx",
+      "sha256": "10419b3e52cf5fa7097d51e21a8c3692b8d8344570df5075e507f1a1586745a1"
+    },
+    {
+      "file": "src/app/setores/page.tsx",
+      "sha256": "5bbf9de18e649d4956acea9ef05bf6dd81532c40eb15e2244ea31e7e7f42a791"
+    },
+    {
+      "file": "src/components/AppShell.tsx",
+      "sha256": "9eac4dc60ebfb3ab0a46148a5852e858c7ed52f71f48aee415d94d01331acb41"
+    },
+    {
+      "file": "src/components/DataTable.tsx",
+      "sha256": "df48bb4d3479ba53ebfc5f0928bfe5c900fd3b8458b9e267513202fa6d9ad13c"
+    },
+    {
+      "file": "src/components/MaskedInput.tsx",
+      "sha256": "3d52a5abe4342562a700cd52b48b1a2adc7c1ed6abd87e1ce2319fdbbf3c5d3f"
+    },
+    {
+      "file": "src/components/ProfileFields.tsx",
+      "sha256": "08fdb8b3b0c9bad8b9867d542ac9459a0267e92c7d9ec586455302ae13cdcd32"
+    },
+    {
+      "file": "src/components/RichText.tsx",
+      "sha256": "ffbcedb54787f8941c13fabb3715b044b43286b7ccd42f283dfe5e0d8c2c89fc"
+    },
+    {
+      "file": "src/components/WorkflowField.tsx",
+      "sha256": "6977526759399aee39247d51b855e9e135eb7728912fddd9d1edecd60a07f477"
+    },
+    {
+      "file": "src/components/session.tsx",
+      "sha256": "3846257ded12aa8e1b46ef4747fbd8fda1fb1dd09efee468f09676ab356436ad"
+    },
+    {
+      "file": "src/db/migrations/0001_core.sql",
+      "sha256": "bb9ab9049a49f51896c546dc865c0af27747afe1ca9df434a64e434f9639fdae"
+    },
+    {
+      "file": "src/db/migrations/002_modules.sql",
+      "sha256": "692a59e9ac43ca46a9693d20886b321b1ea4cd7770ae80ec70bc863396b74fb7"
+    },
+    {
+      "file": "src/db/migrations/003_operations.sql",
+      "sha256": "326bcdc7d0850fe5ec7aef6e331091864c1fb2f23d6a44509fb5a18c9a816053"
+    },
+    {
+      "file": "src/db/migrations/004_jobs.sql",
+      "sha256": "69eb926ef0389205567d9e7de2415419c919142ce4b2a8cd10a316d7a0de8e73"
+    },
+    {
+      "file": "src/db/migrations/005_modules_completion.sql",
+      "sha256": "4ed12a74721097e65c700bfc570c149cf86b4416856893f6baf1252acb279a52"
+    },
+    {
+      "file": "src/db/migrations/006_contacts_anonymous.sql",
+      "sha256": "81887c9e1489f7486001215be90f7084411ed4982bed27b4f094bfd0c2b3fc61"
+    },
+    {
+      "file": "src/db/migrations/007_workflow_diary.sql",
+      "sha256": "6795c782a14bc748d434706cd6a547feb7862eebbdfb13b4eb7551eb30ab9fc7"
+    },
+    {
+      "file": "src/db/migrations/008_operations_completion.sql",
+      "sha256": "c15d4768b0a0ec142af3525e6a2a373856bf898e23fe4649f5a976703a3b035a"
+    },
+    {
+      "file": "src/db/migrations/009_contacts_external.sql",
+      "sha256": "deb768cb2e0fe956101a1697437cdba5726f1ce2091ec93fcb59ebbd5a2d4431"
+    },
+    {
+      "file": "src/db/migrations/010_administration_core_completion.sql",
+      "sha256": "48afb9c661938431de0c6f740290f19e95beb379570511915d2d7e374114e491"
+    },
+    {
+      "file": "src/lib/auth.ts",
+      "sha256": "c9d1326697b2d9710d4628a225d5c17d0bf6c54e22dbb2f49d37504b64b8c22f"
+    },
+    {
+      "file": "src/lib/blob.ts",
+      "sha256": "799df42bb9095019ae7db7cbe17583f5a8167802cd517b642ecdf8d17d6d532e"
+    },
+    {
+      "file": "src/lib/brazilian-values.ts",
+      "sha256": "f2907339b720c22ca328ee69aff6250baad9df4a5f0a5b4a273b4c5c326ed4c2"
+    },
+    {
+      "file": "src/lib/citizen-auth.ts",
+      "sha256": "bb18e135ef89b1e7c9f2c42f04430ce00e13348c20e1b933a1994f91f3eceb8f"
+    },
+    {
+      "file": "src/lib/citizen-contact.ts",
+      "sha256": "4fa4229b446279290e92b9e3e87a60bdfbb8749a453310d28444a04c1de2d986"
+    },
+    {
+      "file": "src/lib/core-write-guard.ts",
+      "sha256": "333877652ec2fa741c467a1d3ebc514816c539c9b740999d54e184af2d952ebb"
+    },
+    {
+      "file": "src/lib/cpf.ts",
+      "sha256": "98c04895421baba6b7c2f5abc545ccd1e9b3722596fb6062c23e210dd92a5bc4"
+    },
+    {
+      "file": "src/lib/document-actions.ts",
+      "sha256": "d48dea3845813090a677cf081cb7a9f3f2703ad59c554f3d8fe9185fcdd433e5"
+    },
+    {
+      "file": "src/lib/email.ts",
+      "sha256": "88d129fa85890a5ebd5c1efedb722ea4819236ba60e868aa7b3895fa70657b92"
+    },
+    {
+      "file": "src/lib/firebase-admin.ts",
+      "sha256": "956b9f3f5f0558ae065af8ac656174ee7965799245011e3bdeac0e0919de1a28"
+    },
+    {
+      "file": "src/lib/firebase-client.ts",
+      "sha256": "19c0b8c00746a00f0a24e81560485f2572a1a5a993f9e3ad21f39e7a6e15d510"
+    },
+    {
+      "file": "src/lib/govbr.ts",
+      "sha256": "6caf7a89283b2fd986dbb5a22f29893579e95cad46f077f10e88019903dbed65"
+    },
+    {
+      "file": "src/lib/inbound.ts",
+      "sha256": "3452eb397c9bf7b78ff8760f02d2c82bade6a092906bc6ca277705ed743b8561"
+    },
+    {
+      "file": "src/lib/input-masks.ts",
+      "sha256": "50554804f644a1f0eccd3262fa379ab385da47160413fc8ced2a28d06009a5d6"
+    },
+    {
+      "file": "src/lib/jobs/commands.ts",
+      "sha256": "154b5a9e574cecd5ad60a690ecac4ca7aa34d8ca81e0e00e2b6f4be5ad73c059"
+    },
+    {
+      "file": "src/lib/jobs/queue.ts",
+      "sha256": "98663b61c04277398cce08b59dbbe4bea1853de25060cc6a050f1cb4c20a4dd7"
+    },
+    {
+      "file": "src/lib/jobs/render.test.ts",
+      "sha256": "1209052d2fcc19b2f8ccdbb1cd49635f4a60a2a482f018984b5c696be5d0c9d8"
+    },
+    {
+      "file": "src/lib/jobs/render.ts",
+      "sha256": "f84e7de91cdeaca59db51169cb4d5c5cab06c1f35dd1f9853e78b2049132afcb"
+    },
+    {
+      "file": "src/lib/jobs/server.ts",
+      "sha256": "8a38f431d6301914a9b2f2e6813cb26fe4cd659e279ab87305a9c4afd159d6ca"
+    },
+    {
+      "file": "src/lib/jobs/types.ts",
+      "sha256": "4e47043824215f4896123d1c5be731106aadbe6993b18eb660a722cb9d2aeb7d"
+    },
+    {
+      "file": "src/lib/jobs/worker.ts",
+      "sha256": "3d3868bb4923bd337ae30a382d5e742f6a66390b347dbd7837912b5fff5a25c8"
+    },
+    {
+      "file": "src/lib/jobs/zip.ts",
+      "sha256": "09833e2bd8dae71422c7b88bc5c4803afb6290655985d8afb5303817c1b44649"
+    },
+    {
+      "file": "src/lib/mask.ts",
+      "sha256": "a2bb2a4ba80407ed5506e01eafccb18eeb43c02758d78258afeb1adbae841374"
+    },
+    {
+      "file": "src/lib/modules/anonymous.ts",
+      "sha256": "af3d1e64baf6b69a9c34f64d4c2e0979289a2fd3a6b768c1f9f54251f8467ece"
+    },
+    {
+      "file": "src/lib/modules/business-hours.test.ts",
+      "sha256": "4e1a8d417d832a331ea0d7e525bf44aa617fbaaa6f1044bedecbc261219f6f0d"
+    },
+    {
+      "file": "src/lib/modules/business-hours.ts",
+      "sha256": "a128222a3f9d0ad6db0edb1625c3780370adadfc27b6f22a42ba6a379d96d0bb"
+    },
+    {
+      "file": "src/lib/modules/calendar.ts",
+      "sha256": "e958787985e7b2376f198aace4102fc5a90d96c89e01999cf49a166a9ad09a9f"
+    },
+    {
+      "file": "src/lib/modules/contact-profile.test.ts",
+      "sha256": "b59f59d62c7177c5bbab5b07e6a1c4193db2e09257a0c98ae81da3b7bb2db1c8"
+    },
+    {
+      "file": "src/lib/modules/contact-profile.ts",
+      "sha256": "6c072c1e7c09fbb439ad7110660a8c1e434a3f1660dc17914aa3f7f771606966"
+    },
+    {
+      "file": "src/lib/modules/contacts.ts",
+      "sha256": "0f0ca4a9626bd8d1e50470a0f173bb9a2683fad852d040afdf3b8cf8508e3bfc"
+    },
+    {
+      "file": "src/lib/modules/diary-catalog.test.ts",
+      "sha256": "7752454e3e97c18e703bba2f372241b471f4dfefe1bfa99d21603bb565869e4b"
+    },
+    {
+      "file": "src/lib/modules/diary-catalog.ts",
+      "sha256": "6c29f6bba08ba66c87854a7bbacb5bc59316899003ad566878273175b2618320"
+    },
+    {
+      "file": "src/lib/modules/domain.ts",
+      "sha256": "5a44c992432131f54aa40df9b12cdd072bfe378eeb5e441d0a898476261f6e7b"
+    },
+    {
+      "file": "src/lib/modules/external.ts",
+      "sha256": "ee3678024d61892a11bd2eb07f596ef279c9bd01c860dc5564aab7bcd472560f"
+    },
+    {
+      "file": "src/lib/modules/formats.ts",
+      "sha256": "ea24afca5a282593d001f8070f132cf04b95c35ad74b108b6d8f7b0b92f5cc07"
+    },
+    {
+      "file": "src/lib/modules/geospatial.ts",
+      "sha256": "83f45395cbf1d89b4229bc7301df00f5bc3a81cf1554fec8639d119225ce4946"
+    },
+    {
+      "file": "src/lib/modules/modules.test.ts",
+      "sha256": "ec6d5e21a8d9328a60909ef8b6d3fbd84b1cf1fcaf787b4dc79d9de40a9c02be"
+    },
+    {
+      "file": "src/lib/modules/policy.ts",
+      "sha256": "ea9841dd52f6991c0ddde9b2e0cc3c54a4091942ffd670ecd0027f7cd9c2d125"
+    },
+    {
+      "file": "src/lib/modules/server.ts",
+      "sha256": "68dbde4358881603ee7a38e2c566faa9e802c599cdfd87944b6283946b330e6c"
+    },
+    {
+      "file": "src/lib/modules/workflow-validation.test.ts",
+      "sha256": "4fe7d9cc2b78f6d9cd8748e8dd6406a00faf2f3463b21d37475337d83404448e"
+    },
+    {
+      "file": "src/lib/numbering.test.ts",
+      "sha256": "b44b3115b220f197679b007b5eb6f26e5548fd90ab094a9d0d8aaf89456e13ea"
+    },
+    {
+      "file": "src/lib/numbering.ts",
+      "sha256": "f1c360e7e8e4e38812eb65002f2d1a0b5a3335c732dfdb4ba5b1faaddfb8fd56"
+    },
+    {
+      "file": "src/lib/operations/backup-worker.ts",
+      "sha256": "c6213a3f395a4d22714a1b315a922625897c682067259268a4d33f78da29cc35"
+    },
+    {
+      "file": "src/lib/operations/billing.test.ts",
+      "sha256": "9c076435ea95e07a9f6ae00edcad2ab165c53d0fc9d0c8ca3cbcae5b005d1f13"
+    },
+    {
+      "file": "src/lib/operations/billing.ts",
+      "sha256": "0d5c2c54ec2a0ca3fbc1b376d8440f3a6c052e4c0c169e67f933a0f16e3e1765"
+    },
+    {
+      "file": "src/lib/operations/completion-reports.ts",
+      "sha256": "5295a72b442f8f4d46c8afe3eb8c23e875af33ec20739b5b6a38c98c30899b7f"
+    },
+    {
+      "file": "src/lib/operations/consistent-report.ts",
+      "sha256": "4d7c2bc1e8b3ef3e4eebc8a0004ce2ff2e3e7d0b915389b41eca8e0c700f946b"
+    },
+    {
+      "file": "src/lib/operations/formats.test.ts",
+      "sha256": "2629d1bef0c0be2896d82554d0f15040c4e266356e2a5f61f3e4357e39f870b2"
+    },
+    {
+      "file": "src/lib/operations/formats.ts",
+      "sha256": "72186b248fd8c9864c87596386e7e7f48a529355a004bdf1a8396f63be5952c0"
+    },
+    {
+      "file": "src/lib/operations/geo.ts",
+      "sha256": "3142bf3f3c5e5bb27436a6cfc1e7405db049fc130b7006ff55abd447af121354"
+    },
+    {
+      "file": "src/lib/operations/historical-reports.ts",
+      "sha256": "e3bf9ffb21b64995239552fd9cddbe632eef0c015a4215c13e522c85d068b03d"
+    },
+    {
+      "file": "src/lib/operations/page-worker.ts",
+      "sha256": "0c84033bd7c85737e6bd391d33b500b2f78f95534a7dcef95939250b220982ae"
+    },
+    {
+      "file": "src/lib/operations/query.ts",
+      "sha256": "ba918c0591641690ded5950a1398baf8584887603b7a174677254bb11ec11261"
+    },
+    {
+      "file": "src/lib/operations/report-worker.ts",
+      "sha256": "e19e9a387ad5a1d3a85a6b5daf7eaf3cefefcbe884b41a1245ad74607bc82ab4"
+    },
+    {
+      "file": "src/lib/operations/reports.ts",
+      "sha256": "60592a6818cc3e2b050d773316bff6f0b66e262488d1c3bcdb3510e9ef482ae1"
+    },
+    {
+      "file": "src/lib/operations/scheduled.ts",
+      "sha256": "05325dd52285df647ffb7c877defa93099c6c0f3be252b9cf1ace62f5f0b31a8"
+    },
+    {
+      "file": "src/lib/operations/server.ts",
+      "sha256": "102da21dd33c9baf8ca32bb9981371ccad574d9d9d93ec5d498fc467f867e3f5"
+    },
+    {
+      "file": "src/lib/operations/snapshot-helpers.test.ts",
+      "sha256": "1846a2eeb82a2d39953e603c36c98eaee5f8296fd5b846f7d99ec6119a51e540"
+    },
+    {
+      "file": "src/lib/operations/snapshot-helpers.ts",
+      "sha256": "5f54b23630d3ae20cd9502be606dfa157e202b578ea205eb00319a30265df4c3"
+    },
+    {
+      "file": "src/lib/operations/stream-export.ts",
+      "sha256": "153a147cee440fb9c4cd00e76ed37a1b09bde18c5a6cb41e00e1db30fc1a5df9"
+    },
+    {
+      "file": "src/lib/process-tree.ts",
+      "sha256": "3240e53b6c460cbec1d40372b6271b963cb1bbac73e1ab58673260f82cc5b684"
+    },
+    {
+      "file": "src/lib/profile-validation.test.ts",
+      "sha256": "eb84ad2e33a324e4eae8659f411f94d9abef46eddc601d588b6734b0bdf29701"
+    },
+    {
+      "file": "src/lib/profile-validation.ts",
+      "sha256": "8d655015861d3424c370944f25ada2586bfa51f181711c3cb8f38ccda9bc4493"
+    },
+    {
+      "file": "src/lib/public-document.ts",
+      "sha256": "9112e601755558c4d8ad978f4ab2484b80fc79240df5d2f1d43949418a3c7100"
+    },
+    {
+      "file": "src/lib/rbac.ts",
+      "sha256": "e8bd394eb212f095a2c2c53653010b4b59d0409459e51d99c86b4cc364435e66"
+    },
+    {
+      "file": "src/lib/tax-id.ts",
+      "sha256": "b1f5f2ad0707aac49a1cd5fb9f5f2faaca243345199595a40680a89d8ac6d56a"
+    },
+    {
+      "file": "src/lib/user-administration.ts",
+      "sha256": "cbf4d859040fda1c849199e6562d390aebafa9c1810ec77b84e0e3f2dd09a248"
+    }
+  ]
+}

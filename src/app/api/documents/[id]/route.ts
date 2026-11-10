@@ -1,6 +1,7 @@
 // Detalhe do documento: dados + prazos + timeline (movements) + anexos (doc:view).
 import { NextResponse } from "next/server";
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
+import { requestContext } from "@/lib/profile-validation";
 import { db } from "@/db";
 import {
   appUser,
@@ -10,6 +11,7 @@ import {
   documentDeadline,
   documentMovement,
   documentParticipation,
+  userProfile,
 } from "@/db/schema";
 import { getSession, requirePerm, canAccessDocument } from "@/lib/auth";
 import { formatNumber, sanitizeDocumentHtml } from "@/lib/numbering";
@@ -30,7 +32,7 @@ export async function GET(
   const doc = await canAccessDocument(check.session, params.id);
   if (!doc) return NextResponse.json({ error: "not_found" }, { status: 404 });
 
-  const [deadlines, movements, files, depts, users, participation] = await Promise.all([
+  const [deadlines, movements, files, depts, users, participation, profiles, downloads] = await Promise.all([
     db.select().from(documentDeadline).where(eq(documentDeadline.documentId, doc.id)),
     db
       .select()
@@ -41,17 +43,23 @@ export async function GET(
     db.select().from(department),
     db.select().from(appUser),
     db.select().from(documentParticipation).where(eq(documentParticipation.documentId, doc.id)),
+    db.select({ userId: userProfile.userId, details: userProfile.details }).from(userProfile),
+    db.execute(sql`SELECT a.entity_id,count(*)::int AS downloads FROM audit_log a JOIN attachment f ON f.id::text=a.entity_id WHERE f.document_id=${doc.id}::uuid AND a.action='ATTACHMENT_DOWNLOADED' GROUP BY a.entity_id`),
   ]);
   const deptName = (id: string | null) =>
     depts.find((d) => d.id === id)?.name ?? "—";
   const userName = (id: string | null) =>
     users.find((u) => u.id === id)?.name ?? "sistema";
+  await db.execute(sql`INSERT INTO document_access(document_id,user_id,department_id,ip,user_agent)
+    VALUES(${doc.id}::uuid,${check.session.userId}::uuid,${check.session.departmentId}::uuid,${requestContext(_req).ip},${_req.headers.get("user-agent")})`);
 
   return NextResponse.json({
     participation,
     document: {
       id: doc.id,
       displayNumber: formatNumber(doc.type, doc.number, doc.year, doc.businessCode),
+      sequentialNumber: doc.number,
+      year: doc.year,
       type: doc.type,
       accessLevel: doc.accessLevel,
       subject: doc.subject,
@@ -75,6 +83,7 @@ export async function GET(
       note: m.note,
       visibility: m.visibility,
       actor: userName(m.actorUserId),
+      actorPhoto: profiles.find(profile => profile.userId === m.actorUserId)?.details?.photo || null,
       at: m.createdAt,
     })),
     attachments: files.map((f) => ({
@@ -83,6 +92,7 @@ export async function GET(
       url: `/api/attachments/${f.id}`,
       size: f.size,
       citizenVisible: f.citizenVisible,
+      downloads: Number(downloads.rows.find(row => row.entity_id === f.id)?.downloads ?? 0),
     })),
     departments: depts,
   });

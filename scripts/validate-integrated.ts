@@ -492,6 +492,7 @@ async function cleanup() {
   // Expand only explicit, known child relations of journaled resources. Never search by name/email.
   const relations: [string, string, string][] = [
     ["operation_participation_history", "document_id", "document"],
+    ["document_access", "document_id", "document"],
     ["document_deadline", "document_id", "document"], ["document_recipient", "document_id", "document"], ["document_read_receipt", "document_id", "document"],
     ["document_movement", "document_id", "document"], ["document_participation", "document_id", "document"], ["attachment", "document_id", "document"],
     ["email_message", "document_id", "document"], ["external_request", "document_id", "document"],
@@ -500,6 +501,7 @@ async function cleanup() {
     ["module_anonymous_operation", "record_id", "module_record"], ["citizen_identity", "citizen_id", "citizen"],
     ["module_business_hours", "department_id", "department"], ["document_job_text", "job_id", "document_job"],
     ["user_role", "user_id", "app_user"], ["user_profile", "user_id", "app_user"], ["user_department", "user_id", "app_user"],
+    ["user_admin_department", "user_id", "app_user"],
   ];
   const allowed = new Set(["department:id", "app_user:id", "document:id", "citizen:id", "attachment:id", "module_file:id", "module_record:id", "module_mandate:id", "document_job:id", ...relations.map(([t, k]) => `${t}:${k}`)]);
   if (journal.entries.some(e => !allowed.has(`${e.table}:${e.key}`) || !/^[0-9a-f-]{36}$/i.test(e.value))) throw new Error("MANIFESTO_NAO_RECONHECIDO");

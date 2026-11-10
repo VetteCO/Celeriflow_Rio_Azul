@@ -1,7 +1,7 @@
 # Plano de desenvolvimento — POC 100% e implantação integral
 
 **Versão:** 10/11/2026.  
-**Situação:** planejamento; execução ainda não iniciada.  
+**Situação:** execução; etapas 0, 1 e 2 tecnicamente encerradas, com evidências e homologação formal pendente.
 **Base técnica:** `VALIDACAO_INTERNA_POC_2026-11-10.md`.
 
 ## 1. Diretrizes acordadas
@@ -91,14 +91,16 @@ Cada etapa será desdobrada em incrementos pequenos com backend, interface, migr
 
 ### Etapa 1 — Administração, perfis e organograma
 
-- [ ] Provisionar o novo servidor no Firebase e no banco pelo sistema, com definição/recuperação segura de credenciais e tratamento de falhas parciais.
-- [ ] Corrigir autorização no backend: Nível 3 não altera documento; usuário suspenso perde acesso; troca de perfil/setor passa a valer sem depender de token antigo privilegiado.
-- [ ] Aplicar autorização também em consultas, listas, busca, arquivos, prazos e movimentações.
-- [ ] Implementar árvore de setores/subsetores, cadastro/edição, vínculo principal e estrutura para vínculos secundários.
-- [ ] Preservar histórico ao suspender/transferir usuários; exigir realocação ao desativar setor.
-- [ ] Entregar primeiro Admin × Nível 3 para a POC; ampliar para Admin Local, Níveis 1/2 e Auditor na mesma estrutura de permissões.
-- [ ] Antecipar ficha funcional, preferências, afastamentos, último acesso e histórico cadastral.
-- [ ] Registrar ator, data/hora e contexto técnico das ações de administração e acesso.
+- [x] Provisionar o novo servidor no Firebase e no banco pelo sistema, com definição/recuperação segura de credenciais e tratamento de falhas parciais.
+- [x] Corrigir autorização no backend: Nível 3 não altera documento; usuário suspenso perde acesso; troca de perfil/setor passa a valer sem depender de token antigo privilegiado.
+- [x] Aplicar autorização também em consultas, listas, busca, arquivos, prazos e movimentações.
+- [x] Implementar árvore de setores/subsetores, cadastro/edição, vínculo principal e estrutura para vínculos secundários.
+- [x] Preservar histórico ao suspender/transferir usuários; exigir realocação ao desativar setor.
+- [x] Entregar primeiro Admin × Nível 3 para a POC; ampliar para Admin Local, Níveis 1/2 e Auditor na mesma estrutura de permissões.
+- [x] Antecipar ficha funcional, preferências, afastamentos, último acesso e histórico cadastral.
+- [x] Registrar ator, data/hora e contexto técnico das ações de administração e acesso.
+
+**Fechamento técnico:** [FECHAMENTO_ETAPAS_1_2.md](FECHAMENTO_ETAPAS_1_2.md), itens 1.1–1.8 e evidências por cenário. Conferência humana/homologação e canais externos mantêm seus marcos próprios.
 
 **Telas:** administração de servidores, perfis, organograma, conta e recuperação de acesso.  
 **Aceite POC:** criar servidor e entrar com a nova conta; demonstrar permissões diferentes na interface e API. Nível 3 só vê o escopo autorizado.  
@@ -106,14 +108,16 @@ Cada etapa será desdobrada em incrementos pequenos com backend, interface, migr
 
 ### Etapa 2 — Núcleo documental, calendário e tramitação
 
-- [ ] Corrigir numeração por tipo/ano, inclusive virada de ano, concorrência e recuperação de erros.
-- [ ] Tornar criação, prazos e evento inicial consistentes; impedir documentos parcialmente criados.
-- [ ] Estabilizar editor, validação e sanitização de conteúdo; persistir e reabrir a formatação corretamente.
-- [ ] Implementar calendário mensal integrado aos documentos e lista de atividades/prazos, com vencimento, conclusão e histórico de alteração.
-- [ ] Implementar recebimento, despacho, resposta, conclusão, arquivamento e reabertura com transições válidas e permissões específicas.
-- [ ] Modelar participação/estado por setor, preservando origem e destino de cada movimento e preparando cópia para múltiplos setores.
-- [ ] Corrigir download autenticado por clique; manter arquivos privados, verificar autorização por documento e registrar downloads.
-- [ ] Implantar filtros, paginação, busca por número/assunto/setor e timeline determinística.
+- [x] Corrigir numeração por tipo/ano, inclusive virada de ano, concorrência e recuperação de erros.
+- [x] Tornar criação, prazos e evento inicial consistentes; impedir documentos parcialmente criados.
+- [x] Estabilizar editor, validação e sanitização de conteúdo; persistir e reabrir a formatação corretamente.
+- [x] Implementar calendário mensal integrado aos documentos e lista de atividades/prazos, com vencimento, conclusão e histórico de alteração.
+- [x] Implementar recebimento, despacho, resposta, conclusão, arquivamento e reabertura com transições válidas e permissões específicas.
+- [x] Modelar participação/estado por setor, preservando origem e destino de cada movimento e preparando cópia para múltiplos setores.
+- [x] Corrigir download autenticado por clique; manter arquivos privados, verificar autorização por documento e registrar downloads.
+- [x] Implantar filtros, paginação, busca por número/assunto/setor e timeline determinística.
+
+**Fechamento técnico:** [FECHAMENTO_ETAPAS_1_2.md](FECHAMENTO_ETAPAS_1_2.md), itens 2.1–2.8, verificações de API e navegador, preservação de dados e roteiro do proprietário.
 
 **Telas:** caixa do setor, novo documento, detalhe/timeline, calendário e anexos.  
 **Aceite POC:** dois memorandos sequenciais, pelo menos dois prazos visíveis no calendário e fluxo A → B → C com ator/setores/horários corretos; anexos abrem pela tela.  

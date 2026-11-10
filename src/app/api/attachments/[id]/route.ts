@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { attachment, auditLog } from "@/db/schema";
 import { getSession, requirePerm, canAccessDocument, canActInAnyDepartment } from "@/lib/auth";
 import { downloadAttachment } from "@/lib/blob";
+import { coreWriteGuard, coreWriteLock, isCoreWriteConflict } from "@/lib/core-write-guard";
 
 export async function GET(req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = await paramsPromise;
@@ -37,7 +38,7 @@ export async function GET(req: Request, { params: paramsPromise }: { params: Pro
   return new NextResponse(data.stream, {
     headers: {
       "content-type": file.mimeType || data.contentType,
-      "content-length": String(file.size ?? data.size ?? 0),
+      ...(data.size === undefined ? {} : { "content-length": String(data.size) }),
       "content-disposition": `attachment; filename="${encodeURIComponent(file.filename)}"`,
       "cache-control": "private, no-store",
       "x-content-type-options": "nosniff",
@@ -54,6 +55,7 @@ export async function PATCH(req: Request, { params: paramsPromise }: { params: P
   const [file] = await db.select().from(attachment).where(eq(attachment.id, params.id));
   if (!file || !await canAccessDocument(check.session, file.documentId)) return NextResponse.json({ error: "not_found" }, { status: 404 });
   if (!await canActInAnyDepartment(check.session, file.documentId)) return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  await db.batch([db.update(attachment).set({ citizenVisible: b.citizenVisible }).where(eq(attachment.id, file.id)), db.insert(auditLog).values({ actorType: "USER", actorId: check.session.userId, action: "ATTACHMENT_VISIBILITY_CHANGED", entityType: "attachment", entityId: file.id, metadata: { citizenVisible: b.citizenVisible } })]);
+  try { await db.batch([coreWriteLock(), coreWriteGuard(check.session.userId, "doc:edit", file.documentId, null, true), db.update(attachment).set({ citizenVisible: b.citizenVisible }).where(eq(attachment.id, file.id)), db.insert(auditLog).values({ actorType: "USER", actorId: check.session.userId, action: "ATTACHMENT_VISIBILITY_CHANGED", entityType: "attachment", entityId: file.id, metadata: { citizenVisible: b.citizenVisible } })]);
+  } catch (error) { if (isCoreWriteConflict(error)) return NextResponse.json({ error: "authorization_changed" }, { status: 409 }); throw error; }
   return NextResponse.json({ ok: true });
 }

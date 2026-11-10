@@ -6,7 +6,7 @@ export const PERMS = {
   NIVEL_1: [...write, "admin:users", "admin:departments"],
   NIVEL_2: [...read, "doc:create", "doc:edit", "doc:receive", "doc:forward"],
   NIVEL_3_VISUALIZACAO: read,
-  AUDITOR: [...read, "operations:reports"],
+  AUDITOR: [...write, "operations:reports"],
 } as const;
 export type Role = keyof typeof PERMS;
 export function can(role: Role | undefined, action: string): boolean {

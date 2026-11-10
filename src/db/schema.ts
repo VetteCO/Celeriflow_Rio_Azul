@@ -254,7 +254,13 @@ export const userProfile = pgTable("user_profile", {
   leaveStart: timestamp("leave_start"),
   leaveEnd: timestamp("leave_end"),
   lastAccessAt: timestamp("last_access_at"),
+  details: jsonb("details").$type<import("@/lib/profile-validation").ProfileDetails>().notNull().default({}),
 });
+
+export const userAdminDepartment = pgTable("user_admin_department", {
+  userId: uuid("user_id").notNull().references(() => appUser.id),
+  departmentId: uuid("department_id").notNull().references(() => department.id),
+}, t => ({ unique: uniqueIndex("user_admin_department_unique").on(t.userId, t.departmentId) }));
 
 export const calendarHoliday = pgTable("calendar_holiday", {
   id: uuid("id").primaryKey().defaultRandom(),

@@ -6,9 +6,11 @@ import { useEffect, useRef, useState } from "react";
 export function RichText({
   value,
   onChange,
+  advanced = true,
 }: {
   value: string;
   onChange: (html: string) => void;
+  advanced?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const wrapper = useRef<HTMLDivElement>(null);
@@ -100,9 +102,9 @@ export function RichText({
         >
           1. lista
         </button>
-        <button type="button" className="btn" onMouseDown={e => e.preventDefault()} onClick={() => { setInsert("link"); setUrl(""); setError(""); }}>Link</button>
+        {advanced && <><button type="button" className="btn" onMouseDown={e => e.preventDefault()} onClick={() => { setInsert("link"); setUrl(""); setError(""); }}>Link</button>
         <button type="button" className="btn" onMouseDown={e => e.preventDefault()} onClick={() => { setInsert("image"); setUrl(""); setError(""); }}>Imagem</button>
-        <button type="button" className="btn" onMouseDown={e => e.preventDefault()} onClick={() => { setInsert("table"); setError(""); }}>Tabela</button>
+        <button type="button" className="btn" onMouseDown={e => e.preventDefault()} onClick={() => { setInsert("table"); setError(""); }}>Tabela</button></>}
         <button type="button" className="btn" onClick={() => { if (document.fullscreenElement === wrapper.current) void document.exitFullscreen(); else void wrapper.current?.requestFullscreen().catch(() => setError("O navegador não permitiu a tela cheia.")); }}>Tela cheia</button>
       </div>
       {insert && <div className="rt-insert-panel">
@@ -122,6 +124,8 @@ export function RichText({
       <div
         ref={ref}
         contentEditable
+        spellCheck
+        lang="pt-BR"
         suppressContentEditableWarning
         role="textbox"
         aria-multiline="true"

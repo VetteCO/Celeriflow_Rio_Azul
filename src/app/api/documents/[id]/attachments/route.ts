@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { attachment, auditLog, document } from "@/db/schema";
 import { getSession, requirePerm, canAccessDocument, canActInAnyDepartment } from "@/lib/auth";
 import { uploadAttachment } from "@/lib/blob";
+import { coreWriteGuard, coreWriteLock, isCoreWriteConflict } from "@/lib/core-write-guard";
 
 export async function POST(req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = await paramsPromise;
@@ -42,8 +43,8 @@ export async function POST(req: Request, { params: paramsPromise }: { params: Pr
       { status: 502 }
     );
   }
-  const inserted = await db
-    .insert(attachment)
+  try {
+  const [, , inserted] = await db.batch([coreWriteLock(), coreWriteGuard(check.session.userId, "doc:edit", doc.id, null, true), db.insert(attachment)
     .values({
       documentId: params.id,
       filename: file.name,
@@ -51,14 +52,20 @@ export async function POST(req: Request, { params: paramsPromise }: { params: Pr
       storageKey: url,
       size: file.size,
     })
-    .returning();
-  await db.insert(auditLog).values({
+    .returning(),
+  db.insert(auditLog).values({
     actorType: "USER",
-    actorId: check.session.uid,
+    actorId: check.session.userId,
     action: "ATTACHMENT_UPLOADED",
     entityType: "document",
     entityId: params.id,
     metadata: { filename: file.name, size: file.size },
-  });
+  })]);
   return NextResponse.json({ id: inserted[0]!.id, url: `/api/attachments/${inserted[0]!.id}` }, { status: 201 });
+  } catch (error) {
+    // Persistence may have committed before a transport failure. Preserve Blob;
+    // reconciliation checks references instead of guessing rollback from a read.
+    if (isCoreWriteConflict(error)) return NextResponse.json({ error: "authorization_changed" }, { status: 409 });
+    return NextResponse.json({ error: "attachment_persistence_uncertain" }, { status: 503 });
+  }
 }

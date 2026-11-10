@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { documentDeadline, auditLog } from "@/db/schema";
+import { documentDeadline, auditLog, documentMovement } from "@/db/schema";
+import { coreWriteGuard, coreWriteLock, isCoreWriteConflict } from "@/lib/core-write-guard";
 import { getSession, requirePerm, canAccessDocument, canActInAnyDepartment } from "@/lib/auth";
 const Schema = z.object({ title: z.string().min(1).max(200).optional(), dueAt: z.string().datetime().optional(), status: z.enum(["PENDING", "COMPLETED", "CANCELLED"]).optional() });
 export async function PATCH(req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
@@ -14,6 +15,9 @@ export async function PATCH(req: Request, { params: paramsPromise }: { params: P
   const [deadline] = await db.select().from(documentDeadline).where(eq(documentDeadline.id, params.id));
   if (!deadline || !await canAccessDocument(check.session, deadline.documentId)) return NextResponse.json({ error: "not_found" }, { status: 404 });
    if (!await canActInAnyDepartment(check.session, deadline.documentId)) return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  await db.batch([db.update(documentDeadline).set({ ...b.data, dueAt: b.data.dueAt ? new Date(b.data.dueAt) : undefined }).where(eq(documentDeadline.id, deadline.id)), db.insert(auditLog).values({ actorType: "USER", actorId: check.session.userId, action: "DEADLINE_UPDATED", entityType: "document_deadline", entityId: deadline.id, metadata: { before: deadline, after: b.data } })]);
+  try { await db.batch([coreWriteLock(), coreWriteGuard(check.session.userId, "doc:edit", deadline.documentId, null, true),
+    db.update(documentDeadline).set({ ...b.data, dueAt: b.data.dueAt ? new Date(b.data.dueAt) : undefined }).where(eq(documentDeadline.id, deadline.id)), db.insert(auditLog).values({ actorType: "USER", actorId: check.session.userId, action: "DEADLINE_UPDATED", entityType: "document_deadline", entityId: deadline.id, metadata: { before: deadline, after: b.data } }),
+    db.insert(documentMovement).values({ documentId: deadline.documentId, action: "DEADLINE_UPDATED", fromDepartmentId: check.session.departmentId, actorUserId: check.session.userId, visibility: "INTERNAL", note: JSON.stringify({ deadlineId: deadline.id, before: { title: deadline.title, dueAt: deadline.dueAt, status: deadline.status }, after: b.data }) })]);
+  } catch (error) { if (isCoreWriteConflict(error)) return NextResponse.json({ error: "authorization_changed" }, { status: 409 }); throw error; }
   return NextResponse.json({ ok: true });
 }

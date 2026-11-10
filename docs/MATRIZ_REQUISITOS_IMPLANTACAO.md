@@ -59,6 +59,21 @@ As linhas por família seguintes continuam sendo a decomposição contratual com
 
 **Revisão incremental local posterior à publicação:** [REVISAO_FORMULARIOS_0_9_2026-11-10.md](REVISAO_FORMULARIOS_0_9_2026-11-10.md) registra correções dos recortes FOR-P86-02.c/d/f/g, FOR-P87-01.a/b/c/d, FOR-P87-02.e e validação de cálculos de PRO-P56-01.f/URB-P38-01.b. Build/lint/tipos, 32 testes de domínio/formatos e cinco cenários isolados de navegador aprovados. Não publicado e sem aceite integral dessas linhas; pendências programáveis identificadas estão discriminadas no registro.
 
+### Complemento de fechamento — etapas 1 e 2, 10/11/2026
+
+Dossiê: [FECHAMENTO_ETAPAS_1_2.md](FECHAMENTO_ETAPAS_1_2.md). Índice de artefatos e resultados: `EVIDENCIAS_ETAPAS_1_2.json`. Oito itens técnicos por etapa concluídos; 44 testes de domínio/formatos e 119 verificações locais API/Chrome aprovados. Migração 010 aditiva; histórico anterior preservado. Acompanhamento de publicação consta no dossiê; os registros anteriores descrevem suas respectivas versões históricas.
+
+| Requisito/alínea | Evidência adicional executada | Estado e limite de aceite |
+|---|---|---|
+| POC-P25-01; ACE-P31-01.a/c; ACE-P31-03.a/c; ACE-P33-02.a/b/c/d | Provisionamento Firebase/SQL, login real e comparação visual Admin/N3; negativas de escrita; N1 nos subordinados, N2 recusado fora do vínculo e Auditor interagindo. | Testado internamente e recorte Admin/N3 validado em tela automatizada; homologação humana pendente. |
+| ACE-P31-02.a; ACE-P32-01.a/b | Senha ausente gera endereço privado; código consumido no Firebase, senha definida e login aprovado. Contexto técnico e ficha ampliada persistidos. | Recuperação técnica executada; recebimento na caixa de e-mail e confirmação humana aguardam canais finais. Login e-CPF/2FA não incluídos. |
+| ACE-P32-02.c; ACE-P33-01.a/b/c | Token anterior perde autorização após perfil/suspensão; autoria não mantém acesso após transferência; Admin Local administra árvore designada independente da lotação e não lê por essa concessão. | Testado internamente; cadastro e auditoria preservados. |
+| ACE-P32-03.a/b/c/f; ACE-P32-04.b; ACE-P33-03.b/c | Afastamentos, editor básico com efeito visual, preferência de anexos, telefone público/privado, histórico antes/depois e suspensão por inatividade/reativação. | Cadastro/efeitos exercitados no recorte indicado; entrega de notificações e presença instantânea não inferidas. |
+| POC-P25-04; POC-P25-05 | Criação no editor pela tela; reabertura formatada; dois prazos no documento/grade mensal; numeração concorrente e rollback sem avanço; A→B→C com origem/destino/ator reais e transições setoriais. | API/Chrome aprovados; aceite formal na apresentação permanece pendente. |
+| ORG-P66-01/ORG-P67-01, recortes de setor/tramitação; ANX-P77-01, recorte de download | Cópias, conclusão independente por setor, realocação, download privado por clique e SHA-256 idêntico; anônimo recusado; filtros número/ano e padrão de 20. | Recortes testados; não atribuir aceite automático às demais alíneas das famílias. |
+
+Preservação após limpeza: fingerprints dos sete conjuntos originais e bytes do anexo original conferidos; contas Firebase/linhas/Blob criados pelo roteiro removidos, auditoria mantida. Migração 010 reconstruída em três bancos locais vazios, 52 tabelas/11 históricos cada, FKs/checksums/rollback aprovados.
+
 ## 3. Acesso, contas e identidade
 
 | ID / fonte | Subrequisitos preservados | Escopo / E | Verificação e critério de aceitação |
