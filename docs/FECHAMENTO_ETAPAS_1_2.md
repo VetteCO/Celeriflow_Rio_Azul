@@ -54,6 +54,15 @@ Referências: POC-P25-04/05; MEM-P52-02; ORG-P66-01/ORG-P67-01 no recorte de par
 5. Em interrupção de limpeza: `npm run validate:stages12 -- --cleanup --directory "<diretório>"`. Somente IDs de recursos criados pelo roteiro são removidos; a auditoria permanece.
 6. O SaaS exige `--allow-production --base https://rioazul.celeriflow.com.br`, além das opções explícitas anteriores; executar sequencialmente às demais suítes de escrita.
 
+## Versão e bloqueio de publicação
+
+- Implementação e fechamento local: commit `381d54f6cbea38553abb6529bb867475d20936ef`.
+- O push pela CLI desta execução exigiu autenticação; depois, `origin/main` foi sincronizado por outra operação. A Vercel confirmou o mesmo SHA em um deployment de origem GitHub (`3vDS8k4gwcjTMVQYu9yC2NaeJED9`, repositório 1385843702, branch `main`). Portanto o código chegou ao remoto, apesar da falha da primeira tentativa da CLI.
+- **Publicação deste incremento bloqueada no provedor:** deployments CLI `A2fxaP9Mhrx5zHDz8VAorL9ZVji1` e `2DfmYuaave2t2Z4T9gR75jeq6amD`, e deployment GitHub `3vDS8k4gwcjTMVQYu9yC2NaeJED9`, todos com `BUILD_FAILED / Resource provisioning timed out`, antes da compilação remota.
+- Recuperação local de empacotamento também não produziu artefato publicável: CLI 65 exigiu privilégios de symlink do Windows; CLI 48 compilou a aplicação, mas o empacotador não encontrou a lambda de `/cidadao/conta/cadastro`. Nenhum desses artefatos foi promovido. A configuração privada original foi preservada; o arquivo gerado pela CLI teve seus placeholders restaurados.
+- Produção continua no deployment anterior `4rCT9aejbqj2eorMQKR9sGFiyYgN`. Os 119 cenários finais são locais com os provedores reais compartilhados; não registrar como validação desta versão no SaaS.
+- Pendência de release: quando o provisionamento da Vercel voltar a funcionar, publicar o commit pela CLI ou integração Git e executar o roteiro HTTPS. A migração 010 já aplicada é aditiva e compatível com a versão anterior.
+
 ## Roteiro curto para conferência do proprietário
 
 1. **Servidores:** cadastrar servidor, entrar com a nova conta e comparar Admin × N3. Transferir ou suspender e confirmar a mudança de acesso; consultar o histórico.

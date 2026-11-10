@@ -42,3 +42,11 @@ Os três bancos locais são reprodutíveis por `stage0:databases`, permanecem pr
 - Reverter aplicação para deployment conhecido só após conferir compatibilidade com schema aditivo. Não remover colunas/tabelas, editar migrações aplicadas ou truncar registros como rollback.
 - Migração com falha: transação por arquivo; corrigir pendência ainda não aplicada ou criar nova migração se já houver aplicação. Histórico/checksum divergente interrompe o executor.
 - Versionamento da baseline é exclusivo de instalações novas; nenhum dos nove arquivos históricos foi alterado nesta etapa.
+
+## Incremento das etapas 1 e 2 — 10/11/2026
+
+- Commit funcional `381d54f`, confirmado também no deployment de origem GitHub `3vDS8k4gwcjTMVQYu9yC2NaeJED9` (branch `main`).
+- Migração 010 aplicada com estratégia aditiva; banco existente com dez históricos válidos e nenhuma pendência. Novas instalações têm baseline + dez migrações, 52 tabelas.
+- 119 verificações integradas locais/Chrome e 44 testes de domínio aprovados. Evidências e limites em `FECHAMENTO_ETAPAS_1_2.md` e `EVIDENCIAS_ETAPAS_1_2.json`.
+- Duas publicações CLI e uma GitHub falharam antes do build remoto com `Resource provisioning timed out`. Tentativa de empacotamento local no Windows também não gerou artefato publicável. Não promover saídas incompletas de `.vercel/output`.
+- O alias SaaS permanece no deployment `4rCT9aejbqj2eorMQKR9sGFiyYgN`; o incremento das etapas 1/2 e o complemento local de formulários ainda aguardam publicação e validação HTTPS.

@@ -74,6 +74,8 @@ Dossiê: [FECHAMENTO_ETAPAS_1_2.md](FECHAMENTO_ETAPAS_1_2.md). Índice de artefa
 
 Preservação após limpeza: fingerprints dos sete conjuntos originais e bytes do anexo original conferidos; contas Firebase/linhas/Blob criados pelo roteiro removidos, auditoria mantida. Migração 010 reconstruída em três bancos locais vazios, 52 tabelas/11 históricos cada, FKs/checksums/rollback aprovados.
 
+Publicação deste complemento bloqueada: dois deployments CLI e um GitHub falharam em provisionamento da Vercel, `Resource provisioning timed out`. O deployment GitHub confirma o commit `381d54f` no remoto; produção permanece na versão anterior `4rCT9aejbqj2eorMQKR9sGFiyYgN`. A validação publicada deste incremento não foi executada. IDs e tentativas de recuperação em `FECHAMENTO_ETAPAS_1_2.md`.
+
 ## 3. Acesso, contas e identidade
 
 | ID / fonte | Subrequisitos preservados | Escopo / E | Verificação e critério de aceitação |
