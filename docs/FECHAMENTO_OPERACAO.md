@@ -2,6 +2,8 @@
 
 Rodada local de desenvolvimento, 10/11/2026. A implementação inicial foi entregue sem execuções remotas. **Atualização posterior autorizada: validação HTTP/SQL e catálogo executados**, conforme seção final deste documento. Migração 008 aplicada e congelada pelo principal; não alterada nesta validação. Nenhum provisionamento, SLA, redundância ou homologação é declarado.
 
+**Resultado final para fechamento: 92 PASS, 0 FAIL, 0 BLOCKED**, execução real em 10/11/2026, 17:55:53–17:56:35 UTC. A seção “Execução final sem concorrência” abaixo prevalece sobre os resultados diagnósticos anteriores, que permanecem documentados.
+
 ## Entregas de código
 
 ### Indicadores e gráficos
@@ -182,3 +184,40 @@ Evidência restrita ao executor:
 - `ownership.private.json` guarda somente IDs necessários à limpeza; não publicar como documentação externa.
 
 Arquivos finais gerados e depois removidos: CSV 11.581 bytes, PDF 13.344 bytes, XLSX 28.186 bytes. Os respectivos hashes estão na evidência. Tentativas diagnósticas anteriores também limparam seus próprios pedidos e preservaram auditoria; não houve limpeza de dados originais.
+
+### Execução final sem concorrência — 92 PASS / 0 FAIL / 0 BLOCKED
+
+Por solicitação do principal, primeiro foi recuperada a execução interrompida `a275445e-274b-4330-b358-4efd37d30fa3`, usando exclusivamente seu `ownership.private.json`:
+
+- Conferência de cada ID, proprietário e chave de requisição; revogação do lease antes da limpeza.
+- Encontrados dois pedidos READY e um RUNNING. Removidos os três pedidos e os dois Blobs existentes, incluindo busca restrita ao prefixo exato de cada pedido para cobrir upload interrompido.
+- Confirmados zero pedidos/Blobs próprios restantes e preservação da auditoria. Registro: `recovery.redacted.json` no diretório dessa execução.
+- Novo modo reproduzível: `scripts/validate-operations.ts --run --base URL --cleanup-manifest CAMINHO_OWNERSHIP`. O manifesto deve estar no diretório temporário autorizado; IDs e chaves são validados. Nenhuma limpeza global é executada.
+
+Depois foi executado novamente o harness completo, com timeout externo de 600 segundos, contra o build final já iniciado pelo principal. **Nenhum rebuild, reinício do servidor, deploy ou commit foi feito nesta rodada.**
+
+```powershell
+npx tsx --env-file=.env.local scripts/validate-operations.ts --run --base http://localhost:3300
+```
+
+Resultado: **92 assertivas aprovadas, zero falhas e zero bloqueios**, duração de aproximadamente 42 segundos. Todos os cenários funcionais descritos acima foram repetidos, incluindo autorização de outro proprietário com permissão de relatórios, não publicidade do Blob, reutilização em fila/pronto, snapshots, catálogo, reconciliação SQL e formatos reais. A limpeza final agora confere explicitamente a ausência dos Blobs de cada um dos três pedidos.
+
+Comparação por fingerprint integral aprovada, antes/depois, para as dez tabelas: `document`, `document_movement`, `document_participation`, `attachment`, `module_record`, `module_version`, `module_file`, `document_job`, `department` e `app_user`. Não houve divergência por concorrência nesta execução.
+
+Worker CLI passou a limitar conexão a 30 segundos, comando SQL a 60 segundos no servidor/65 segundos no cliente, upload Blob a 60 segundos e remoção a 30 segundos. Telemetria opcional por etapa registra somente formato, etapa e duração, sem consultas, IDs pessoais, credenciais ou URLs. Nesta execução, o snapshot SQL levou 1.344/1.316/1.342 ms para CSV/PDF/XLSX, respectivamente; essa amostra não é declaração de SLA.
+
+Evidência final:
+
+`C:\Users\trici\AppData\Local\Temp\opencode\operations-validation-85babb78-3843-4925-9bd1-04925492ed9b`
+
+- `results.redacted.json`: 92 PASS, artefatos, hashes e tempos por etapa.
+- `preservation.redacted.json`: fingerprints antes/depois das dez tabelas.
+- `ownership.private.json`: identificação restrita dos três pedidos de teste já removidos.
+
+| Formato | Bytes | SHA-256 conferido no download |
+|---|---:|---|
+| CSV | 11.581 | `075086dac5a2988f001c55383ba95bb9e469a7cad5c297f756717a25ee543be7` |
+| PDF | 13.345 | `361992dc5bc6b0f7125887898a962c891071905ac864efb4f02a9fb53ece067f` |
+| XLSX | 28.185 | `dd1869008f9d3bc00c88e984c034bf76e6a99c27cae2acbe7873609f80a63430` |
+
+Esses arquivos foram removidos após conferência; a auditoria de geração/download/limpeza permanece. Catálogo operacional legítimo de três fontes preservado. Migração 008 e mudanças do principal nos executores de exportação/restauração permanecem intactas.

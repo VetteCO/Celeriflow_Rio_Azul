@@ -28,6 +28,7 @@
     "validate:integrated": "tsx --env-file=.env.local scripts/validate-integrated.ts",
     "validate:contacts": "tsx --env-file=.env.local scripts/validate-contacts.ts",
     "validate:learning-support": "tsx --env-file=.env.local scripts/validate-learning-support.ts",
+    "validate:operations": "tsx --env-file=.env.local scripts/validate-operations.ts",
     "validate:capacity": "tsx --env-file=.env.local scripts/validate-capacity.ts",
     "db:seed": "tsx src/db/seed.ts",
     "db:seed:cenario": "tsx --env-file=.env.local src/db/seed-cenario.ts",
