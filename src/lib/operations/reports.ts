@@ -1,7 +1,9 @@
-import { db } from "@/db";
+import { operationsDb as db } from "./query";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
-export const reportFilters=z.object({from:z.string().regex(/^\d{4}-\d{2}-\d{2}$/),to:z.string().regex(/^\d{4}-\d{2}-\d{2}$/),department:z.string().uuid().optional(),user:z.string().uuid().optional(),module:z.string().max(80).optional()}).refine(f=>Number.isFinite(Date.parse(f.from))&&Number.isFinite(Date.parse(f.to))&&f.from<=f.to,"Período inválido");
+import { completionReports } from "./completion-reports";
+const validDay=(day:string)=>Number.isFinite(Date.parse(day))&&new Date(day).toISOString().slice(0,10)===day;
+export const reportFilters=z.object({from:z.string().regex(/^\d{4}-\d{2}-\d{2}$/),to:z.string().regex(/^\d{4}-\d{2}-\d{2}$/),department:z.string().uuid().optional(),user:z.string().uuid().optional(),module:z.string().max(80).optional()}).refine(f=>validDay(f.from)&&validDay(f.to)&&f.from<=f.to,"Período inválido");
 export type ReportRow={id:string;category:string;indicator:string;value:number;unit:string;source:string};
 export async function report(filters:z.infer<typeof reportFilters>){
  const f=filters;
@@ -9,7 +11,7 @@ export async function report(filters:z.infer<typeof reportFilters>){
  const docs=sql`d.created_at >= ${f.from}::date AND d.created_at < (${f.to}::date + interval '1 day') ${f.department?sql`AND d.origin_department_id=${f.department}::uuid`:sql``} ${f.user?sql`AND d.created_by_id=${f.user}::uuid`:sql``} ${f.module?sql`AND d.type::text=${f.module}`:sql``}`;
  const result=await db.execute(sql`WITH scoped AS (SELECT d.* FROM document d WHERE ${docs}),
  movements AS (SELECT m.* FROM document_movement m JOIN document d ON d.id=m.document_id WHERE m.created_at>=${f.from}::date AND m.created_at<(${f.to}::date+interval '1 day') ${f.department?sql`AND coalesce(m.from_department_id,m.to_department_id)=${f.department}::uuid`:sql``} ${f.user?sql`AND m.actor_user_id=${f.user}::uuid`:sql``} ${f.module?sql`AND d.type::text=${f.module}`:sql``}),
- audits AS (SELECT a.* FROM audit_log a LEFT JOIN app_user u ON a.actor_id=u.id::text WHERE a.created_at>=${f.from}::date AND a.created_at<(${f.to}::date+interval '1 day') ${f.department?sql`AND u.department_id=${f.department}::uuid`:sql``} ${f.user?sql`AND a.actor_id=${f.user}`:sql``} ${f.module?sql`AND a.entity_type=${f.module}`:sql``})
+  audits AS (SELECT a.* FROM audit_log a LEFT JOIN app_user u ON a.actor_id=u.id::text WHERE a.created_at>=${f.from}::date AND a.created_at<(${f.to}::date+interval '1 day') ${f.department?sql`AND u.department_id=${f.department}::uuid`:sql``} ${f.user?sql`AND a.actor_id=${f.user}`:sql``} ${f.module?sql`AND (a.entity_type=${f.module} OR EXISTS(SELECT 1 FROM module_record mr WHERE mr.id::text=a.entity_id AND mr.family=${f.module}) OR EXISTS(SELECT 1 FROM document ad WHERE ad.id::text=a.entity_id AND ad.type::text=${f.module}))`:sql``})
  SELECT 'volume' AS id,'Volumetria' AS category,'Documentos criados' AS indicator,count(*)::float AS value,'documentos' AS unit,'document.created_at' AS source FROM scoped
  UNION ALL SELECT 'closed','Eficiência','Documentos do período concluídos ou arquivados',count(*)::float,'documentos','document.status atual' FROM scoped WHERE status IN ('CONCLUDED','ARCHIVED')
  UNION ALL SELECT 'moves','Produtividade','Movimentações registradas no período',count(*)::float,'eventos','document_movement.created_at / actor_user_id' FROM movements
@@ -19,7 +21,7 @@ export async function report(filters:z.infer<typeof reportFilters>){
  UNION ALL SELECT 'audit','Auditoria','Eventos auditados no período',count(*)::float,'eventos','audit_log.created_at' FROM audits
  UNION ALL SELECT 'days','Assiduidade digital','Dias com ações auditadas (não é ponto funcional)',count(DISTINCT (created_at AT TIME ZONE 'America/Sao_Paulo')::date)::float,'dias','audit_log; somente ações instrumentadas' FROM audits
  UNION ALL SELECT 'access','Acessos','Eventos explícitos de login registrados',count(*)::float,'eventos','audit_log.action LOGIN / AUTH_LOGIN / SESSION_LOGIN' FROM audits WHERE action IN ('LOGIN','AUTH_LOGIN','SESSION_LOGIN')`);
- const rows=result.rows as ReportRow[];
+ const rows:ReportRow[]=result.rows.map(r=>({id:String(r.id),category:String(r.category),indicator:String(r.indicator),value:Number(r.value),unit:String(r.unit),source:String(r.source)}));
  const tickets=await db.execute(sql`SELECT count(*)::float AS total,
  count(*) FILTER(WHERE coalesce(t.resolved_at,now())>t.due_at)::float AS late,
  avg(t.rating)::float AS rating,
@@ -36,7 +38,7 @@ export async function report(filters:z.infer<typeof reportFilters>){
  const exists=await db.execute(sql`SELECT to_regclass('public.module_record') IS NOT NULL AS ready`);
  if(exists.rows[0]?.ready){
  const modules=await db.execute(sql`SELECT family,count(*)::float AS total,
- count(*) FILTER(WHERE data->'values'->>'latitude' IS NOT NULL AND data->'values'->>'longitude' IS NOT NULL)::float AS located,
+  count(*) FILTER(WHERE CASE WHEN data->'values'->>'latitude' ~ '^-?[0-9]{1,3}([.][0-9]+)?$' AND data->'values'->>'longitude' ~ '^-?[0-9]{1,3}([.][0-9]+)?$' THEN (data->'values'->>'latitude')::numeric BETWEEN -90 AND 90 AND (data->'values'->>'longitude')::numeric BETWEEN -180 AND 180 ELSE false END)::float AS located,
  coalesce(sum(CASE WHEN jsonb_typeof(data->'geometry'->'features')='array' THEN jsonb_array_length(data->'geometry'->'features') ELSE 0 END),0)::float AS features
  FROM module_record WHERE created_at>=${f.from}::date AND created_at<(${f.to}::date+interval '1 day')
  ${f.department?sql`AND department_id=${f.department}::uuid`:sql``} ${f.user?sql`AND owner_id=${f.user}::uuid`:sql``} ${f.module?sql`AND family=${f.module}`:sql``} GROUP BY family ORDER BY family`);
@@ -44,5 +46,6 @@ export async function report(filters:z.infer<typeof reportFilters>){
  if(m.family==="fiscalizacao")rows.push({id:"geo-inspections",category:"Georreferenciamento",indicator:"Fiscalizações com coordenadas cadastradas",value:Number(m.located),unit:"registros",source:"module_record.data.values latitude/longitude; não valida precisão de GPS"});
  if(m.family==="camadas")rows.push({id:"geo-features",category:"Georreferenciamento",indicator:"Feições das camadas cadastradas",value:Number(m.features),unit:"feições",source:"module_record.data.geometry.features"});}
  }
- return rows;
+  rows.push(...await completionReports(f));
+  return rows;
 }

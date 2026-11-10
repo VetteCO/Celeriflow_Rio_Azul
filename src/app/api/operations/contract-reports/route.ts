@@ -1,7 +1,8 @@
 import { db } from "@/db";
 import { operationReport } from "@/db/operations-schema";
 import { actor,failure,download,OperationError } from "@/lib/operations/server";
-import { report } from "@/lib/operations/reports";
+import { consistentReport as report } from "@/lib/operations/consistent-report";
+import { billingRows } from "@/lib/operations/billing";
 import { csv,pdf,xlsx } from "@/lib/operations/formats";
 import { eq,desc } from "drizzle-orm";
 import { z } from "zod";
@@ -13,7 +14,8 @@ export async function POST(req:Request){try{
  if(existing){if(existing.period!==period)throw new OperationError(409,"Chave já utilizada para outro período.");return Response.json({report:existing});}
  const [year,month]=period.split("-").map(Number);if(year<2000||year>9999)throw new OperationError(400,"Ano inválido.");
  const filters={from:`${period}-01`,to:`${period}-${new Date(Date.UTC(year,month,0)).getUTCDate()}`};
- const snapshot={filters,rows:await report(filters),generatedAt:new Date().toISOString()};
+  const rows=await report(filters);rows.push(...billingRows(period,rows));
+  const snapshot={filters,rows,generatedAt:new Date().toISOString()};
  const [created]=await db.insert(operationReport).values({createdById:user.id,period,requestKey,snapshot}).onConflictDoNothing().returning();
  const [saved]=created?[created]:await db.select().from(operationReport).where(eq(operationReport.requestKey,requestKey));
  if(saved.period!==period)throw new OperationError(409,"Chave já utilizada para outro período.");

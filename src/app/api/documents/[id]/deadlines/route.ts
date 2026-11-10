@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/db";
 import { auditLog, documentDeadline } from "@/db/schema";
-import { getSession, requirePerm, canAccessDocument, canActInDepartment } from "@/lib/auth";
+import { getSession, requirePerm, canAccessDocument, canActInAnyDepartment } from "@/lib/auth";
 const Schema = z.object({ title: z.string().min(1).max(200), dueAt: z.string().datetime() });
 export async function POST(req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = await paramsPromise;
@@ -12,7 +12,7 @@ export async function POST(req: Request, { params: paramsPromise }: { params: Pr
   if (!parsed.success) return NextResponse.json({ error: "invalid_payload" }, { status: 400 });
   const doc = await canAccessDocument(check.session, params.id);
   if (!doc) return NextResponse.json({ error: "not_found" }, { status: 404 });
-  if (!check.session.departmentId || !await canActInDepartment(check.session, doc.id, check.session.departmentId)) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+   if (!await canActInAnyDepartment(check.session, doc.id)) return NextResponse.json({ error: "forbidden" }, { status: 403 });
   const [inserted] = await db.batch([db.insert(documentDeadline).values({ documentId: doc.id, title: parsed.data.title, dueAt: new Date(parsed.data.dueAt) }).returning(), db.insert(auditLog).values({ actorType: "USER", actorId: check.session.userId, action: "DEADLINE_ADDED", entityType: "document", entityId: doc.id, metadata: parsed.data })]);
   return NextResponse.json({ id: inserted[0].id }, { status: 201 });
 }

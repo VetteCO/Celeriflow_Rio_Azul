@@ -9,6 +9,7 @@ import { canAccessDocument, documentScope, requirePerm, type Session } from "@/l
 import { PERMS, type Role } from "@/lib/rbac";
 import { context, getRecord, scope, ModuleError, type Context } from "@/lib/modules/server";
 import { JobError, jobInputSchema, type JobPayload, type SourceRef } from "./types";
+import { processTree } from "@/lib/process-tree";
 
 export { context };
 export function failure(error: unknown) {
@@ -37,7 +38,10 @@ export async function authorizeSources(refs: SourceRef[], ctx: Context) {
   }
 }
 async function capture(input: z.infer<typeof jobInputSchema>, ctx: Context): Promise<JobPayload> {
-  const pending = [...input.sources]; const seen = new Set<string>();
+  const pending: SourceRef[] = input.selection === "complete"
+    ? (await processTree(input.sources, ctx, false)).nodes.map(({ type, id }) => ({ type, id }))
+    : [...input.sources];
+  const seen = new Set<string>();
   const payload: JobPayload = { sources: [], files: [], selection: input.selection, capturedAt: new Date().toISOString() };
   while (pending.length) {
     const ref = pending.shift()!; const key = `${ref.type}:${ref.id}`;
@@ -56,9 +60,6 @@ async function capture(input: z.infer<typeof jobInputSchema>, ctx: Context): Pro
       payload.sources.push({ ...ref, code: row.code, title: row.title, body: row.body, blocks: row.data.blocks ?? [], revision: row.revision });
       const files = await db.select().from(moduleFile).where(eq(moduleFile.recordId, ref.id)).orderBy(moduleFile.createdAt, moduleFile.id);
       payload.files.push(...files.map(f => ({ id: f.id, sourceId: ref.id, filename: f.filename, mimeType: f.mimeType, storageKey: f.storageKey, size: f.size, sha256: f.sha256 })));
-      if (input.selection === "complete") {
-        pending.push(...(row.data.linkedIds ?? []).map(id => ({ type: "module" as const, id })), ...(row.data.coreDocumentIds ?? []).map(id => ({ type: "document" as const, id })));
-      }
     }
   }
   if (input.fileIds !== undefined && input.selection === "custom") {

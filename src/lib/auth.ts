@@ -50,7 +50,7 @@ export async function isRecipient(session: Session, id: string) {
 }
 export async function canActInDepartment(session: Session, documentId: string, departmentId: string) {
   if (!session.departmentIds.includes(departmentId)) return false;
-  return !!(await db.select().from(documentParticipation).where(and(eq(documentParticipation.documentId, documentId), eq(documentParticipation.departmentId, departmentId), inArray(documentParticipation.state, ["OPEN", "PENDING"])))).length;
+  return !!(await db.select({ id: documentParticipation.documentId }).from(documentParticipation).innerJoin(department, eq(department.id, documentParticipation.departmentId)).where(and(eq(documentParticipation.documentId, documentId), eq(documentParticipation.departmentId, departmentId), eq(department.active, true), inArray(documentParticipation.state, ["OPEN", "PENDING"])))).length;
 }
 
 export async function canActInAnyDepartment(session: Session, documentId: string) {

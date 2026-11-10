@@ -14,7 +14,7 @@ export async function getCitizenSession(req: Request) {
 export async function ownedCitizenDocument(req: Request, key: string) {
   const session = await getCitizenSession(req);
   if (!session) return null;
-  const [record] = await db.select({ doc: document, request: externalRequest }).from(externalRequest).innerJoin(citizen, eq(citizen.id, externalRequest.citizenId)).innerJoin(document, eq(document.id, externalRequest.documentId)).where(and(eq(externalRequest.publicKey, key), sql`lower(${citizen.email})=${session.email}`));
+  const [record] = await db.select({ doc: document, request: externalRequest }).from(externalRequest).innerJoin(citizen, eq(citizen.id, externalRequest.citizenId)).innerJoin(document, eq(document.id, externalRequest.documentId)).where(and(eq(externalRequest.publicKey, key), sql`lower(${citizen.email})=${session.email} AND NOT EXISTS(SELECT 1 FROM module_contact_account WHERE citizen_id=${citizen.id} AND uid<>${session.uid})`));
   return record ? { ...record, session } : null;
 }
 

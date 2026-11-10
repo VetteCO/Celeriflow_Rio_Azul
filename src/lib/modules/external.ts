@@ -6,7 +6,7 @@ import { auditLog, department } from "@/db/schema";
 import { moduleRecord, moduleFile, moduleMandate, type ModuleRecord } from "@/db/modules-schema";
 import { getCitizenSession } from "@/lib/citizen-auth";
 import { ModuleError, validateBusiness } from "./server";
-import { deadline } from "./calendar";
+import { workflowDeadline } from "./business-hours";
 import { familyFields, familySchema, validateFields, validateWorkflowFields, type ModuleData, type Family } from "./domain";
 
 export const externalFamilies: Family[] = ["processos", "chamados", "ouvidoria", "esic", "seletivo", "projetos", "ambiental", "fiscalizacao"];
@@ -121,7 +121,7 @@ export async function externalCommand(id: string, input: unknown, session: Exter
     const files = await db.select().from(moduleFile).where(eq(moduleFile.recordId, id));
     const missing = data.workflow.requiredFiles.filter(c => !files.some(f => f.category === c));
     if (missing.length) throw new ModuleError(`Envie os documentos obrigatórios: ${missing.join(", ")}.`);
-    status = "EM_ANDAMENTO"; data.dueAt = await deadline(data.workflow.steps[0].hours, data.workflow.businessDays);
+    status = "EM_ANDAMENTO"; data.dueAt = await workflowDeadline(data.workflow.steps[0].hours, data.workflow.businessDays, data.workflow.steps[0].departments);
   } else if (parsed.action === "RESPONDER") {
     if (status !== "EM_ANDAMENTO" || !parsed.text.trim()) throw new ModuleError("Respostas exigem texto e atendimento em andamento.");
     data.messages = [...(data.messages ?? []), { actorId: "INTERESSADO", visibility: "EXTERNA", text: parsed.text.trim(), at: new Date().toISOString() }];

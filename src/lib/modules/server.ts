@@ -7,13 +7,16 @@ import { moduleRecord, moduleVersion, moduleFile, type ModuleRecord } from "@/db
 import { canAccessDocument, getSession, requirePerm } from "@/lib/auth";
 import { blockSchema, configFamilies, familyFields, familySchema, processFamilies, workflowSchema, validateFields, validateWorkflowFields, validateGeometry, validTaxId, measureShape, type Family, type ModuleData } from "./domain";
 import { canManage, canRead, redacted } from "./policy";
-import { deadline } from "./calendar";
+import { workflowDeadline } from "./business-hours";
+import { validatePublication } from "./diary-catalog";
 export { canRead, redacted } from "./policy";
 
 export class ModuleError extends Error { constructor(message: string, public status = 400) { super(message); } }
 export function failure(error: unknown) {
   if (error instanceof ModuleError) return Response.json({ error: error.message }, { status: error.status });
   if (error instanceof z.ZodError) return Response.json({ error: error.issues.map(i => `${i.path.join(".")}: ${i.message}`).join("; ") }, { status: 400 });
+  const databaseCode = error && typeof error === "object" && "code" in error ? String(error.code) : "";
+  if (["P0001", "23505", "23503", "40001"].includes(databaseCode)) return Response.json({ error: "Os dados foram alterados, possuem vínculo incompatível ou estão fora do seu acesso. Atualize o cadastro e confira os vínculos antes de continuar." }, { status: 409 });
   console.error("[modules]", error);
   return Response.json({ error: "Não foi possível concluir a operação. Verifique a configuração e a disponibilidade do serviço." }, { status: 500 });
 }
@@ -92,6 +95,11 @@ export function validateBusiness(family: Family, data: ModuleData) {
 }
 export async function createRecord(familyInput: string, input: unknown, ctx: Context) {
   const family = familySchema.parse(familyInput);
+  if (family === "contatos") {
+    const { saveContact } = await import("./contacts");
+    const saved = await saveContact(input, ctx);
+    return redacted(await getRecord(String(saved.id), ctx), ctx);
+  }
   if (configFamilies.includes(family)) admin(ctx);
   const parsed = inputSchema.parse(input);
   parsed.values = safeValues(parsed.values, family);
@@ -164,6 +172,11 @@ export async function command(id: string, input: unknown, ctx: Context) {
   };
   switch (cmd.action) {
     case "EDITAR": {
+      if (family === "contatos") {
+        const { saveContact } = await import("./contacts");
+        await saveContact({ ...payload, revision: cmd.revision }, ctx, id);
+        return redacted(await getRecord(id, ctx), ctx);
+      }
       if (!["RASCUNHO", "ATIVO", "SUSPENSO"].includes(status)) throw new ModuleError("O conteúdo já foi formalizado. Registre uma resposta.");
       const parsed = inputSchema.parse(payload); await checkLinks(parsed.linkedIds, ctx);
       await checkCoreLinks(parsed.coreDocumentIds, ctx);
@@ -206,7 +219,7 @@ export async function command(id: string, input: unknown, ctx: Context) {
         const files = await db.select().from(moduleFile).where(eq(moduleFile.recordId, id));
         const missing = data.workflow.requiredFiles.filter(category => !files.some(f => f.category === category));
         if (missing.length) throw new ModuleError(`Anexos obrigatórios: ${missing.join(", ")}.`);
-        data.dueAt = await deadline(data.workflow.steps[0].hours, data.workflow.businessDays);
+        data.dueAt = await workflowDeadline(data.workflow.steps[0].hours, data.workflow.businessDays, data.workflow.steps[0].departments);
       }
       status = "EM_ANDAMENTO"; break;
     }
@@ -216,7 +229,7 @@ export async function command(id: string, input: unknown, ctx: Context) {
       if (!step.departments.every(d => data.completedDepartments?.includes(d))) throw new ModuleError("Todos os setores devem concluir sua participação antes do avanço.");
       const next = (data.step ?? 0) + 1; const nextStep = data.workflow!.steps[next];
       if (!nextStep) throw new ModuleError("Última etapa: registre a decisão final.");
-      data.step = next; data.completedDepartments = []; data.dueAt = await deadline(nextStep.hours, data.workflow!.businessDays);
+      data.step = next; data.completedDepartments = []; data.dueAt = await workflowDeadline(nextStep.hours, data.workflow!.businessDays, nextStep.departments);
       participants = Array.from(new Set([...participants, ...nextStep.departments])); departmentId = nextStep.departments[0]; break;
     }
     case "DEFERIR": case "INDEFERIR": {
@@ -286,6 +299,7 @@ export async function command(id: string, input: unknown, ctx: Context) {
       admin(ctx);
       if (family !== "diario" || status !== "AGUARDANDO_ASSINATURA" || !data.publication?.some(a=>!a.withdrawn)) throw new ModuleError("Prepare a edição com ao menos um ato ativo antes de publicar.");
       z.object({ mode: z.literal("INFORMATIVA"), acknowledgeUnsigned: z.literal(true) }).parse(payload);
+      await validatePublication(data.publication);
       data.publicationMode = "INFORMATIVA"; data.publishedAt = now; status = "PUBLICADO"; break;
     }
     case "SOLICITAR_PROCESSAMENTO": {
@@ -294,10 +308,10 @@ export async function command(id: string, input: unknown, ctx: Context) {
     }
     case "CANCELAR": if (!cmd.note || row.ownerId !== ctx.user.id) throw new ModuleError("Cancelamento exige o autor e justificativa.", 403); status = "CANCELADO"; break;
     case "UNIFICAR_CONTATO": {
-      if (family !== "contatos" || !cmd.note) throw new ModuleError("Unificação exige contato e justificativa.");
-      const target = await getRecord(z.string().uuid().parse(payload.targetId), ctx);
-      if (target.id === id || target.family !== "contatos" || target.status !== "ATIVO") throw new ModuleError("Selecione outro contato ativo como cadastro principal.");
-      data.values = { ...data.values, cadastroPrincipal: target.id }; status = "UNIFICADO"; break;
+      if (family !== "contatos") throw new ModuleError("Selecione um contato.");
+      const { mergeContacts } = await import("./contacts");
+      await mergeContacts({ sourceId: id, sourceRevision: cmd.revision, targetId: payload.targetId, targetRevision: payload.targetRevision }, ctx);
+      return redacted(await getRecord(id, ctx), ctx);
     }
     case "CONCLUIR": {
       active();

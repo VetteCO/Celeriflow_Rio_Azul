@@ -1,6 +1,10 @@
 # Entrega de desenvolvimento — etapas 0 a 9
 
+**Atualização de publicação:** versão publicada e conferida em https://rioazul.celeriflow.com.br pela conta `celeriflow@gmail.com`. Build remoto, 39 verificações HTTP e conferência das tabelas aprovados. Ver `DEPLOY_2026-11-10.md`; as referências abaixo ao ambiente somente local descrevem a rodada anterior à publicação.
+
 Data: 10/11/2026. Ambiente conferido: **http://localhost:3200**. Next.js **15.5.29**, Node.js 24.21.0; requisito mínimo do projeto: Node.js 22.13.
+
+**Rodada complementar posterior:** código compilado em produção local (`localhost:3300`), nove migrações aplicadas, 34 testes de domínio/formatos aprovados, 307 verificações integradas e 86 verificações adicionais de contatos/cadastro externo aprovadas. Exportação integral e restauração PostgreSQL real concluídas. Detalhes/evidências em `FECHAMENTO_ARVORE_E_VALIDACAO.md`, `FECHAMENTO_ATENDIMENTO_CONTATOS.md`, `FECHAMENTO_EXPEDIENTE_DIARIO.md` e `FECHAMENTO_OPERACAO.md`. Esta rodada amplia e substitui as lacunas funcionais abaixo; sua publicação deve ser conferida no registro de deploy.
 
 ## Resultado executivo
 
@@ -53,16 +57,16 @@ Por autorização expressa do proprietário:
 
 ### Complementos funcionais do escopo detalhado
 
-Ainda não considerar integralmente atendidos: anexos/avaliação por chave na entrada anônima dedicada; listas segmentadas e campos de contatos por perfil; unificação retroativa de todos os vínculos legados; expediente diário configurável por setor; catálogo municipal independente de cadernos/seções do Diário; árvore única de anexos entre todos os núcleos; cobertura integral de todos os indicadores contratuais. A relação técnica detalhada permanece em `src/lib/modules/ENTREGA.md`.
+Complementos implementados nesta rodada: anexos/avaliação por chave na entrada anônima; listas segmentadas e campos de contatos por perfil nos canais interno/externo; unificação transacional de referências e vínculos legados explicitamente associados; expediente diário setorial; catálogo independente de cadernos/seções/subseções; árvore única de documentos/anexos; indicadores históricos, comparação setorial, páginas reais e relatórios prontos persistentes. Os relatórios e respectivos executores têm fechamento de aceites próprio em `FECHAMENTO_OPERACAO.md`.
 
 Esses pontos não devem ser ocultados por uma marcação global de “etapas 0–9 100%”. A matriz de requisitos precisa de evidência individual para avançar de implementação para atendimento/homologação.
 
 ### Configuração e operação
 
 - Bases/regras municipais e fornecedores cartográficos/geocodificação; medições e dados territoriais precisam de aceite sobre referência municipal válida.
-- Worker permanente, conversores PDF/A/OCR, scheduler, canal de alertas, backup redundante e ensaio de restauração. A infraestrutura do worker foi adiada pelo proprietário.
+- Worker permanente, conversores PDF/A/OCR, scheduler, canal de alertas e backup redundante. Exportação/restauração real em PostgreSQL local foi executada nesta rodada; falta restauração da aplicação com armazenamento isolado remapeado e rotina operacional provisionada. A infraestrutura do worker foi adiada pelo proprietário.
 - Vídeos/conteúdo EAD, capacitação presencial, visitas, disponibilidade contínua e comprovação de capacidade para 60 usuários.
-- Publicação SaaS e parâmetros do domínio real: o ambiente conferido nesta entrega é local.
+- Publicação SaaS existente em `rioazul.celeriflow.com.br`; os complementos posteriores à publicação inicial exigem o novo registro de deploy.
 - Auditoria de dependências: o Next antigo e o sanitizador foram atualizados; não há declaração de árvore de dependências sem alertas. Restam avisos em dependências existentes e transitivas, alguns exigindo migrações maiores. Devem ser tratados antes do aceite de segurança da publicação.
 
 ### Etapas finais mantidas

@@ -1,0 +1,14 @@
+"use client";
+import {MaskedInput} from "@/components/MaskedInput";
+import {useRef,useState} from "react";
+import {contactBaseKeys,type ContactProfile} from "@/lib/modules/contact-profile";
+const labels:Record<string,string>={cpfCnpj:"CPF/CNPJ",email:"E-mail",phone:"Celular",cep:"CEP",endereco:"Endereço",organizacao:"Organização"};
+export function ContactProfileFields({profile,values,onChange,identityLocked=false}:{profile:ContactProfile;values:Record<string,string>;onChange:(values:Record<string,string>)=>void;identityLocked?:boolean}){
+ const [notice,setNotice]=useState("");const [loading,setLoading]=useState(false);const current=useRef(values);current.current=values;
+ async function lookup(){const cep=(values.cep??"").replace(/\D/g,"");if(cep.length!==8){setNotice("Informe um CEP de oito dígitos.");return;}setLoading(true);try{const r=await fetch(`/api/cep?cep=${cep}`);const d=await r.json();if(!r.ok)throw new Error("Endereço não localizado; preencha manualmente.");if((current.current.cep??"").replace(/\D/g,"")!==cep)return;onChange({...current.current,endereco:[d.street,d.district,d.city,d.state].filter(Boolean).join(", ")});setNotice("Endereço localizado. Confira e acrescente número e complemento.");}catch(e){setNotice((e as Error).message);}finally{setLoading(false);}}
+ const fields=[...contactBaseKeys.filter(k=>profile.definition.base.find(b=>b.key===k)?.enabled!==false).map(key=>({key,label:labels[key],type:key==="email"?"email":["cpfCnpj","phone","cep"].includes(key)?key:"text",required:profile.definition.base.find(b=>b.key===key)?.required??false,help:"",options:[] as string[]})),...profile.definition.fields.filter(f=>f.channel!=="INTERNO")];
+ return <><label>Tipo de contato<select required value={values.tipo??""} onChange={e=>onChange({...values,tipo:e.target.value})}><option value="">Selecione</option>{profile.definition.types.map(t=><option key={t}>{t}</option>)}</select></label>{fields.map(f=>{
+ const readOnly=f.key==="email"||f.key==="cpfCnpj"&&identityLocked&&!!values.cpfCnpj;
+ return <label key={f.key}>{f.label}{f.required?" *":""}{["cpfCnpj","cep","phone"].includes(f.type)?<MaskedInput kind={f.type as "cpfCnpj"|"cep"|"phone"} required={f.required} readOnly={readOnly} value={values[f.key]??""} onValueChange={v=>onChange({...values,[f.key]:v})}/>:f.type==="select"?<select required={f.required} value={values[f.key]??""} onChange={e=>onChange({...values,[f.key]:e.target.value})}><option value="">Selecione</option>{f.options.map(o=><option key={o}>{o}</option>)}</select>:<input required={f.required} readOnly={readOnly} type={f.type} value={values[f.key]??""} onChange={e=>onChange({...values,[f.key]:e.target.value})}/>}<small>{f.help}</small></label>;
+ })}{fields.some(f=>f.key==="cep")&&fields.some(f=>f.key==="endereco")&&<button className="btn" type="button" disabled={loading} onClick={lookup}>{loading?"Buscando…":"Buscar endereço pelo CEP"}</button>}{notice&&<p role="status">{notice}</p>}</>;
+}

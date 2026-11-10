@@ -3,7 +3,8 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { appUser, role, userRole, auditLog } from "@/db/schema";
 import { operationReport } from "@/db/operations-schema";
-import { report } from "@/lib/operations/reports";
+import { consistentReport as report } from "@/lib/operations/consistent-report";
+import { billingRows } from "./billing";
 
 export function validSchedulerSecret(authorization: string | null) {
   const secret = process.env.OPERATIONS_SCHEDULER_SECRET;
@@ -30,7 +31,8 @@ export async function generatePreviousMonthReport() {
   if (existing) return { id: existing.id, code: existing.code, period, created: false };
   const lastDay = new Date(Date.UTC(previous.getUTCFullYear(), previous.getUTCMonth() + 1, 0)).getUTCDate();
   const filters = { from: `${period}-01`, to: `${period}-${lastDay}` };
-  const snapshot = { filters, rows: await report(filters), generatedAt: new Date().toISOString() };
+  const rows=await report(filters);rows.push(...billingRows(period,rows));
+  const snapshot = { filters, rows, generatedAt: new Date().toISOString() };
   const [created] = await db.insert(operationReport).values({ createdById: operator.id, period, requestKey, snapshot }).onConflictDoNothing().returning();
   if (created) await db.insert(auditLog).values({ actorType: "SYSTEM", actorId: operator.id, action: "CONTRACT_REPORT_SCHEDULED", entityType: "operation_report", entityId: created.id, metadata: { period } });
   const [saved] = created ? [created] : await db.select().from(operationReport).where(eq(operationReport.requestKey, requestKey));

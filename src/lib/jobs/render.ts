@@ -18,7 +18,15 @@ export function sourceHtml(source: JobSource) {
   return sanitizeHtml(`<h1>${escape(source.title)}</h1><p>${escape(source.code)}${source.revision ? ` · Revisão ${source.revision}` : ""}</p>${body}${blocks}`, {
     allowedTags: ["h1", "h2", "h3", "h4", "p", "br", "div", "span", "b", "strong", "i", "em", "u", "s", "ul", "ol", "li", "blockquote", "table", "thead", "tbody", "tr", "th", "td", "a", "img", "figure", "figcaption", "hr"],
     allowedAttributes: { "*": ["style"], a: ["href"], img: ["src", "alt", "width", "height"], td: ["colspan", "rowspan"], th: ["colspan", "rowspan"] },
-    allowedSchemes: ["https", "http"], allowedSchemesByTag: { img: ["https"] },
+    allowedSchemes: ["https", "http"], allowedSchemesByTag: { img: ["https", "data"] },
+    allowProtocolRelative: false,
+    transformTags: { img: (_tag, attributes) => {
+      const src = attributes.src ?? "";
+      if (src.startsWith("data:") && (src.length > 3000000 || !/^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(src))) {
+        const { src: _source, ...rest } = attributes; return { tagName: "img", attribs: rest };
+      }
+      return { tagName: "img", attribs: attributes };
+    } },
     allowedStyles: { "*": { "text-align": [/^(left|right|center|justify)$/], "font-size": [/^\d{1,2}(px|pt)$/], "font-weight": [/^(normal|bold|[1-9]00)$/], "font-style": [/^(normal|italic)$/], "text-decoration": [/^(none|underline|line-through)$/], color: [/^#[0-9a-f]{3,8}$/i], "background-color": [/^#[0-9a-f]{3,8}$/i], width: [/^\d{1,3}%$/] } },
   });
 }
@@ -42,7 +50,7 @@ export async function renderPdf(job: DocumentJob, files: { file: JobFile; path: 
     let blocked = false;
     await context.route("**/*", async route => {
       const request = route.request(); const url = new URL(request.url());
-      if (request.resourceType() === "image" && url.protocol === "https:" && !url.username && !url.password && origins.has(url.origin)) await route.continue();
+      if (request.resourceType() === "image" && ((url.protocol === "https:" && !url.username && !url.password && origins.has(url.origin)) || (request.url().length <= 3000000 && /^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(request.url())))) await route.continue();
       else { blocked = true; await route.abort(); }
     });
     const page = await context.newPage();

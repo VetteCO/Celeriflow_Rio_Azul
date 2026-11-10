@@ -1,6 +1,6 @@
 # Matriz rastreável de requisitos — POC e implantação
 
-**Baseline documental:** 10/11/2026 · **Etapa:** 0 · **Estado:** planejado.  
+**Baseline documental:** 10/11/2026 · **Estado:** baseline planejada com registros de validação incremental abaixo.
 **Plano de referência:** [PLANO_DESENVOLVIMENTO_POC_E_IMPLANTACAO.md](PLANO_DESENVOLVIMENTO_POC_E_IMPLANTACAO.md).  
 **Auditoria de referência:** [VALIDACAO_INTERNA_POC_2026-11-10.md](VALIDACAO_INTERNA_POC_2026-11-10.md). Esta matriz não certifica correções posteriores à auditoria.
 
@@ -17,7 +17,7 @@
 
 ## 2. Nove requisitos da POC
 
-Todos em estado **planejado**, com aceite pendente. A auditoria é evidência de diagnóstico, não de atendimento integral.
+O aceite formal dos nove itens está pendente. Os estados de implementação/verificação interna posteriores constam no registro incremental abaixo; a auditoria original permanece evidência de diagnóstico.
 
 | ID estável / fonte | Requisito e cenário de aceitação | E / dependências | Evidência necessária / lacuna histórica |
 |---|---|---|---|
@@ -32,6 +32,30 @@ Todos em estado **planejado**, com aceite pendente. A auditoria é evidência de
 | POC-P26-09 · 16.3.4.3 | Consultar externamente por QR **ou** chave pública mantendo sigilo/LGPD. | 4–5, 12 | V+A: acesso fora da rede local, notas internas/anexos e classificação respeitados nas duas consultas; F04/F11. |
 
 **Condição do Marco P:** nove cenários evidenciados no mesmo SaaS publicado, apresentação presencial ao vivo em até duas horas; preparar ambiente/apresentação em cinco dias úteis da convocação (E p.25). O prazo da comissão para resultado é até três dias úteis. Os sete cenários sem integração final também dependem de validação em tela. Gov.br/e-CPF de acesso não substitui assinatura nem Tramita GOV.BR.
+
+### Registro incremental — 10/11/2026, fechamento local
+
+Responsável: execução automatizada acompanhada pelo agente principal. Ambiente: HTTP `localhost:3100`, Firebase/PostgreSQL/Blob do projeto, cadastros exclusivos removidos por manifesto após o ensaio. Código local posterior ao deployment de 10/11; ainda não corresponde a uma nova versão publicada. Evidência privada principal: `integrated-058f3af4-ec85-4655-a6bb-a75eb9214286/results.redacted.json`, **163 verificações aprovadas**, com histórico cifrado e teardown aprovado. Detalhamento permanente: `VALIDACAO_INTEGRADA_ROTEIRO.md` e `FECHAMENTO_ARVORE_E_VALIDACAO.md`.
+
+| Requisito/alínea | Estado verificado e resultado | Pendência para aceite integral |
+|---|---|---|
+| POC-P25-01; ACE-P31-01.a/b/c; ACE-P32-02.c | Testado internamente: criação/login, acesso N3, papel revogado e suspensão; operações proibidas recusadas. | Conferência humana do cenário em tela na versão final. |
+| POC-P25-02 | Dependência externa mantida: Gov.br/e-CPF real. | Credenciamento e etapa 10; não computar como aprovado. |
+| POC-P25-03; POC-P26-09 | Testado internamente no recorte do requerimento/chave: resposta pública sem CPF integral ou dados internos; anexo anônimo recusado. | Completar apresentação em tela de CPF e CNPJ e todos os caminhos públicos. |
+| POC-P25-04 | Testado internamente: gravação, numeração concorrente, cálculo de dia útil/feriado e persistência do prazo. | Editor e múltiplos prazos no mesmo cenário visual. |
+| POC-P25-05 | Testado internamente: percurso A→B→C, concorrência, autorização setorial, conclusão/arquivo/reabertura. | Conferência humana da timeline publicada. |
+| POC-P25-06 | Testado internamente: leitura concorrente imutável, contagens e encaminhamento urgente com ampliação de destinatários. | Apresentar ambas as modalidades e subsetores pela interface. |
+| POC-P26-07 | Testado internamente: requerimento no Protocolo Geral existente; titular/representante e revogação no portal ampliado. | CEP externo e cadastro completo por tela, incluindo perfis complementares em integração. |
+| POC-P26-08 | Dependência externa mantida: Resend/DNS/webhook real. | Configuração pelo proprietário e etapa 11; não computar como aprovado. |
+| GED — árvore/anexos vinculados | Testado internamente: raízes núcleo/módulo, vínculos inversos, ocultação de registro restrito, payload completo e idempotência do ZIP. | Processamento das novas compilações e conferência visual com arquivos reais; PDF/A/OCR aguardam infraestrutura. |
+| Workflow — expediente setorial | Testes de domínio aprovados: turnos, intervalo, minutos/segundos, feriados, fim de semana e virada do ano. | Configuração municipal oficial e aceite dos prazos reais. |
+| Diário — catálogo/snapshots | 11 cenários SQL isolados aprovados: hierarquia, rollback, classificação, publicação e imutabilidade histórica. | Catálogo oficial e publicação certificada nas integrações finais. |
+| Operação — capacidade | 60 sessões independentes, nove identidades existentes, 180/180 leituras aprovadas; p95 5.029 ms em execução local. | 60 identidades distintas, carga sustentada e medição do SaaS em produção. |
+| Operação — restauração | Snapshot original conferido em PostgreSQL WASM; posteriormente exportação consistente com dump e restauração real em PostgreSQL 18 local: 50 tabelas, 585 registros, três arquivos, hashes/contagens/FKs aprovados. | Abrir aplicação restaurada com armazenamento privado remapeado e provisionar redundância. |
+
+Ampliação posterior nesta mesma data: **307 verificações integradas** aprovadas, incluindo anexos e avaliação anônimos, reabertura, medições e PDF derivado (`integrated-223d5c19-2c37-4cdd-9662-1b89d2688fad`). Contatos/perfis/listas/unificação/titularidade externa: **86 verificações aprovadas** (`contacts-cb21bb49-e58f-46e0-b5cb-6a0ce1cd5dbe`), com recuperação da primeira limpeza e remoção confirmada dos recursos próprios. Tradução de conflitos SQL para HTTP 409 acrescentada após essa rodada, com nova conferência específica exigida no fechamento. Suíte de domínio/formatos ampliada: **34/34**.
+
+As linhas por família seguintes continuam sendo a decomposição contratual completa. Estes resultados alteram somente os recortes indicados; não atribuem aceite integral a alíneas não exercitadas.
 
 ## 3. Acesso, contas e identidade
 

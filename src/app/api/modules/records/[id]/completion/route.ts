@@ -6,7 +6,7 @@ import { department } from "@/db/schema";
 import { moduleRecord } from "@/db/modules-schema";
 import { context, getRecord, failure, ModuleError } from "@/lib/modules/server";
 import { canManage } from "@/lib/modules/policy";
-import { deadline } from "@/lib/modules/calendar";
+import { workflowDeadline } from "@/lib/modules/business-hours";
 export const dynamic="force-dynamic";
 export async function GET(req:Request,{params:paramsPromise}:{params:Promise<{id:string}>}) {
  const params = await paramsPromise;
@@ -24,7 +24,7 @@ export async function POST(req:Request,{params:paramsPromise}:{params:Promise<{i
    if(row.status!=="EM_ANDAMENTO"||!step||!ctx.session.departmentIds.some(id=>step.departments.includes(id))||!data.workflow?.routingDepartments?.includes(p.departmentId))throw new ModuleError("Roteamento não autorizado pelo fluxo ou setor atual.",403);
    if(data.workflow.family==="pessoal"&&p.departmentId!==data.workflow.rhDepartmentId)throw new ModuleError("Requerimento pessoal restrito ao RH.",403);
    const [sector]=await db.select().from(department).where(and(eq(department.id,p.departmentId),eq(department.active,true)));if(!sector)throw new ModuleError("Setor inativo.");
-   data.workflow.steps.splice(data.step??0,0,{name:`Diligência: ${sector.name}`,departments:[sector.id],hours:p.hours,decision:false});data.completedDepartments=[];data.dueAt=await deadline(p.hours,data.workflow.businessDays);departmentId=sector.id;participants=Array.from(new Set([...participants,sector.id]));
+   data.workflow.steps.splice(data.step??0,0,{name:`Diligência: ${sector.name}`,departments:[sector.id],hours:p.hours,decision:false});data.completedDepartments=[];data.dueAt=await workflowDeadline(p.hours,data.workflow.businessDays,[sector.id]);departmentId=sector.id;participants=Array.from(new Set([...participants,sector.id]));
   } else if(input.action==="EDITION") {
    if(row.family!=="diario"||row.status!=="AGUARDANDO_ASSINATURA"||!data.publication)throw new ModuleError("Prepare a edição antes de organizar atos.");
    const items=z.array(z.object({id:z.string().uuid(),section:z.string().max(200),subsection:z.string().max(200),withdrawn:z.boolean()})).max(100).parse(input.payload.items);

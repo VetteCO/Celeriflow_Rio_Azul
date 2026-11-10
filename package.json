@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.13"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "next dev",
@@ -20,6 +20,15 @@
     "operations:report": "tsx --env-file=.env.local scripts/contract-report.ts",
     "operations:monitor": "tsx --env-file=.env.local scripts/monitor.ts",
     "operations:backup": "tsx --env-file=.env.local src/lib/operations/backup-worker.ts",
+    "operations:export": "tsx --env-file=.env.local scripts/export-operations.ts",
+    "operations:restore": "tsx --env-file=.env.local scripts/restore-operations.ts",
+    "operations:reconcile": "tsx --env-file=.env.local scripts/reconcile-storage.ts",
+    "worker:reports": "tsx --env-file=.env.local scripts/operations-report-worker.ts",
+    "worker:pages": "tsx --env-file=.env.local scripts/operations-page-worker.ts",
+    "validate:integrated": "tsx --env-file=.env.local scripts/validate-integrated.ts",
+    "validate:contacts": "tsx --env-file=.env.local scripts/validate-contacts.ts",
+    "validate:learning-support": "tsx --env-file=.env.local scripts/validate-learning-support.ts",
+    "validate:capacity": "tsx --env-file=.env.local scripts/validate-capacity.ts",
     "db:seed": "tsx src/db/seed.ts",
     "db:seed:cenario": "tsx --env-file=.env.local src/db/seed-cenario.ts",
     "admin:bootstrap": "tsx src/db/bootstrap-users.ts"

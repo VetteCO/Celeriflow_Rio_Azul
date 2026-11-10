@@ -36,16 +36,17 @@ export function ModuleForm({ family, options, initial, onSave, onAutoSave, busy 
   const saveRef = useRef(onAutoSave); saveRef.current = onAutoSave;
   const autoPayload = useMemo(() => ({ title, body, blocks, values, workflowId: workflowId || undefined, workflow: family === "fluxos" ? workflow : undefined, linkedIds, coreDocumentIds, tags: tags.split(",").map(v => v.trim()).filter(Boolean), classificationId: classificationId || undefined, identity: family === "ouvidoria" && values.modalidade !== "Anônima" ? identity : undefined, agenda, attendees: attendees.split("\n").map(s => s.trim()).filter(Boolean) }), [title, body, blocks, values, workflowId, workflow, family, linkedIds, coreDocumentIds, tags, classificationId, identity, agenda, attendees]);
   const previousPayload = useRef(JSON.stringify(autoPayload));
+  const failedPayload = useRef("");
   useEffect(() => {
     const serialized = JSON.stringify(autoPayload);
-    if (!leased || !saveRef.current || family === "camadas" || serialized === previousPayload.current) return;
+    if (busy || !leased || !saveRef.current || family === "camadas" || serialized === previousPayload.current || serialized === failedPayload.current) return;
     const timer = setTimeout(async () => {
-      previousPayload.current = serialized; setAutoStatus("Salvando rascunho…");
-      try { await saveRef.current?.({...autoPayload,leaseToken}); setAutoStatus("Rascunho salvo no servidor."); }
-      catch (e) { setAutoStatus(`Salvamento automático interrompido: ${(e as Error).message}`); }
+      setAutoStatus("Salvando rascunho…");
+      try { await saveRef.current?.({...autoPayload,leaseToken}); previousPayload.current = serialized; failedPayload.current = ""; setAutoStatus("Rascunho salvo no servidor."); }
+      catch (e) { failedPayload.current = serialized; setAutoStatus(`Salvamento automático interrompido: ${(e as Error).message}. Use Salvar para tentar novamente.`); }
     }, 2500);
     return () => clearTimeout(timer);
-  }, [autoPayload, family, leased,leaseToken]);
+  }, [autoPayload, family, leased,leaseToken,busy]);
   const selectedWorkflow = options.configurations.find(c => c.id === workflowId)?.data.workflow ?? initial?.data.workflow;
   const setValue = (key: string, value: string) => setValues(current => ({ ...current, [key]: value }));
   const field = (definition: { key: string; label: string; type?: string; required?: boolean; options?: string[]; help?: string }) => <label key={definition.key}>{definition.label}{definition.required ? " *" : ""}

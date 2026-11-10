@@ -217,7 +217,7 @@ export default function DocDetail() {
         </p>
       )}
 
-      <p>{data.deadlines.length} prazo(s) · {data.attachments.length} anexo(s)</p>
+       <p>{data.deadlines.length} prazo(s) · {data.attachments.length} anexo(s) · <Link href={`/arvore?type=document&id=${params.id}`}>Árvore processual e anexos unificados</Link></p>
 
       <h3>Tramitação</h3>
       {data.participation && <ul>{data.participation.map((p) => <li key={p.departmentId}>{data.departments.find((d) => d.id === p.departmentId)?.name ?? "Setor"}: {p.state}</li>)}</ul>}

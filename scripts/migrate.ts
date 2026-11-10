@@ -11,6 +11,12 @@ async function main() {
   neonConfig.webSocketConstructor = WebSocket;
   const folder = resolve("src/db/migrations");
   const files = (await readdir(folder)).filter(name => name.endsWith(".sql")).sort();
+  const throughIndex = process.argv.indexOf("--through");
+  const through = throughIndex >= 0 ? process.argv[throughIndex + 1] : undefined;
+  if (throughIndex >= 0 && (!through || !files.includes(through))) throw new Error("Informe um nome de migração existente após --through.");
+  const onlyIndex = process.argv.indexOf("--only");
+  const only = onlyIndex >= 0 ? process.argv[onlyIndex + 1] : undefined;
+  if (onlyIndex >= 0 && (!only || !files.includes(only))) throw new Error("Informe um nome de migração existente após --only.");
   if (!apply) {
     console.log("Migrações disponíveis (nenhuma alteração aplicada):");
     for (const file of files) console.log(file);
@@ -44,6 +50,7 @@ async function main() {
         console.log(`Já aplicada: ${name}`);
         continue;
       }
+      if ((through && name > through) || (only && name !== only)) { console.log(`Adiada: ${name}`); continue; }
       await client.query("BEGIN");
       try {
         await client.query(source);

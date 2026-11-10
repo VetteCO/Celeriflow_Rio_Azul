@@ -8,3 +8,6 @@ drizzle/*.sql
 tsconfig.tsbuildinfo
 .agent/
 public/vendor/pdfjs/
+
+.vercel
+.env*

@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
-import { pgTable, uuid, text, integer, boolean, jsonb, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
-import { appUser } from "./schema";
+import { pgTable, uuid, text, integer, boolean, jsonb, timestamp, uniqueIndex, bigint, bigserial, primaryKey } from "drizzle-orm/pg-core";
+import { appUser,document,department } from "./schema";
 export type Lesson = { title: string; videoUrl: string; content: string };
 export type Question = { prompt: string; options: string[]; answer: number };
 const code = () => text("code").notNull().unique().default(sql`operations_next_code()`);
@@ -29,4 +29,16 @@ export const operationReport = pgTable("operation_report", {
   period: text("period").notNull(), requestKey: text("request_key").notNull().unique(),
   snapshot: jsonb("snapshot").$type<{ filters: Record<string,string>; rows: {id:string;category:string;indicator:string;value:number;unit:string;source:string}[]; generatedAt:string }>().notNull(),
   createdAt: timestamp("created_at", { withTimezone:true }).defaultNow().notNull(),
+});
+export const operationReportJob=pgTable('operation_report_job',{
+ id:uuid('id').primaryKey().defaultRandom(),ownerId:uuid('owner_id').notNull().references(()=>appUser.id),requestKey:text('request_key').notNull(),
+ filters:jsonb('filters').$type<Record<string,string>>().notNull(),format:text('format').notNull(),status:text('status').notNull().default('QUEUED'),attempts:integer('attempts').notNull().default(0),
+ leaseToken:uuid('lease_token'),leaseUntil:timestamp('lease_until',{withTimezone:true}),snapshot:jsonb('snapshot').$type<Record<string,unknown>>(),outputKey:text('output_key'),outputHash:text('output_hash'),outputSize:bigint('output_size',{mode:'number'}),error:text('error'),
+ createdAt:timestamp('created_at',{withTimezone:true}).notNull().defaultNow(),completedAt:timestamp('completed_at',{withTimezone:true}),expiresAt:timestamp('expires_at',{withTimezone:true}),notifiedAt:timestamp('notified_at',{withTimezone:true}),
+},t=>({request:uniqueIndex('operation_report_job_owner_id_request_key_key').on(t.ownerId,t.requestKey)}));
+export const operationPageMetric=pgTable('operation_page_metric',{
+ sourceType:text('source_type').notNull(),sourceId:uuid('source_id').notNull(),storageKey:text('storage_key').notNull(),sourceHash:text('source_hash').notNull().default(''),contentHash:text('content_hash'),pages:integer('pages'),bytes:bigint('bytes',{mode:'number'}),status:text('status').notNull(),measuredAt:timestamp('measured_at',{withTimezone:true}).notNull().defaultNow(),detail:text('detail'),
+},t=>({pk:primaryKey({columns:[t.sourceType,t.sourceId,t.storageKey,t.sourceHash]})}));
+export const operationParticipationHistory=pgTable('operation_participation_history',{
+ id:bigserial('id',{mode:'number'}).primaryKey(),documentId:uuid('document_id').notNull().references(()=>document.id),departmentId:uuid('department_id').notNull().references(()=>department.id),state:text('state').notNull(),recordedAt:timestamp('recorded_at',{withTimezone:true}).notNull().defaultNow(),origin:text('origin').notNull(),
 });

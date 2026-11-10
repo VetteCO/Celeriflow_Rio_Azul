@@ -1,5 +1,6 @@
 import { actor, failure, download } from "@/lib/operations/server";
-import { report, reportFilters } from "@/lib/operations/reports";
+import { reportFilters } from "@/lib/operations/reports";
+import { consistentReport as report } from "@/lib/operations/consistent-report";
 import { csv,pdf,xlsx } from "@/lib/operations/formats";
 import { db } from "@/db";
 import { appUser,department,auditLog } from "@/db/schema";

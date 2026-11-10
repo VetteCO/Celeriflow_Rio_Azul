@@ -1,0 +1,25 @@
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { api, useSession } from "@/components/session";
+import type { Options } from "../client";
+type Shift={day:number;start:string;end:string};
+type Hours={departmentId:string;revision:number;active:boolean;shifts:Shift[]};
+const days=["","Segunda","Terça","Quarta","Quinta","Sexta"];
+const template=()=>[1,2,3,4,5].flatMap(day=>[{day,start:"08:00",end:"12:00"},{day,start:"13:00",end:"17:00"}]);
+export default function BusinessHoursPage() {
+ const {user}=useSession(); const [options,setOptions]=useState<Options>(); const [rows,setRows]=useState<Hours[]>([]); const [holidays,setHolidays]=useState<{date:string;title?:string}[]>([]);
+ const [sector,setSector]=useState("");const [revision,setRevision]=useState(0);const [active,setActive]=useState(true);const [shifts,setShifts]=useState<Shift[]>(template);const [note,setNote]=useState("");const [message,setMessage]=useState("");const [busy,setBusy]=useState(false);
+ const [start,setStart]=useState("");const [hours,setHours]=useState(8);
+ async function load(){const [o,b]=await Promise.all([api("/api/modules/options"),api("/api/modules/business-hours")]);setOptions(o);setRows(b.hours);setHolidays(b.holidays);return b.hours as Hours[];}
+ useEffect(()=>{if(user)load().catch(e=>setMessage(e.message));},[user]);
+ function choose(id:string,list=rows){setSector(id);const row=list.find(r=>r.departmentId===id);setRevision(row?.revision??0);setActive(row?.active??true);setShifts(row?.shifts??template());setNote("");}
+ async function save(){setBusy(true);try{await api("/api/modules/business-hours",{method:"PUT",body:JSON.stringify({departmentId:sector,revision,active,shifts,note})});choose(sector,await load());setMessage("Expediente salvo e auditado. Será utilizado nos próximos protocolos e avanços de etapa.");}catch(e){setMessage((e as Error).message);}finally{setBusy(false);}}
+ async function preview(){setBusy(true);try{const r=await api("/api/modules/business-hours",{method:"POST",body:JSON.stringify({departmentIds:[sector],hours,start:`${start}:00-03:00`})});setMessage(`Vencimento pelo expediente salvo: ${new Date(r.dueAt).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo"})} (São Paulo).`);}catch(e){setMessage((e as Error).message);}finally{setBusy(false);}}
+ function change(i:number,value:Partial<Shift>){setShifts(shifts.map((s,j)=>i===j?{...s,...value}:s));}
+ return <section className="card"><h1>Expediente por setor</h1><p><Link href="/gestao">Gestão</Link> · <Link href="/calendario">Calendário e feriados</Link></p><p>Fuso America/Sao_Paulo. SLA útil conta apenas os turnos, excluindo intervalos, sábados, domingos e feriados cadastrados. Em etapas paralelas vale o último vencimento entre os setores. Prazos já emitidos permanecem preservados.</p><p role="status">{message}</p>
+ <label>Setor<select value={sector} onChange={e=>choose(e.target.value)}><option value="">Selecione</option>{options?.departments.map(d=><option key={d.id} value={d.id}>{d.name}{rows.some(r=>r.departmentId===d.id&&r.active)?" — configurado":" — sem expediente ativo"}</option>)}</select></label>
+ {sector&&<><fieldset disabled={busy||!options?.admin}><legend>Turnos semanais — revisão {revision}</legend><label><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)}/> Expediente ativo</label>{shifts.map((s,i)=><div key={i} style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:8}}><label>Dia<select value={s.day} onChange={e=>change(i,{day:Number(e.target.value)})}>{days.slice(1).map((d,j)=><option key={d} value={j+1}>{d}</option>)}</select></label><label>Início<input type="time" value={s.start} onChange={e=>change(i,{start:e.target.value})}/></label><label>Fim<input type="time" value={s.end} onChange={e=>change(i,{end:e.target.value})}/></label><button className="btn" onClick={()=>setShifts(shifts.filter((_,j)=>j!==i))}>Remover turno {i+1}</button></div>)}<button className="btn" onClick={()=>setShifts([...shifts,{day:1,start:"08:00",end:"12:00"}])}>Adicionar turno</button><label>Justificativa da configuração<input value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}/></label><button className="btn" disabled={!note.trim()||!shifts.length} onClick={save}>Salvar expediente</button></fieldset>
+ <fieldset disabled={busy}><legend>Consultar vencimento pelo expediente salvo</legend><label>Início em São Paulo<input type="datetime-local" value={start} onChange={e=>setStart(e.target.value)}/></label><label>Horas úteis<input type="number" min="0.01" step="0.25" value={hours} onChange={e=>setHours(Number(e.target.value))}/></label><button className="btn" disabled={!start||hours<=0} onClick={preview}>Calcular vencimento</button></fieldset></>}
+ <details><summary>Feriados excluídos do cálculo ({holidays.length})</summary>{holidays.length?holidays.map(h=><p key={h.date}>{h.date} {h.title}</p>):<p>Nenhum feriado cadastrado. Configure os feriados municipais na administração.</p>}</details></section>;
+}

@@ -3,7 +3,7 @@
 ## Ambiente e dados
 
 - Raiz da aplicação: pasta interna `Celeriflow_Rio_Azul`.
-- Node.js 22.13 ou superior, PostgreSQL/Neon, Firebase Auth e Blob privado.
+- Node.js **24.x** (versão fixada e validada na publicação), PostgreSQL/Neon, Firebase Auth e Blob privado.
 - Manter `.env.local` fora do Git; cadastrar as mesmas variáveis no ambiente de publicação.
 - `DIRECT_URL` deve apontar ao endpoint PostgreSQL direto, sem pool transacional, para migrações com lock de sessão.
 - `DEFAULT_INTAKE_DEPARTMENT_ID` aponta para **Protocolo Geral**, criado por autorização do proprietário como subsetor da Secretaria Municipal de Administração. No ambiente local foi usado `379a1186-9a99-4eb4-94a4-fc2f5795562d`.
@@ -12,7 +12,7 @@
 ## Instalação
 
 1. Preservar banco e anexos originais. Registrar contagens, checksums e destino da cópia.
-2. Revisar `src/db/migrations/0001_core.sql`, `002_modules.sql`, `003_operations.sql`, `004_jobs.sql` e `005_modules_completion.sql`.
+2. Revisar `src/db/migrations/0001_core.sql` até `009_contacts_external.sql`, inclusive os incrementos 006 (contatos/anônimo), 007 (expediente/Diário), 008 (operação) e 009 (cadastro externo). Todos esses históricos já foram aplicados no ambiente atual.
 3. Listar com `npm run db:migrate`.
 4. Na primeira instalação deste executor sobre o banco existente revisado, executar `npm run db:migrate -- --apply --existing-schema`. Nas seguintes, usar `npm run db:migrate -- --apply`.
 5. Executar `npm run lint` e `npm run build` após integrar os módulos. Publicar somente o build conferido.
@@ -34,7 +34,12 @@ O proprietário escolheu definir a infraestrutura depois. Código, fila e APIs i
 
 - Relatórios mensais: `npm run operations:report`, após configurar conta operacional. Também há endpoint protegido para agendador externo.
 - Monitoramento: `npm run operations:monitor`, em ambiente independente, com armazenamento dos resultados e canal de alerta.
-- Backup: `npm run operations:backup -- <diretório-novo>`, com PostgreSQL `pg_dump` instalado. Replicar e ensaiar restauração conforme a política contratual.
+- Backup: `npm run operations:backup -- <diretório-novo> --authorize-full-export`, com PostgreSQL `pg_dump` instalado e conta operacional configurada. Replicar e ensaiar restauração conforme a política contratual.
+- Exportação integral: `npm run operations:export -- <diretório-novo> --authorize-full-export --with-dump`. Requer `DIRECT_URL` sem pooler, `OPERATIONS_SERVICE_USER_ID` de administrador ativo e ferramentas PostgreSQL. O manifesto v2 contém hashes, inventário, NDJSON, schema SQL/JSON e originais em streaming.
+- Restauração: `npm run operations:restore -- <backup-v2> <diretório-novo> --confirm-isolated`, com `RESTORE_DATABASE_URL` e `RESTORE_DATABASE_NAME` explícitos apontando para banco vazio isolado. PostgreSQL local utiliza `psql`; Neon utiliza conexão WebSocket. O ensaio real de banco/arquivos foi aprovado em 10/11; conectar a aplicação ao armazenamento restaurado exige remapeamento isolado.
+- Reconciliação: `npm run operations:reconcile -- --output <manifesto-privado.json>`. Compara objetos com referências persistidas, incluindo uploads de resposta incerta. Não exclui objetos.
+- Relatórios prontos: `npm run worker:reports -- --watch`; contagem de páginas reais: `npm run worker:pages`. Agendar/supervisionar no executor autorizado; não iniciar processos dentro de requisições serverless.
+- Configurar perfis de contatos, expediente dos setores e catálogo do Diário pela administração municipal. A implantação não presume jornada, tarifa de faturamento nem custo de impressão. Regras de faturamento/economia precisam de configuração explícita conforme `FECHAMENTO_OPERACAO.md`.
 - Redundância geográfica, restauração, carga de 60 usuários, disponibilidade contínua, treinamento presencial e visitas mensais exigem evidências operacionais próprias.
 
 ## Etapas finais preservadas
