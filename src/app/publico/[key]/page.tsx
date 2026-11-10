@@ -1,29 +1,26 @@
 import QRCode from "qrcode";
 import { headers } from "next/headers";
 import { KeySearch } from "./KeySearch";
+import { publicDocument } from "@/lib/public-document";
+
+const statuses: Record<string, string> = { DRAFT: "Rascunho", OPEN: "Aberto", IN_TRANSIT: "Em tramitação", CONCLUDED: "Concluído", ARCHIVED: "Arquivado" };
+const actions: Record<string, string> = { CREATED: "Registrado", FORWARDED: "Encaminhado", RECEIVED: "Recebido", CONCLUDED: "Concluído", ARCHIVED: "Arquivado", REOPENED: "Reaberto", CITIZEN_REPLY: "Resposta registrada", CITIZEN_COMPLEMENT: "Complementação recebida", EMAIL_INBOUND: "Correspondência recebida" };
 
 // POC-09: página pública sem auth. Dados via DTO interno (mesma projeção
 // limitada da API): sem corpo, sem anexos, CPF mascarado, histórico resumido.
 async function fetchPublic(key: string) {
-  const h = headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "http";
-  const base = `${proto}://${host}`;
-  const r = await fetch(`${base}/api/publico/${encodeURIComponent(key)}`, {
-    cache: "no-store",
-  });
-  if (r.status === 404) return null;
-  if (!r.ok) throw new Error(`public_${r.status}`);
-  return r.json();
+  return publicDocument(key);
 }
 
-export default async function PublicoKey({ params }: { params: { key: string } }) {
+export default async function PublicoKey({ params: paramsPromise }: { params: Promise<{ key: string }> }) {
+  const params = await paramsPromise;
   const data = await fetchPublic(params.key).catch(() => undefined);
 
-  const h = headers();
+  const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host");
   const proto = h.get("x-forwarded-proto") ?? "http";
-  const url = `${proto}://${host}/publico/${encodeURIComponent(params.key)}`;
+   const base = (process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || `${proto}://${host}`).replace(/\/$/, "");
+   const url = `${base}/publico/${encodeURIComponent(params.key)}`;
   const qr = await QRCode.toDataURL(url, { width: 220, margin: 1 }).catch(() => null);
 
   return (
@@ -34,7 +31,7 @@ export default async function PublicoKey({ params }: { params: { key: string } }
       </div>
       {data === null && (
         <p className="alert alert-error" role="alert">
-          Chave inválida — confira o código do protocolo ou leia o QR novamente.
+           Consulta indisponível para esta chave. Confira o código ou procure o atendimento responsável.
         </p>
       )}
       {data === undefined && (
@@ -51,14 +48,14 @@ export default async function PublicoKey({ params }: { params: { key: string } }
             </p>
             <p>{data.subject}</p>
             <p>
-              <span className={`badge badge-${data.status}`}>{data.status}</span>{" "}
+              <span className={`badge badge-${data.status}`}>{statuses[data.status] ?? data.status}</span>{" "}
               <span className="muted">
                 Criado em {new Date(data.createdAt).toLocaleString("pt-BR")}
               </span>
             </p>
             {data.citizenCpf && (
               <p>
-                CPF/CNPJ (LGPD, mascarado): <strong>{data.citizenCpf}</strong>
+                 CPF/CNPJ protegido: <strong>{data.citizenCpf}</strong>
               </p>
             )}
           </div>
@@ -76,10 +73,10 @@ export default async function PublicoKey({ params }: { params: { key: string } }
           </div>
           <h2>Andamento</h2>
           <ol className="timeline">
-            {data.history.map((ev: { action: string; at: string }, i: number) => (
+             {data.history.map((ev, i) => (
               <li key={i}>
-                <span className="t-action">{ev.action}</span>
-                <div className="t-meta">{new Date(ev.at).toLocaleString("pt-BR")}</div>
+                <span className="t-action">{actions[ev.action] ?? "Andamento registrado"}</span>
+                 <div className="t-meta">{new Date(ev.at).toLocaleString("pt-BR")}</div>
               </li>
             ))}
           </ol>

@@ -9,14 +9,16 @@ import {
   document,
   documentDeadline,
   documentMovement,
+  documentParticipation,
 } from "@/db/schema";
-import { getSession, requirePerm } from "@/lib/auth";
-import { formatNumber } from "@/lib/numbering";
+import { getSession, requirePerm, canAccessDocument } from "@/lib/auth";
+import { formatNumber, sanitizeDocumentHtml } from "@/lib/numbering";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
 ) {
+  const params = await paramsPromise;
   const session = await getSession(_req);
   const check = requirePerm(session, "doc:view");
   if (!check.ok)
@@ -25,20 +27,20 @@ export async function GET(
       { status: check.status }
     );
 
-  const rows = await db.select().from(document).where(eq(document.id, params.id));
-  const doc = rows[0];
+  const doc = await canAccessDocument(check.session, params.id);
   if (!doc) return NextResponse.json({ error: "not_found" }, { status: 404 });
 
-  const [deadlines, movements, files, depts, users] = await Promise.all([
+  const [deadlines, movements, files, depts, users, participation] = await Promise.all([
     db.select().from(documentDeadline).where(eq(documentDeadline.documentId, doc.id)),
     db
       .select()
       .from(documentMovement)
       .where(eq(documentMovement.documentId, doc.id))
-      .orderBy(asc(documentMovement.createdAt)),
+      .orderBy(asc(documentMovement.createdAt), asc(documentMovement.id)),
     db.select().from(attachment).where(eq(attachment.documentId, doc.id)),
     db.select().from(department),
     db.select().from(appUser),
+    db.select().from(documentParticipation).where(eq(documentParticipation.documentId, doc.id)),
   ]);
   const deptName = (id: string | null) =>
     depts.find((d) => d.id === id)?.name ?? "—";
@@ -46,11 +48,14 @@ export async function GET(
     users.find((u) => u.id === id)?.name ?? "sistema";
 
   return NextResponse.json({
+    participation,
     document: {
       id: doc.id,
-      displayNumber: formatNumber(doc.type, doc.number, doc.year),
+      displayNumber: formatNumber(doc.type, doc.number, doc.year, doc.businessCode),
+      type: doc.type,
+      accessLevel: doc.accessLevel,
       subject: doc.subject,
-      body: doc.body,
+      body: sanitizeDocumentHtml(doc.body),
       status: doc.status,
       origin: deptName(doc.originDepartmentId),
       createdAt: doc.createdAt,
@@ -68,6 +73,7 @@ export async function GET(
       from: deptName(m.fromDepartmentId),
       to: deptName(m.toDepartmentId),
       note: m.note,
+      visibility: m.visibility,
       actor: userName(m.actorUserId),
       at: m.createdAt,
     })),
@@ -76,6 +82,7 @@ export async function GET(
       filename: f.filename,
       url: `/api/attachments/${f.id}`,
       size: f.size,
+      citizenVisible: f.citizenVisible,
     })),
     departments: depts,
   });

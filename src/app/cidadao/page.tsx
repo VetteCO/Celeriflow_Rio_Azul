@@ -1,7 +1,11 @@
 "use client";
 // POC-07 — portal do cidadão: cadastro + CEP automático + requerimento +
 // protocolo/chave + acompanhamento.
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { MaskedInput } from "@/components/MaskedInput";
+import { validCpfCnpj } from "@/lib/tax-id";
+import { externalError, useExternalAccount } from "./conta/ExternalAccount";
 
 type Addr = { street: string; district: string; city: string; state: string };
 type Created = { protocolNumber: string; publicKey: string; emailStatus: string };
@@ -10,11 +14,12 @@ type Track = {
   requestType: string;
   status: string;
   createdAt: string;
-  citizen: { name: string; cpfCnpj: string };
+   citizen?: { name?: string; cpfCnpj: string };
   history: Array<{ action: string; note: string | null; at: string }>;
 };
 
 export default function CidadaoPage() {
+  const { user } = useExternalAccount();
   const [form, setForm] = useState({
     name: "",
     cpfCnpj: "",
@@ -36,6 +41,10 @@ export default function CidadaoPage() {
   const [created, setCreated] = useState<Created | null>(null);
   const [trackKey, setTrackKey] = useState("");
   const [tracked, setTracked] = useState<Track | null>(null);
+  const [tracking, setTracking] = useState(false);
+  useEffect(() => {
+    if (user?.email) setForm((current) => ({ ...current, email: user.email!, name: current.name || user.displayName || "" }));
+  }, [user]);
 
   function set<K extends keyof typeof form>(k: K, v: string) {
     setForm((f) => ({ ...f, [k]: v }));
@@ -53,7 +62,7 @@ export default function CidadaoPage() {
       const r = await fetch(`/api/cep?cep=${cep}`);
       const d = (await r.json()) as Addr & { error?: string };
       if (!r.ok) throw new Error(d.error ?? "falha na busca");
-      setForm((f) => ({ ...f, street: d.street, district: d.district, city: d.city, state: d.state }));
+       setForm((f) => f.cep.replace(/\D/g, "") === cep ? ({ ...f, street: d.street, district: d.district, city: d.city, state: d.state }) : f);
       setCepState("ok");
     } catch (e) {
       setCepState("error");
@@ -65,18 +74,21 @@ export default function CidadaoPage() {
     e.preventDefault();
     if (saving) return;
     setErr(null);
+    if (!validCpfCnpj(form.cpfCnpj)) { setErr("Informe um CPF ou CNPJ válido."); return; }
+    if (user && !user.emailVerified) { setErr("Confirme o e-mail da sua conta antes de registrar o requerimento autenticado."); return; }
     setSaving(true);
     try {
+      const token = user ? await user.getIdToken() : null;
       const r = await fetch("/api/cidadao/requerimentos", {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(form),
+        headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) },
+         body: JSON.stringify({ ...form, email: user?.email ?? form.email, cpfCnpj: form.cpfCnpj.replace(/\D/g, ""), cep: form.cep.replace(/\D/g, ""), phone: form.phone.replace(/\D/g, "") }),
       });
       const d = (await r.json()) as Created & { error?: string };
       if (!r.ok) throw new Error(d.error ?? `http_${r.status}`);
       setCreated(d);
     } catch (e) {
-      setErr((e as Error).message);
+      setErr(externalError(e));
     } finally {
       setSaving(false);
     }
@@ -84,6 +96,8 @@ export default function CidadaoPage() {
 
   async function acompanhar(e: React.FormEvent) {
     e.preventDefault();
+    if (tracking) return;
+    setTracking(true);
     setErr(null);
     try {
       const r = await fetch(`/api/cidadao/requerimentos?key=${encodeURIComponent(trackKey.trim())}`);
@@ -92,7 +106,9 @@ export default function CidadaoPage() {
       setTracked(d);
     } catch (e) {
       setErr((e as Error).message);
-      setTracked(null);
+       setTracked(null);
+    } finally {
+      setTracking(false);
     }
   }
 
@@ -109,10 +125,12 @@ export default function CidadaoPage() {
           </p>
           <p className="muted">
             {created.emailStatus === "SENT"
-              ? "Confirmação enviada para o seu e-mail."
-              : "Você receberá a confirmação no e-mail informado."}
+               ? "Confirmação aceita pelo serviço de e-mail. Confira sua caixa de entrada."
+               : "A confirmação por e-mail não foi enviada. Acompanhe seu protocolo pela chave abaixo."}
           </p>
           <p>Guarde esses dois códigos — anote ou fotografe esta tela.</p>
+          <Link className="btn btn-primary" href={`/publico/${encodeURIComponent(created.publicKey)}`}>Acompanhar protocolo e QR Code</Link>
+          <Link className="btn" href={user?.emailVerified ? `/cidadao/processos/${encodeURIComponent(created.publicKey)}` : "/cidadao/conta"}>Minha caixa, anexos e complementação</Link>
         </div>
         <button className="btn" onClick={() => setCreated(null)}>
           Novo requerimento
@@ -124,6 +142,8 @@ export default function CidadaoPage() {
   return (
     <div>
       <h1>Portal do cidadão</h1>
+      <div className="form-row"><Link className="btn btn-primary" href="/cidadao/conta">{user ? "Minha conta e protocolos" : "Entrar ou criar conta"}</Link><Link className="btn" href="/publico">Consulta pública</Link></div>
+      {user && <p className="muted">Requerimento vinculado a {user.email}.{!user.emailVerified && " Confirme seu e-mail na página Minha conta para continuar."}</p>}
       {err && (
         <p className="alert alert-error" role="alert">
           {err}
@@ -134,27 +154,27 @@ export default function CidadaoPage() {
         <div className="form-row">
           <label style={{ flex: 2 }}>
             Nome completo
-            <input name="name" autoComplete="name" value={form.name} onChange={(e) => set("name", e.target.value)} />
+             <input required name="name" autoComplete="name" value={form.name} onChange={(e) => set("name", e.target.value)} />
           </label>
           <label style={{ flex: 1 }}>
             CPF/CNPJ
-            <input name="cpfCnpj" inputMode="numeric" value={form.cpfCnpj} onChange={(e) => set("cpfCnpj", e.target.value)} />
+             <MaskedInput required kind="cpfCnpj" name="cpfCnpj" value={form.cpfCnpj} onValueChange={(v) => set("cpfCnpj", v)} />
           </label>
         </div>
         <div className="form-row">
           <label style={{ flex: 1 }}>
             E-mail
-            <input type="email" name="email" spellCheck={false} value={form.email} onChange={(e) => set("email", e.target.value)} />
+             <input required readOnly={!!user} type="email" name="email" spellCheck={false} value={form.email} onChange={(e) => set("email", e.target.value)} />
           </label>
           <label style={{ flex: 1 }}>
             Telefone
-            <input name="phone" inputMode="tel" autoComplete="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
+             <MaskedInput kind="phone" name="phone" autoComplete="tel" value={form.phone} onValueChange={(v) => set("phone", v)} />
           </label>
         </div>
         <div className="form-row">
           <label style={{ flex: 1 }}>
             CEP
-            <input name="cep" inputMode="numeric" autoComplete="postal-code" value={form.cep} onChange={(e) => set("cep", e.target.value)} />
+             <MaskedInput required kind="cep" name="cep" autoComplete="postal-code" value={form.cep} onValueChange={(v) => { set("cep", v); setCepState("idle"); }} />
           </label>
           <div style={{ alignSelf: "end" }}>
             <button type="button" className="btn" onClick={buscarCep} disabled={cepState === "loading"}>
@@ -162,9 +182,11 @@ export default function CidadaoPage() {
             </button>
           </div>
         </div>
-        <div className="form-row">
-          <label style={{ flex: 3 }}>
-            Logradouro
+         {cepState === "ok" && <p role="status">Endereço localizado. Confira os dados e informe o número e complemento.</p>}
+         {cepState === "error" && <p role="status">A consulta de CEP está indisponível ou o endereço não foi localizado. Preencha os dados manualmente.</p>}
+         <div className="form-row">
+           <label style={{ flex: 3 }}>
+             Logradouro
             <input value={form.street} onChange={(e) => set("street", e.target.value)} />
           </label>
           <label style={{ flex: 1 }}>
@@ -185,11 +207,11 @@ export default function CidadaoPage() {
         <div className="form-row">
           <label style={{ flex: 3 }}>
             Cidade
-            <input value={form.city} onChange={(e) => set("city", e.target.value)} />
+             <input required value={form.city} onChange={(e) => set("city", e.target.value)} />
           </label>
           <label style={{ flex: 1 }}>
             UF
-            <input maxLength={2} value={form.state} onChange={(e) => set("state", e.target.value.toUpperCase())} />
+             <input required minLength={2} maxLength={2} value={form.state} onChange={(e) => set("state", e.target.value.toUpperCase())} />
           </label>
         </div>
 
@@ -205,7 +227,7 @@ export default function CidadaoPage() {
         </label>
         <label>
           Descrição
-          <textarea rows={5} value={form.description} onChange={(e) => set("description", e.target.value)} />
+           <textarea required minLength={10} rows={5} value={form.description} onChange={(e) => set("description", e.target.value)} />
         </label>
         <button type="submit" className="btn btn-primary" disabled={saving}>
           {saving ? "Enviando…" : "Enviar requerimento"}
@@ -222,8 +244,8 @@ export default function CidadaoPage() {
             value={trackKey}
             onChange={(e) => setTrackKey(e.target.value)}
           />
-          <button type="submit" className="btn">
-            Consultar
+           <button type="submit" className="btn" disabled={tracking || !trackKey.trim()}>
+             {tracking ? "Consultando…" : "Consultar"}
           </button>
         </form>
         {tracked && (
@@ -232,15 +254,13 @@ export default function CidadaoPage() {
               <strong>{tracked.protocolNumber}</strong> — {tracked.requestType} · status{" "}
               {tracked.status}
             </p>
-            <p className="muted">
-              {tracked.citizen.name} · {tracked.citizen.cpfCnpj}
-            </p>
+             {tracked.citizen && <p className="muted">CPF/CNPJ protegido: {tracked.citizen.cpfCnpj}</p>}
             <ol className="timeline">
               {tracked.history.map((h, i) => (
                 <li key={i}>
                   <span className="t-action">{h.action}</span>
-                  <div className="t-meta">{new Date(h.at).toLocaleString("pt-BR")}</div>
-                  {h.note && <div className="t-note">{h.note}</div>}
+                   <div className="t-meta">{new Date(h.at).toLocaleString("pt-BR")}</div>
+                   {h.action === "CITIZEN_REPLY" && h.note && <p>{h.note}</p>}
                 </li>
               ))}
             </ol>

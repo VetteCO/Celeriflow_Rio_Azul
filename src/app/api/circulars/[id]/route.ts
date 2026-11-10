@@ -2,7 +2,7 @@
 // Ao abrir como destinatário, registra firstReadAt (imutável via unique +
 // onConflictDoNothing) e retorna o recibo.
 import { NextResponse } from "next/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, asc } from "drizzle-orm";
 import { db } from "@/db";
 import {
   appUser,
@@ -12,8 +12,8 @@ import {
   documentReadReceipt,
   documentRecipient,
 } from "@/db/schema";
-import { getSession, requirePerm } from "@/lib/auth";
-import { formatNumber } from "@/lib/numbering";
+import { getSession, requirePerm, canAccessDocument, isRecipient } from "@/lib/auth";
+import { formatNumber, sanitizeDocumentHtml } from "@/lib/numbering";
 
 async function recordRead(documentId: string, userId: string) {
   await db
@@ -32,7 +32,8 @@ async function recordRead(documentId: string, userId: string) {
   return rows[0] ?? null;
 }
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession(req);
   const check = requirePerm(session, "circular:view");
   if (!check.ok)
@@ -44,8 +45,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   const { searchParams } = new URL(req.url);
   const onlyUnread = searchParams.get("unread") === "1";
 
-  const rows = await db.select().from(document).where(eq(document.id, params.id));
-  const doc = rows[0];
+  const doc = await canAccessDocument(check.session, params.id);
   if (!doc || doc.type !== "CIRCULAR")
     return NextResponse.json({ error: "not_found" }, { status: 404 });
 
@@ -58,18 +58,19 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
   // Leitura do próprio visualizador (prova individual de leitura).
   let myReceipt = null;
-  if (me) myReceipt = await recordRead(doc.id, me.id);
+  if (me && await isRecipient(check.session, doc.id)) myReceipt = await recordRead(doc.id, me.id);
 
   const [recipients, receipts, users, depts, movements] = await Promise.all([
     db.select().from(documentRecipient).where(eq(documentRecipient.documentId, doc.id)),
     db.select().from(documentReadReceipt).where(eq(documentReadReceipt.documentId, doc.id)),
     db.select().from(appUser),
     db.select().from(department),
-    db.select().from(documentMovement).where(eq(documentMovement.documentId, doc.id)),
+    db.select().from(documentMovement).where(eq(documentMovement.documentId, doc.id)).orderBy(asc(documentMovement.createdAt), asc(documentMovement.id)),
   ]);
 
   const individual = recipients
-    .filter((r) => r.userId)
+    .filter(r => r.recipientType !== "CANCELLED")
+    .filter((r, i, all) => r.userId && all.findIndex(x => x.userId === r.userId) === i)
     .map((r) => {
       const u = users.find((x) => x.id === r.userId);
       const d = depts.find((x) => x.id === (r.departmentId ?? u?.departmentId));
@@ -88,9 +89,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   return NextResponse.json({
     circular: {
       id: doc.id,
-      displayNumber: formatNumber(doc.type, doc.number, doc.year),
+      displayNumber: formatNumber(doc.type, doc.number, doc.year, doc.businessCode),
       subject: doc.subject,
-      body: doc.body,
+      body: sanitizeDocumentHtml(doc.body),
       urgency: doc.urgency,
       status: doc.status,
       createdAt: doc.createdAt,

@@ -13,9 +13,13 @@ function adminApp() {
 }
 
 export async function verifyIdToken(idToken: string) {
-  return getAuth(adminApp()).verifyIdToken(idToken);
+  return getAuth(adminApp()).verifyIdToken(idToken, true);
 }
 
-export async function setRoleClaim(uid: string, role: "ADMIN_GERAL" | "NIVEL_3_VISUALIZACAO") {
-  return getAuth(adminApp()).setCustomUserClaims(uid, { role });
+export function firebaseAdminAuth() { return getAuth(adminApp()); }
+
+export async function setRoleClaim(uid: string, role: import("./rbac").Role) {
+  const auth = firebaseAdminAuth();
+  const user = await auth.getUser(uid);
+  return auth.setCustomUserClaims(uid, { ...user.customClaims, role });
 }

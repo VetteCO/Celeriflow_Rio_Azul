@@ -2,7 +2,9 @@
 // POC-06 — detalhe: painel lido/não lido por servidor + filtro + recibo próprio.
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { api, useSession } from "@/components/session";
+import { DataTable } from "@/components/DataTable";
 
 type Detail = {
   circular: {
@@ -26,15 +28,17 @@ type Detail = {
   }>;
 };
 
-export default function CircularDetail({ params }: { params: { id: string } }) {
+export default function CircularDetail() {
+  const params = useParams<{ id: string }>();
   const { user } = useSession();
   const [data, setData] = useState<Detail | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [onlyUnread, setOnlyUnread] = useState(false);
+  const [showRecipients, setShowRecipients] = useState(false);
 
   const load = useCallback(
-    (unread: boolean) => {
-      api(`/api/circulars/${params.id}${unread ? "?unread=1" : ""}`)
+     () => {
+       api(`/api/circulars/${params.id}`)
         .then(setData)
         .catch((e) => setErr((e as Error).message));
     },
@@ -43,8 +47,8 @@ export default function CircularDetail({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     if (!user) return;
-    load(onlyUnread);
-  }, [user, onlyUnread, load]);
+     load();
+   }, [user, load]);
 
   if (user === undefined) return <p role="status">Carregando…</p>;
   if (!user)
@@ -60,6 +64,11 @@ export default function CircularDetail({ params }: { params: { id: string } }) {
       </p>
     );
   if (!data) return <p role="status">Carregando circular…</p>;
+
+  if (showRecipients) return <DataTable id="circular-recipients" title={`Destinatários — ${data.circular.displayNumber}`} rows={data.recipients.filter((r) => !onlyUnread || !r.read)} rowKey={(r) => r.userId} error={err}
+    actions={<><Link className="btn" href="/circulares">Circulares</Link><button className="btn" onClick={() => setShowRecipients(false)}>Voltar à circular</button><button className="btn" onClick={load}>Atualizar</button></>} filters={<label><input type="checkbox" checked={onlyUnread} onChange={(e) => setOnlyUnread(e.target.checked)} /> Somente não lidos</label>} columns={[
+      { key: "name", label: "Nome", value: (r) => r.name }, { key: "email", label: "E-mail", value: (r) => r.email }, { key: "sector", label: "Setor", value: (r) => r.sector }, { key: "read", label: "Situação", value: (r) => r.read ? "Lido" : "Não lido" }, { key: "date", label: "Primeira leitura", value: (r) => r.firstReadAt ? new Date(r.firstReadAt).toLocaleString("pt-BR") : "—" },
+    ]} />;
 
   return (
     <div>
@@ -92,55 +101,8 @@ export default function CircularDetail({ params }: { params: { id: string } }) {
         <strong>{data.stats.read}</strong> lidos · <strong>{data.stats.unread}</strong> não
         lidos · {data.stats.total} destinatários
       </p>
-      <label style={{ display: "flex", gap: 8, alignItems: "center", fontWeight: 400 }}>
-        <input
-          type="checkbox"
-          style={{ width: "auto", minHeight: "auto" }}
-          checked={onlyUnread}
-          onChange={(e) => setOnlyUnread(e.target.checked)}
-        />
-        Mostrar só não lidos
-      </label>
-      <div className="table-wrap">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Servidor</th>
-              <th scope="col">Setor</th>
-              <th scope="col">Status</th>
-              <th scope="col">Lido em</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.recipients.map((r) => (
-              <tr key={r.userId}>
-                <td>
-                  {r.name}
-                  <div className="muted">{r.email}</div>
-                </td>
-                <td>{r.sector}</td>
-                <td>
-                  <span className={`badge ${r.read ? "badge-OPEN" : "badge-DRAFT"}`}>
-                    {r.read ? "Lido" : "Não lido"}
-                  </span>
-                </td>
-                <td>
-                  {r.firstReadAt
-                    ? new Date(r.firstReadAt).toLocaleString("pt-BR")
-                    : "—"}
-                </td>
-              </tr>
-            ))}
-            {data.recipients.length === 0 && (
-              <tr>
-                <td colSpan={4} className="muted">
-                  {onlyUnread ? "Todos leram. Nada pendente." : "Sem destinatários."}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+       <button className="btn" onClick={() => setShowRecipients(true)}>Consultar destinatários e recibos</button>
+       <Link className="btn" href={`/documentos/${params.id}`}>Anexos, prazos e tramitação</Link>
     </div>
   );
 }

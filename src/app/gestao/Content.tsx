@@ -1,0 +1,22 @@
+"use client";
+import type { ContentBlock } from "@/lib/modules/domain";
+export function DocumentContent({ blocks }: { blocks: ContentBlock[] }) {
+  return <div>{blocks.map((block, i) => {
+    if (block.type === "paragraph") return <p key={i} style={{ whiteSpace: "pre-wrap", textAlign: block.align, fontSize: block.size, fontWeight: block.bold ? "bold" : undefined, fontStyle: block.italic ? "italic" : undefined, textDecoration: block.underline ? "underline" : undefined }}>{block.text}</p>;
+    if (block.type === "link") return <p key={i}><a href={block.url} target="_blank" rel="noopener noreferrer">{block.label || block.url}</a></p>;
+    // Original document resources must not be rewritten through the application image proxy.
+    // eslint-disable-next-line @next/next/no-img-element
+    if (block.type === "image") return <figure key={i}><img src={block.url} alt={block.caption} style={{ maxWidth: "100%", maxHeight: 500 }} /><figcaption>{block.caption}</figcaption></figure>;
+    return <table key={i} style={{ borderCollapse: "collapse", width: "100%" }}><tbody>{block.rows.map((row, ri) => <tr key={ri}>{row.map((cell, ci) => <td key={ci} style={{ border: "1px solid #bbb", padding: 6, whiteSpace: "pre-wrap" }}>{cell}</td>)}</tr>)}</tbody></table>;
+  })}</div>;
+}
+export function BlockEditor({ value, onChange }: { value: ContentBlock[]; onChange: (blocks: ContentBlock[]) => void }) {
+  const change = (index: number, block: ContentBlock) => onChange(value.map((b, i) => i === index ? block : b));
+  return <fieldset><legend>Conteúdo formatado</legend>{value.map((block, i) => <fieldset key={i}><legend>Bloco {i + 1}</legend>
+    {block.type === "paragraph" && <><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{(["bold", "italic", "underline"] as const).map((key, index) => <label key={key}><input type="checkbox" checked={block[key]} onChange={e => change(i, { ...block, [key]: e.target.checked })} />{["Negrito", "Itálico", "Sublinhado"][index]}</label>)}<label>Alinhamento<select value={block.align} onChange={e => change(i, { ...block, align: e.target.value as "left" | "center" | "right" })}><option value="left">Esquerda</option><option value="center">Centro</option><option value="right">Direita</option></select></label><label>Tamanho<input type="number" min={10} max={36} value={block.size} onChange={e => change(i, { ...block, size: Number(e.target.value) })} /></label></div><textarea aria-label={`Texto do bloco ${i + 1}`} spellCheck rows={4} value={block.text} onChange={e => change(i, { ...block, text: e.target.value })} /></>}
+    {block.type === "table" && <><label>Células separadas por tabulação, uma linha por parágrafo<textarea rows={5} value={block.rows.map(row => row.join("\t")).join("\n")} onChange={e => change(i, { ...block, rows: e.target.value.split("\n").map(row => row.split("\t")) })} /></label><small>É possível colar células de uma planilha.</small></>}
+    {block.type === "link" && <><label>Texto<input value={block.label} onChange={e => change(i, { ...block, label: e.target.value })} /></label><label>URL<input type="url" value={block.url} onChange={e => change(i, { ...block, url: e.target.value })} /></label></>}
+    {block.type === "image" && <><label>Imagem institucional HTTPS<input type="url" value={block.url} onChange={e => change(i, { ...block, url: e.target.value })} /></label><label>Descrição da imagem<input value={block.caption} onChange={e => change(i, { ...block, caption: e.target.value })} /></label></>}
+    <button type="button" className="btn" onClick={() => onChange(value.filter((_, index) => index !== i))}>Remover bloco</button>
+  </fieldset>)}<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><button type="button" className="btn" onClick={() => onChange([...value, { type: "paragraph", text: "", bold: false, italic: false, underline: false, align: "left", size: 14 }])}>Parágrafo</button><button type="button" className="btn" onClick={() => onChange([...value, { type: "table", rows: [["", ""], ["", ""]] }])}>Tabela</button><button type="button" className="btn" onClick={() => onChange([...value, { type: "link", label: "", url: "" }])}>Link</button><button type="button" className="btn" onClick={() => onChange([...value, { type: "image", caption: "", url: "" }])}>Imagem</button></div><details><summary>Pré-visualizar conteúdo formatado</summary><DocumentContent blocks={value} /></details></fieldset>;
+}

@@ -1,5 +1,7 @@
 # Plano de Implementação — Celeriflow Rio Azul (POC 9/9)
 
+> **Plano histórico.** A sequência vigente, baseada na auditoria de 10/11/2026 e na revisão do escopo integral do edital, está em [PLANO_DESENVOLVIMENTO_POC_E_IMPLANTACAO.md](PLANO_DESENVOLVIMENTO_POC_E_IMPLANTACAO.md). Meta: POC 100%, antecipação da implantação, Gov.br/ICP-Brasil e Resend nas etapas finais e aplicativos na última etapa.
+
 Stack: GitHub + Vercel + Neon + Vercel Blob + Firebase Auth + Next.js/TS/React + Drizzle + Resend + Gov.br predisposto.
 
 Base já criada nesta pasta. Você preenche os CHECKPOINTS no `.env` (copie `.env.example` para `.env.local`).

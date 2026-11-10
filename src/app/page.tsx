@@ -2,6 +2,9 @@ import Link from "next/link";
 
 // Mesa de trabalho: módulos do sistema em linguagem de produto.
 const MODULES = [
+  { titulo: "Gestão municipal", desc: "Processos, serviços, modelos e atendimento integrado.", href: "/gestao", cta: "Acessar gestão" },
+  { titulo: "Gestão e serviços", desc: "Indicadores, capacitação e acompanhamento do suporte.", href: "/operacao", cta: "Acessar serviços" },
+  { titulo: "Calendário", desc: "Prazos e atividades vinculados aos documentos do setor.", href: "/calendario", cta: "Consultar calendário" },
   {
     titulo: "Documentos",
     desc: "Memorandos e ofícios: elaborar, numerar, tramitar e acompanhar.",
@@ -39,7 +42,7 @@ export default function Home() {
     <div>
       <h1>Mesa de trabalho</h1>
       <p className="muted">
-        Prefeitura Municipal de Rio Azul — gestão eletrônica de documentos, tramitação e
+        Gestão eletrônica de documentos, tramitação e
         atendimento ao cidadão.
       </p>
       <div className="grid-3">

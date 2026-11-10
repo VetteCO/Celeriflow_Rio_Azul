@@ -24,6 +24,9 @@ const Schema = z.object({
 });
 
 export async function POST(req: Request) {
+  if (process.env.NODE_ENV === "production" || process.env.ENABLE_INBOUND_DIAGNOSTICS !== "1") {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
   const session = await getSession(req);
   const check = requirePerm(session, "admin:users");
   if (!check.ok)

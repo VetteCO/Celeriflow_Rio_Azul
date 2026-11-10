@@ -94,6 +94,7 @@ export const citizen = pgTable("citizen", {
 
 export const document = pgTable("document", {
   id: uuid("id").primaryKey().defaultRandom(),
+  businessCode: text("business_code").unique(),
   type: documentTypeEnum("type").notNull(),
   number: integer("number").notNull(),
   year: integer("year").notNull(),
@@ -168,6 +169,7 @@ export const documentMovement = pgTable("document_movement", {
   toDepartmentId: uuid("to_department_id").references(() => department.id),
   action: text("action").notNull(), // CREATED, SENT, RECEIVED, READ, FORWARDED, SIGNED, CONCLUDED
   note: text("note"),
+  visibility: text("visibility").notNull().default("INTERNAL"),
   actorUserId: uuid("actor_user_id").references(() => appUser.id),
   createdAt: timestamp("created_at").notNull().defaultNow()
 });
@@ -181,6 +183,7 @@ export const attachment = pgTable("attachment", {
   mimeType: text("mime_type"),
   storageKey: text("storage_key").notNull(), // URL do Vercel Blob
   size: integer("size"),
+  citizenVisible: boolean("citizen_visible").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow()
 });
 
@@ -223,4 +226,43 @@ export const auditLog = pgTable("audit_log", {
   entityId: text("entity_id"),
   metadata: jsonb("metadata"),
   createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+export const userDepartment = pgTable("user_department", {
+  userId: uuid("user_id").notNull().references(() => appUser.id),
+  departmentId: uuid("department_id").notNull().references(() => department.id),
+}, (t) => ({ unique: uniqueIndex("user_department_unique").on(t.userId, t.departmentId) }));
+
+export const documentParticipation = pgTable("document_participation", {
+  documentId: uuid("document_id").notNull().references(() => document.id),
+  departmentId: uuid("department_id").notNull().references(() => department.id),
+  state: text("state").notNull().default("PENDING"),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (t) => ({ unique: uniqueIndex("document_participation_unique").on(t.documentId, t.departmentId) }));
+
+export const businessCounter = pgTable("business_counter", {
+  key: text("key").primaryKey(),
+  value: integer("value").notNull(),
+});
+
+export const userProfile = pgTable("user_profile", {
+  userId: uuid("user_id").primaryKey().references(() => appUser.id),
+  phone: text("phone"),
+  registration: text("registration"),
+  position: text("position"),
+  preferences: jsonb("preferences"),
+  leaveStart: timestamp("leave_start"),
+  leaveEnd: timestamp("leave_end"),
+  lastAccessAt: timestamp("last_access_at"),
+});
+
+export const calendarHoliday = pgTable("calendar_holiday", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  date: text("date").notNull().unique(),
+  title: text("title").notNull(),
+});
+
+export const citizenIdentity = pgTable("citizen_identity", {
+  cpfCnpj: text("cpf_cnpj").primaryKey(),
+  citizenId: uuid("citizen_id").notNull().references(() => citizen.id),
 });

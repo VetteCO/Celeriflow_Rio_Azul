@@ -6,24 +6,44 @@ import Link from "next/link";
 import { api, useSession } from "@/components/session";
 import { RichText } from "@/components/RichText";
 
-type Dept = { id: string; name: string; acronym: string | null };
+type Dept = { id: string; name: string; acronym: string | null; parentId?: string | null; active?: boolean };
 
 export default function NovaCircular() {
-  const { user, role } = useSession();
+  const { user, permissions } = useSession();
   const router = useRouter();
   const [depts, setDepts] = useState<Dept[]>([]);
+  const [myDepartmentIds, setMyDepartmentIds] = useState<string[]>([]);
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [urgency, setUrgency] = useState("URGENT");
   const [origin, setOrigin] = useState("");
   const [picked, setPicked] = useState<string[]>([]);
+  const [includeSubdepartments, setIncludeSubdepartments] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [draftReady, setDraftReady] = useState(false);
+  const [draftNotice, setDraftNotice] = useState("");
+  useEffect(() => {
+    if (!user) return;
+    try {
+      const raw = sessionStorage.getItem(`circular-draft:${user.uid}`);
+      if (raw) { const draft = JSON.parse(raw); setSubject(draft.subject ?? ""); setBody(draft.body ?? ""); setUrgency(draft.urgency ?? "URGENT"); setOrigin(draft.origin ?? ""); setIncludeSubdepartments(draft.includeSubdepartments === true); if (Array.isArray(draft.picked)) setPicked(draft.picked); setDraftNotice("Rascunho recuperado desta sessão do navegador."); }
+    } catch { setDraftNotice("Não foi possível recuperar o rascunho local."); }
+    setDraftReady(true);
+  }, [user]);
+  useEffect(() => {
+    if (!user || !draftReady || saving) return;
+    const timer = window.setTimeout(() => {
+      try { sessionStorage.setItem(`circular-draft:${user.uid}`, JSON.stringify({ subject, body, urgency, origin, picked, includeSubdepartments })); setDraftNotice("Rascunho salvo nesta sessão do navegador."); }
+      catch { setDraftNotice("O armazenamento local está indisponível. Salve a circular para preservar o conteúdo."); }
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [user, draftReady, saving, subject, body, urgency, origin, picked, includeSubdepartments]);
 
   useEffect(() => {
     if (!user) return;
-    api("/api/circulars")
-      .then((d) => setDepts(d.departments))
+     api("/api/admin/departments")
+       .then((d) => { setDepts(d.departments.filter((s: Dept) => s.active !== false)); setMyDepartmentIds(d.myDepartmentIds ?? []); })
       .catch((e) => setErr((e as Error).message));
   }, [user]);
 
@@ -34,10 +54,10 @@ export default function NovaCircular() {
         Faça login em <Link href="/admin">/admin</Link>.
       </p>
     );
-  if (role !== "ADMIN_GERAL")
+   if (!permissions.includes("*") && !permissions.includes("doc:create"))
     return (
       <p className="alert alert-warn">
-        Bloqueado: somente ADMIN_GERAL cria circular (a API retorna 403).
+         Seu perfil permite consultar circulares. A criação está disponível aos servidores autorizados.
       </p>
     );
 
@@ -49,6 +69,7 @@ export default function NovaCircular() {
     e.preventDefault();
     if (saving) return;
     setErr(null);
+    if (!body.replace(/<[^>]*>/g, "").trim()) { setErr("Preencha o conteúdo da circular."); return; }
     setSaving(true);
     try {
       const data = await api("/api/circulars", {
@@ -59,9 +80,12 @@ export default function NovaCircular() {
           urgency,
           originDepartmentId: origin || null,
           departmentIds: picked,
+          includeSubdepartments,
         }),
       });
-      router.push(`/circulares/${data.id}`);
+       setDraftReady(false);
+       try { sessionStorage.removeItem(`circular-draft:${user!.uid}`); } catch { /* Storage is optional. */ }
+       router.push(`/circulares/${data.id}`);
     } catch (e) {
       setErr((e as Error).message);
     } finally {
@@ -72,6 +96,7 @@ export default function NovaCircular() {
   return (
     <div>
       <h1>Nova circular</h1>
+      {draftNotice && <p role="status" className="muted">{draftNotice}</p>}
       {err && (
         <p className="alert alert-error" role="alert">
           {err}
@@ -90,7 +115,7 @@ export default function NovaCircular() {
             Origem
             <select value={origin} onChange={(e) => setOrigin(e.target.value)}>
               <option value="">—</option>
-              {depts.map((d) => (
+               {depts.filter((d) => myDepartmentIds.includes(d.id)).map((d) => (
                 <option key={d.id} value={d.id}>
                   {d.name}
                 </option>
@@ -101,6 +126,7 @@ export default function NovaCircular() {
         <label>
           Assunto
           <input
+            required
             name="subject"
             autoComplete="off"
             value={subject}
@@ -115,7 +141,8 @@ export default function NovaCircular() {
           <legend>
             <strong>Setores destinatários ({picked.length})</strong>
           </legend>
-          {depts.map((d) => (
+          <label><input type="checkbox" checked={includeSubdepartments} onChange={(e) => setIncludeSubdepartments(e.target.checked)} /> Incluir os subsetores dos setores selecionados</label>
+           {depts.filter((d) => d.active !== false).map((d) => (
             <label key={d.id} style={{ display: "flex", gap: 8, alignItems: "center", fontWeight: 400 }}>
               <input
                 type="checkbox"
@@ -123,7 +150,7 @@ export default function NovaCircular() {
                 checked={picked.includes(d.id)}
                 onChange={() => toggle(d.id)}
               />
-              {d.name} ({d.acronym})
+               {d.parentId && `${depts.find((p) => p.id === d.parentId)?.name ?? "Setor superior"} / `}{d.name}{d.acronym ? ` (${d.acronym})` : ""}
             </label>
           ))}
         </fieldset>

@@ -1,0 +1,101 @@
+# Incrementos das etapas 6–8
+
+**Integração consolidada pela frente principal:** consultar `docs/ENTREGA_DESENVOLVIMENTO_0_9_2026-11-10.md`. Migrações 002/005 aplicadas, Next 15 compatibilizado e build aprovado. Os estados históricos de execução desta frente abaixo não substituem o registro final. A aba Processamento agora envia PDF/ZIP/OCR/PDF-A à fila executável `/api/jobs`; Sisobra permanece separado.
+
+Data: 10/11/2026. Atualização: terceira rodada de implementação, sem executar testes, TypeScript, build, lint, seed ou migração nesta rodada. A frente principal informou build integrado e migrações 0001–004 aplicadas antes destes incrementos. Esses resultados anteriores não validam a terceira rodada.
+
+## Fechamento funcional adicional — migração 005
+
+**Aplicar somente a nova `src/db/migrations/005_modules_completion.sql` pelo executor principal.** O histórico 002 não foi alterado nesta rodada. Novos schemas estão em `modules-schema.ts`. A reserva de edição exige a migração 005 antes do uso da versão ampliada.
+
+| Incremento | Operação e persistência |
+|---|---|
+| DOCX | `mammoth@1.11.0` converte Word em texto, tabelas e imagens PNG/JPEG incorporadas; original privado com nome/tamanho/SHA256 e auditoria. Em um modelo já salvo, usar “Importar modelo Word” e salvar os blocos. Variáveis são substituídas em parágrafos e células ao aplicar o modelo. Não é reprodução tipográfica absoluta do Word; imagens de células são representadas após a tabela. |
+| Lease | Reserva exclusiva por documento/editor/token, TTL de 90 segundos, renovação a cada 30, liberação ao sair e expiração automática. Gravação exige hash do token ativo e revisão otimista; trigger também exige reserva válida para `EDITAR`. |
+| Classificação | `/gestao/classificacao/lote`: importação JSON hierárquica com validação de pais/ciclos e inserção atômica; reclassificação em lote por registro autorizado, versão otimista, auditoria e resultado individual. `values.parentId` preserva a hierarquia. |
+| Etiquetas | Nova tabela `module_sector_tag`, consulta limitada aos setores do usuário e alteração restrita ao setor selecionado. A API e a página de operações não expõem etiquetas de outros setores. Os descritores gerais antigos permanecem dados gerais do documento, não são convertidos silenciosamente em etiquetas privadas. |
+| Workflow | Operadores `eq/neq/gt/gte/lt/lte/contains/in`; cálculos declarativos `sum/subtract/multiply/divide/min/max`, resolução de dependências e rejeição de ciclo/divisão por zero, sem eval. Prazos podem excluir fins de semana/feriados de `calendar_holiday` (horas em dias úteis, não jornada comercial). Diligência livre somente para destinos configurados e usuário do setor atual; etapa original é retomada depois. RH continua restrito. |
+| Ouvidoria sem conta | `/gestao/anonimo`, habilitado explicitamente em fluxo de Ouvidoria por `anonymousEnabled=Sim`. Protocolo direto, consulta e complementação por chave aleatória de 256 bits; banco guarda somente hash em tabela separada. Não solicita nome, e-mail, CPF, IP ou Firebase. Relato livre pode conter dados escritos espontaneamente pelo manifestante. A chave é mostrada na emissão e não é recuperável. |
+| Contrassenha | Uso único, escopado ao rascunho e digitador, token armazenado como hash, expiração, cancelamento auditado e consumo atômico com revisão do alvo. Não compartilha senha Firebase nem concede acesso a documento fora do escopo do digitador. |
+| Diário | Página de operações permite subseções, subir/descer atos, retirar e reativar antes da publicação. Todos os snapshots ficam preservados; atos retirados são excluídos da busca/leitura/PDF públicos. Publicação exige ao menos um ato ativo e permanece imutável. |
+| Timeline núcleo | Trigger aditivo gera `MODULE_LINKED` em `audit_log` e `document_movement` no momento do vínculo novo. Movimento contém mensagem genérica interna; auditoria inclui somente ID/revisão do módulo, sem título/corpo ou identidade do interessado. |
+| Cartografia | Geoportal em projeção Web Mercator com tiles opt-in, origem explicitamente permitida, atribuição e política. Adaptador de geocodificação compatível com resposta Nominatim, configurado por ambiente. Fiscalizações GPS são carregadas somente após autenticação e autorização por registro; não entram no endpoint público de camadas. |
+| Derivado PDF | `pdf-lib` incorpora os desenhos de medição preservados e um selo administrativo textual em novo arquivo privado. Original permanece intacto; arquivo derivado ganha SHA256, metadados, versão e referência auditada ao original. Saída é identificada como sem assinatura digital. Plantas rotacionadas exigem normalização prévia. |
+
+Entrada das operações: detalhe do registro → **Etiquetas, diligências e operações documentais**, rota `/gestao/registros/[id]/ferramentas`.
+
+### Configuração cartográfica
+
+- `MODULE_TILE_URL`: template HTTPS com `{z}`, `{x}`, `{y}`.
+- `MODULE_TILE_ALLOWED_ORIGINS`: origens exatas permitidas, separadas por vírgulas.
+- `MODULE_TILE_ATTRIBUTION`: atribuição exigida pelo fornecedor.
+- `MODULE_TILE_POLICY_URL`: página HTTPS da política de uso.
+- `MODULE_GEOCODER_URL`: endpoint HTTPS compatível com pesquisa Nominatim (`q`, `format=jsonv2`, `limit=5`).
+- `MODULE_GEOCODER_AGENT`: identificação de serviço exigida pelo fornecedor.
+
+Sem essas configurações, o mapa vetorial continua disponível e não há consulta externa fictícia. O operador deve selecionar fornecedor e condições reais de utilização.
+
+## Integração com a frente principal
+
+- Entrada: `/gestao` (adicionar ao menu compartilhado na frente principal).
+- Novos schemas exclusivamente em `src/db/modules-schema.ts`; importação direta, sem alteração de `schema.ts`/`index.ts`.
+- `002_modules.sql` pertence ao histórico já aplicado pela frente principal. Esta frente não executou migrações remotas. A atualização atual usa exclusivamente `005_modules_completion.sql`, com transação controlada pelo executor principal.
+- Usa `getSession`, `requirePerm`, `documentScope` e `canAccessDocument` atuais, incluindo vínculos secundários. Configuração exige `ADMIN_GERAL`; administração global não concede leitura irrestrita dos registros.
+- Reutiliza `DataTable` e `MaskedInput`. Tabelas operacionais: lista de cada família, anexos, versões, resultado da importação e Carta de Serviços. Aferição geométrica/viewport ainda precisa ocorrer no aplicativo integrado.
+- Eventos de escrita são inseridos atomicamente em `module_version` e `audit_log` pelo trigger. `entity_type=module_record`, `metadata.family`, `metadata.code`, `metadata.revision`, `metadata.departmentId` permitem agregação na etapa 9. Leituras/downloads também geram auditoria.
+- As APIs seguem `/api/modules/[family]`, `/api/modules/records/[id]`, subrotas de arquivos/versões/exportação/delegação, `/api/modules/options` e `/api/modules/public`.
+- Códigos de negócio: `aaaammddxxxxx`, agora usando `business_counter` e a chave global `business:aaaammdd`, compartilhada com núcleo/operações, no fuso de São Paulo e limite explícito de 99.999/dia. UUID aleatório independente para identificação pública.
+- Autoria externa: `module_record` acrescenta `external_owner_uid`, `external_owner_email`, `external_actor_uid`; `owner_id`/`actor_id` admitem nulo para não atribuir ações externas a servidores fictícios. `module_version.actor_id` e `module_file.actor_id` também admitem nulo. Auditoria distingue `USER` de `CITIZEN`. Escritas internas limpam o ator externo anterior.
+- Nova tabela `module_mandate`: titular e representante, UID aceito, e-mail verificado, famílias/atendimentos/poderes, vigência, consentimento, aceite, revogação e eventos auditados. Os poderes são reavaliados nas consultas e nas gravações, com bloqueio compartilhado do mandato durante sua utilização.
+- Dependências instaladas: `shapefile@0.6.6`, `@types/shapefile@0.6.4`, `proj4@2.15.0`, `@types/proj4@2.5.5` e `pdfjs-dist@4.10.38`. O worker PDF é empacotado a partir da dependência local, sem CDN. A compatibilidade do bundle será conferida na validação final concentrada.
+
+## Cobertura implementada
+
+| Família / fonte | Incremento real | Aceite a executar após migração |
+|---|---|---|
+| GED, modelos e classificação — pp. 71–72, 76–77, 85 | Acervo, modelos com variáveis, texto e blocos formatados (parágrafo/tabela/link/imagem), tela cheia, prévia, autosalvamento de rascunhos existentes, controle otimista de revisão, snapshots imutáveis, arquivo original privado com hash, PDF textual/folha de rosto, classificação em quatro campos hierárquicos e etiquetas | Criar modelo/classificação; ativar; criar acervo, anexar; abrir revisão anterior; disputar uma revisão com duas sessões e verificar 409 |
+| Parecer, ofício, intimação, pauta e atos — p. 24, pp. 41–42, 52–55 | Parecer exige vínculo a registro ou documento do núcleo; ofício registra destinatário e respostas; intimação possui prazo e ciência com evidência; reunião tem itens/participantes/deliberações; atos têm espécie e composição em edição | Executar fluxo próprio de cada família e conferir eventos/versões |
+| Assinaturas — pp. 41, 72–76 | Solicitações com revisão, signatários e ordem, hash de conteúdo, recusa e cancelamento; nenhum estado de assinatura concluída é fabricado | Solicitar, recusar como signatário, cancelar como solicitante |
+| Workflow/formulários — pp. 55–58, 86–87 | Editor de etapas/campos condicionais/seletores/máscaras, anexos obrigatórios, setores múltiplos, SLA em horas, snapshot do fluxo na instância, conclusão por setor, avanço sequencial e decisão na última etapa | Fluxo de duas etapas; tentar avançar antes das conclusões e decidir antes da última etapa; alterar configuração e verificar que instância conserva a versão |
+| Atendimento/PAD/judicial/seletivo — pp. 44–45, 53–63 | Campos de domínio para cada família; tramitação configurada, respostas internas/externas, revisão de anexos, exportação CSV; requerimento pessoal exige fluxo exclusivamente no RH | Abrir cada família e percorrer seu fluxo; conferir restrição do RH |
+| Ouvidoria — pp. 53–55 | Modalidade identificada/sigilosa/anônima; identidade separada, omitida dos setores participantes e de snapshots consultados fora da Ouvidoria; anônima descarta identidade | Comparar resposta da API e versões com Ouvidoria e setor destinatário; modalidade anônima sem dados de identidade |
+| Contatos e organizações — pp. 77–78 | PF/PJ/setor de organização, máscaras, validação fiscal, importação CSV com resultado por linha/idempotência, exportação CSV, unificação por referência ao cadastro principal preservando origem | Importar CSV válido/inválido e repetir lote; unificar duplicata e conferir histórico |
+| Delegação/procuração — pp. 76, 78 | Delegação interna com limite transacional; representação externa operante por concessão do titular autenticado, convite por e-mail verificado, aceite que vincula UID, poderes/escopo/validade explícitos e revogação/renúncia. Cadastro arquivístico de instrumento de procuração permanece distinto do mandato de acesso | Conceder, aceitar com a conta convidada, protocolar/responder como representante; revogar e verificar perda de acesso. Conferir eventos do titular e representante |
+| Carta — pp. 42–44 | Cadastro/ativação/suspensão, descrições/canais/prazos/requisitos, lista pública pesquisável e acesso ao protocolo | Ativar e suspender serviço; conferir presença/ausência na área pública |
+| Central externa — pp. 34–35, 53–63, 78–80 | Firebase/e-mail confirmado reutilizado; caixa do titular/representante; abertura por assunto expressamente liberado; anexos obrigatórios antes de protocolar; resposta/complementação; arquivos liberados explicitamente; avaliação após conclusão. Processos, chamados, Ouvidoria, e-SIC, seletivo, projetos, ambiente e fiscalização | Habilitar assunto no fluxo; abrir como cidadão; anexar; protocolar; responder no interno/externo; concluir; avaliar. Arquivos internos não liberados devem permanecer inacessíveis |
+| Diário — pp. 46–50 | Composição preservada de atos; publicação informativa explícita e imutável; calendário mensal de publicações reais, busca em títulos/conteúdo, leitura dos atos preservados, PDF textual público. Todas as edições deste incremento indicam ausência de assinatura digital | Publicar edição informativa; conferir calendário, busca e imutabilidade. Edição certificada depende da integração de assinatura |
+| Projetos e ambiente — pp. 37–41, 50–52 | Tipos de projeto/licença, áreas/índices, PDF/DWG privados e revisão. PDF.js renderiza original autenticado; seleção gráfica de vértices e ajuste por arraste; polilinha, polígono, retângulo e elipse; escala nominal/calibração por referência; cor/espessura/opacidade/precisão; preservação por página/hash do original | Abrir planta real, medir trecho conhecido, calibrar, desenhar áreas, alterar zoom e reabrir medição. Registros numéricos antigos não são convertidos automaticamente em evidência gráfica |
+| Fiscalização — pp. 36–37, 50–51 | Objeto/endereço/checklist/providências/GPS, vínculo ao núcleo e processos, API idempotente com hash do conteúdo inicial e conflito em payload divergente | Repetir idempotencyKey: mesmo registro; mudar conteúdo com a mesma chave: 409 |
+| Geoprocessamento — pp. 45–46, 63–66 | SHP/DBF/PRJ lidos por parser, reprojeção por proj4 para WGS84, GeoJSON com múltiplas geometrias, origem/projeção preservadas, camadas versionadas/publicação explícita; pan/zoom, atributos, proximidade a pontos/linhas/polígonos, filtro por polígono desenhado, consulta ponto-em-zona com buracos e atributos urbanísticos | Importar base municipal com projeção declarada; conferir coordenadas; consultar lote/zona; desenhar filtro; comparar distâncias e limites com base de referência municipal |
+
+## Lacunas reais — não considerar as etapas integralmente concluídas
+
+1. **GED:** PDF textual geral desta frente ainda não reproduz integralmente o layout; não é PDF/A. DOCX, lease, classificação hierárquica/em lote e etiquetas setoriais foram acrescentados na terceira rodada, pendentes de homologação. Infraestrutura OCR/PDF-A foi adiada expressamente; processamento PDF/ZIP pertence à frente principal.
+2. **Assinaturas/envio:** nenhuma assinatura criptográfica, e-mail/SMS, QR específico de ofício, recibo externo ou integração Sisobra foi realizado. Sisobra possui solicitações rastreáveis, não adaptador/transmissão/retorno real. A emissão certificada do Diário está bloqueada; não há edição pública falsamente certificada.
+3. **Workflow/formulários:** operadores/cálculos declarativos, feriados e diligências foram implementados. Ainda não há expediente diário configurável por setor, nem linguagem de expressões arbitrária. Carta pode apontar diretamente a um assunto liberado da central nova; assuntos dos dois núcleos ainda não são uma entidade única.
+4. **Central externa:** login Gov.br/certificado, notificações externas e entrega dos ofícios/intimações iniciados internamente continuam pendentes (integrações reais de etapas posteriores). Ouvidoria sem conta agora tem protocolo/consulta/complementação, mas sua entrada dedicada ainda não oferece anexos ou avaliação por chave. A seleção do setor guardião da identidade continua obrigatória nos fluxos identificados/sigilosos.
+5. **Contatos:** unificação não reescreve todos os vínculos legados nem oferece listas segmentadas/campos por perfil. Contrassenha interna descartável foi acrescentada. O mandato externo é consentimento por conta autenticada, não assinatura ICP-Brasil nem prova automática de poderes societários/representação legal.
+6. **Diário:** subseções, ordenação, retirada e reativação foram acrescentadas; cadernos/seções permanecem rótulos por edição/ato, sem catálogo hierárquico municipal independente. Publicação informativa não substitui compilação/assinatura certificada, atribuída às integrações posteriores.
+7. **Territorial:** derivado PDF com selos/desenhos, adaptadores cartográficos/geocodificação e GPS autorizado foram acrescentados. Faltam bases municipais homologadas e configuração real dos fornecedores. Proximidade usa projeção tangente local e distância geodésica aproximada; não é cálculo cadastral certificado. PRJ dependente de grades externas pode exigir conversão prévia. SHP é enviado em arquivos separados, não ZIP. Não há afirmação de entrega integral do bloco 1Map.
+8. **Convivência:** vínculos novos geram movimento interno/auditoria após 005. Vínculos anteriores não são retroativamente inventados; árvore de anexos unificada e cobertura integral de relatórios da etapa 9 continuam dependendo da integração principal.
+9. **Validação:** banco remoto, upload Blob e telas autenticadas não foram exercitados neste incremento. Nenhum item acima deve ser tratado como homologado antes desse aceite.
+
+## Rodada final concentrada — roteiro de validação pendente
+
+1. Aplicar apenas 005 nesta atualização, pelo executor principal. As migrações 0001–004 já foram aplicadas pela frente principal. Exercitar reserva entre abas/usuários, renovação, expiração e conflito de versão.
+2. Entrar em `/cidadao/conta`, confirmar o e-mail e acessar `/gestao/central`. Configurar/ativar fluxo com recebimento externo antes de abrir solicitação.
+3. Em duas contas, usar `/gestao/central/mandatos`: conceder, aceitar, representar, revogar, tentar consultar/enviar novamente; conferir escopos por família e lista de documentos. Revogação concorrente deve impedir nova gravação autorizada pelo mandato.
+4. Conferir rascunho → anexos obrigatórios → protocolização → caixa interna → resposta externa → decisão → avaliação. Tentar baixar arquivo privado não liberado. Nos módulos territoriais, arquivos gerados internamente só são liberados com decisão deferida.
+5. Em `/gestao/diario`, compor atos e publicar expressamente como informativa. Conferir `/gestao/edicoes`, calendário, busca, texto/arquivo e bloqueio de alteração posterior.
+6. Em `/gestao/camadas/novo`, importar SHP/DBF/PRJ, salvar e ativar/publicar; no `/gestao/geoportal`, conferir geometria, proximidade, desenho de filtro e ponto-em-zona, inclusive buracos de polígonos.
+7. No detalhe do projeto, abrir Anexos → Enviar/revisar → Medição gráfica; conferir renderização/worker, zoom, escala/calibração, formas, revisão e hash. Medir uma dimensão conhecida com base municipal real.
+8. Importar DOCX com variáveis, tabela e imagem; salvar, aplicar modelo, conferir original privado e imagens incorporadas. Importar plano JSON com pai/filho e rejeitar ciclo; reclassificar lote com um registro sem permissão para conferir resultado individual.
+9. Em setores diferentes, conferir isolamento de etiquetas. Emitir/consumir/cancelar contrassenha; tentar reuso. Reordenar/retirar/reativar atos e conferir publicação pública sem retirados.
+10. Configurar regras calculadas e operadores, prazo sobre feriado e diligência com retorno. Abrir manifestação sem login, guardar chave, consultar/complementar; verificar ausência de identidade persistida. Conferir movimento `MODULE_LINKED` no núcleo.
+11. Configurar fornecedor de tiles/geocodificação; verificar atribuição, origem, resultado de endereço e GPS restrito ao escopo. Gerar PDF derivado com desenhos e selo e comparar hashes/original preservado.
+
+## Verificações anteriores (não validam a segunda rodada)
+
+- Testes focados em `src/lib/modules/modules.test.ts`: CPF/CNPJ, campos condicionais, geometria, escala/proximidade, URLs seguras, leitura por escopo e sigilo. Comando: `npx tsx --test src/lib/modules/modules.test.ts`.
+- Migração exercitada em PostgreSQL WASM local (PGlite), em memória: aplicação/reaplicação, 12 códigos distintos, captura de versões, concorrência otimista, imutabilidade de identificação/histórico/publicação e rollback sem versões órfãs. Script temporário: `C:\Users\trici\AppData\Local\Temp\opencode\modules-db-validation\validate.mjs`. Nenhuma conexão remota.
+- Verificação TypeScript da primeira rodada foi aprovada. **Nenhum teste/tsc/build/lint foi executado na segunda ou terceira rodada por esta frente**. A frente principal informou um build integrado entre essas rodadas; a versão ampliada atual ainda precisa da validação final concentrada.

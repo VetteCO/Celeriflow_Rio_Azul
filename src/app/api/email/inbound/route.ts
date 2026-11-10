@@ -8,6 +8,9 @@ import { processInbound, type InboundPayload } from "@/lib/inbound";
 
 export async function POST(req: Request) {
   const secret = process.env.INBOUND_WEBHOOK_SECRET;
+  if (!secret) {
+    return NextResponse.json({ error: "Recebimento de e-mail indisponível." }, { status: 503 });
+  }
   if (secret && req.headers.get("x-webhook-secret") !== secret) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }

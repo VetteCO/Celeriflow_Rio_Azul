@@ -4,9 +4,10 @@ import { NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { appUser, document, documentReadReceipt } from "@/db/schema";
-import { getSession, requirePerm } from "@/lib/auth";
+import { getSession, requirePerm, isRecipient } from "@/lib/auth";
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession(req);
   const check = requirePerm(session, "circular:view");
   if (!check.ok)
@@ -26,6 +27,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       .then((r) => r.find((u) => u.firebaseUid === check.session.uid))
   );
   if (!me) return NextResponse.json({ error: "unlinked_user" }, { status: 403 });
+  if (!await isRecipient(check.session, params.id)) return NextResponse.json({ error: "not_recipient" }, { status: 403 });
 
   await db
     .insert(documentReadReceipt)

@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    serverComponentsExternalPackages: ["firebase-admin"]
-  }
+  serverExternalPackages: ["firebase-admin", "sanitize-html"]
 };
 export default nextConfig;
