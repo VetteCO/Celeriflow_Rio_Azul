@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { MaskedInput } from "@/components/MaskedInput";
+import { WorkflowField } from "@/components/WorkflowField";
 import { families, familyFields, conditionMatches, type Family, type Field } from "@/lib/modules/domain";
 import { AccountRequired, externalJson, useExternalAccount } from "../client";
 type Flow = { id: string; title: string; description: string; family: Family; fields: Field[]; requiredFiles: string[] };
@@ -18,7 +18,7 @@ export default function NewExternalRequest() {
     <label>Serviço<select required value={workflowId} onChange={e => { setWorkflowId(e.target.value); setValues({}); setMandateId(""); }}>{<option value="">Selecione</option>}{flows.map(f => <option key={f.id} value={f.id}>{families[f.family]} — {f.title}</option>)}</select></label>{flow && <p>{flow.description}</p>}
     <label>Atuação<select value={mandateId} onChange={e => setMandateId(e.target.value)}><option value="">Em meu nome</option>{mandates.filter(m => m.representativeUid === user.uid && !m.revokedAt && new Date(m.expiresAt) > new Date() && new Date(m.startsAt) <= new Date() && m.permissions.includes("create") && !m.recordIds.length && m.families.includes(flow?.family ?? "")).map(m => <option key={m.id} value={m.id}>Representando {m.principalEmail} — {m.code}</option>)}</select></label>
     {values.modalidade === "Anônima" ? <p>Nome e e-mail não serão apresentados aos setores. Sua conta é utilizada para o acompanhamento protegido desta manifestação.</p> : <label>Nome do interessado<input required value={name} onChange={e => setName(e.target.value)} /></label>}<label>Assunto<input required minLength={3} maxLength={250} value={title} onChange={e => setTitle(e.target.value)} /></label>
-    {fields.map(f => <label key={f.key}>{f.label}{f.required ? " *" : ""}{f.type === "select" ? <select required={f.required} value={values[f.key] ?? ""} onChange={e => change(f.key, e.target.value)}><option value="">Selecione</option>{f.options?.map(o => <option key={o}>{o}</option>)}</select> : ["cpfCnpj", "cep", "phone", "currency"].includes(f.type ?? "") ? <MaskedInput kind={f.type as "cpfCnpj" | "cep" | "phone" | "currency"} value={values[f.key] ?? ""} required={f.required} onValueChange={v => change(f.key, v)} /> : <input required={f.required} type={f.type === "date" || f.type === "number" ? f.type : "text"} step="any" value={values[f.key] ?? ""} onChange={e => change(f.key, e.target.value)} />}</label>)}
+    {fields.map(field => <WorkflowField key={field.key} field={field} value={values[field.key] ?? ""} onChange={value => change(field.key, value)} />)}
     <label>Solicitação<textarea required minLength={3} rows={8} value={body} onChange={e => setBody(e.target.value)} /></label>{!!flow?.requiredFiles.length && <p>Na próxima tela, envie os documentos obrigatórios: {flow.requiredFiles.join(", ")}.</p>}<button className="btn btn-primary" disabled={busy || !flow}>{busy ? "Salvando…" : "Continuar para anexos e protocolização"}</button>
   </form></section>;
 }

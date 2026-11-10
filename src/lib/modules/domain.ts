@@ -19,13 +19,24 @@ const text = z.string().trim().max(5000);
 const uuid = z.string().uuid();
 export const fieldSchema = z.object({
   key: z.string().regex(/^[a-z][a-zA-Z0-9_]{0,49}$/), label: text.min(1),
-  type: z.enum(["text", "number", "date", "select", "cpfCnpj", "cep", "phone", "currency"]),
+  type: z.enum(["text", "textarea", "number", "integer", "date", "select", "radio", "checkbox", "cpfCnpj", "cep", "phone", "currency"]),
+  placeholder: z.string().max(500).optional(),
+  minLength: z.number().int().min(0).max(5000).optional(),
+  maxLength: z.number().int().min(1).max(5000).optional(),
   required: z.boolean().default(false), options: z.array(text).max(100).default([]),
   help: text.default(""), condition: z.object({ field: text, equals: text, operator: z.enum(["eq", "neq", "gt", "gte", "lt", "lte", "contains", "in"]).optional() }).optional(),
   calculation: z.object({ operation: z.enum(["sum", "subtract", "multiply", "divide", "min", "max"]), fields: z.array(text.min(1)).min(2).max(20), decimals: z.number().int().min(0).max(6) }).optional(),
 });
 export const stepSchema = z.object({ name: text.min(1), departments: z.array(uuid).min(1).max(30), hours: z.number().int().min(1).max(87600), decision: z.boolean().default(false) });
-export const workflowSchema = z.object({ fields: z.array(fieldSchema).max(80), steps: z.array(stepSchema).min(1).max(50), requiredFiles: z.array(text.min(1)).max(30).default([]), family: familySchema, rhDepartmentId: uuid.optional(), identityDepartmentId: uuid.optional(), businessDays: z.boolean().optional(), routingDepartments: z.array(uuid).max(30).optional() });
+export const workflowSchema = z.object({ fields: z.array(fieldSchema).max(80), steps: z.array(stepSchema).min(1).max(50), requiredFiles: z.array(text.min(1)).max(30).default([]), family: familySchema, rhDepartmentId: uuid.optional(), identityDepartmentId: uuid.optional(), businessDays: z.boolean().optional(), routingDepartments: z.array(uuid).max(30).optional() }).superRefine((workflow, ctx) => {
+  const keys = new Set<string>();
+  workflow.fields.forEach((field, index) => {
+    if (keys.has(field.key)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["fields", index, "key"], message: "Há chaves de campos duplicadas no formulário." });
+    keys.add(field.key);
+    if (field.minLength !== undefined && field.maxLength !== undefined && field.minLength > field.maxLength) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["fields", index, "maxLength"], message: "O máximo de caracteres deve ser maior ou igual ao mínimo." });
+    if (["select", "radio", "checkbox"].includes(field.type) && (!field.options.length || field.options.some(option => !option) || new Set(field.options).size !== field.options.length)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["fields", index, "options"], message: "Informe opções não vazias e sem repetição." });
+  });
+});
 export type Workflow = z.infer<typeof workflowSchema>;
 export type Field = z.infer<typeof fieldSchema>;
 export type FileReview = { fileId: string; status: "ACEITO" | "RECUSADO"; note: string; actorId: string; at: string };
@@ -70,7 +81,7 @@ export const geoSchema = z.object({ type: z.literal("FeatureCollection"), featur
   geometry: z.object({ type: z.enum(["Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon"]), coordinates: z.unknown() }),
 })).max(5000) });
 
-export type FamilyField = { key: string; label: string; required?: boolean; type?: Field["type"]; options?: string[] };
+export type FamilyField = { key: string; label: string; required?: boolean; type?: Field["type"]; options?: string[]; help?: string; placeholder?: string; minLength?: number; maxLength?: number };
 export const familyFields: Partial<Record<Family, FamilyField[]>> = {
   camadas: [{ key: "tipo", label: "Tipo de camada", type: "select", options: ["Zoneamento", "Lotes", "Ambiental", "Equipamentos", "Outra"] }, { key: "legislacao", label: "Referência legal da base" }, { key: "vigencia", label: "Vigência da base", type: "date" }],
   parecer: [{ key: "natureza", label: "Natureza", type: "select", options: ["Técnico", "Jurídico"], required: true }, { key: "conclusao", label: "Conclusão" }],
@@ -100,12 +111,34 @@ export function validateFields(fields: FamilyField[], values: Record<string, str
   for (const field of fields) {
     const value = values[field.key]?.trim() ?? "";
     if (field.required && !value) throw new Error(`Preencha ${field.label}.`);
+    if (field.type === "checkbox") {
+      const selected = checkboxValues(value);
+      if (field.required && !selected.length) throw new Error(`Preencha ${field.label}.`);
+      if (selected.some(option => !field.options?.includes(option)) || new Set(selected).size !== selected.length) throw new Error(`${field.label}: opção inválida.`);
+      continue;
+    }
     if (!value) continue;
-    if (field.type === "number" && !Number.isFinite(Number(value))) throw new Error(`${field.label}: número inválido.`);
-    if (field.type === "date" && (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(Date.parse(value)))) throw new Error(`${field.label}: data inválida.`);
+    if (field.minLength !== undefined && value.length < field.minLength) throw new Error(`${field.label}: mínimo de ${field.minLength} caracteres.`);
+    if (field.maxLength !== undefined && value.length > field.maxLength) throw new Error(`${field.label}: máximo de ${field.maxLength} caracteres.`);
+    if ((field.type === "number" || field.type === "integer") && !Number.isFinite(Number(value))) throw new Error(`${field.label}: número inválido.`);
+    if (field.type === "integer" && !Number.isSafeInteger(Number(value))) throw new Error(`${field.label}: informe um número inteiro válido.`);
+    if (field.type === "date" && !validCalendarDate(value)) throw new Error(`${field.label}: data inválida.`);
     if (field.options?.length && !field.options.includes(value)) throw new Error(`${field.label}: opção inválida.`);
     if (field.type === "cpfCnpj" && !validTaxId(value)) throw new Error(`${field.label}: CPF/CNPJ inválido.`);
   }
+}
+export function checkboxValues(value: string): string[] {
+  if (!value) return [];
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (Array.isArray(parsed) && parsed.every(item => typeof item === "string")) return parsed;
+  } catch { /* Invalid serialized selections are rejected below. */ }
+  throw new Error("Seleção múltipla inválida.");
+}
+export function validCalendarDate(value: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || value.startsWith("0000")) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 export function validTaxId(value: string) {
   const digits = value.replace(/\D/g, "");
@@ -121,6 +154,17 @@ export function validTaxId(value: string) {
   });
 }
 export function validateWorkflowFields(workflow: Workflow, values: Record<string, string>) {
+  // Calculate against a copy: a later failure must not leave partially computed data.
+  const calculatedValues = { ...values };
+  calculateWorkflowFields(workflow, calculatedValues);
+  Object.assign(values, calculatedValues);
+}
+function calculateWorkflowFields(workflow: Workflow, values: Record<string, string>) {
+  const keys = workflow.fields.map(field => field.key);
+  if (new Set(keys).size !== keys.length) throw new Error("Há chaves de campos duplicadas no formulário.");
+  for (const field of workflow.fields) {
+    if (field.minLength !== undefined && field.maxLength !== undefined && field.minLength > field.maxLength) throw new Error(`${field.label}: limites de tamanho incompatíveis.`);
+  }
   const pending = new Set(workflow.fields.filter(f => f.calculation).map(f => f.key));
   while (pending.size) {
     let progressed = false;
@@ -140,7 +184,12 @@ export function conditionMatches(field: Field, values: Record<string,string>) {
  const c=field.condition; if(!c) return true; const actual=values[c.field] ?? "", expected=c.equals;
  switch(c.operator ?? "eq") {
  case "eq": return actual===expected; case "neq": return actual!==expected;
- case "contains": return actual.includes(expected); case "in": return expected.split("|").map(v=>v.trim()).includes(actual);
+  case "contains": {
+    // Checkbox values are JSON arrays; match full options instead of substrings.
+    if (actual.startsWith("[")) { try { return checkboxValues(actual).includes(expected); } catch { return false; } }
+    return actual.includes(expected);
+  }
+  case "in": return expected.split("|").map(v=>v.trim()).includes(actual);
  default: if(!actual.trim() || !expected.trim() || !Number.isFinite(Number(actual)) || !Number.isFinite(Number(expected))) return false;
  return c.operator==="gt" ? Number(actual)>Number(expected) : c.operator==="gte" ? Number(actual)>=Number(expected) : c.operator==="lt" ? Number(actual)<Number(expected) : Number(actual)<=Number(expected);
  }

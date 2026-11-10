@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MaskedInput } from "@/components/MaskedInput";
+import { WorkflowField } from "@/components/WorkflowField";
+import type { FamilyField } from "@/lib/modules/domain";
 import { familyFields, families, processFamilies, renderTemplate, conditionMatches, type Family, type Field, type Workflow } from "@/lib/modules/domain";
 import { DocxImport } from "./DocxImport";
 import { WorkflowRules } from "./WorkflowRules";
@@ -49,11 +51,7 @@ export function ModuleForm({ family, options, initial, onSave, onAutoSave, busy 
   }, [autoPayload, family, leased,leaseToken,busy]);
   const selectedWorkflow = options.configurations.find(c => c.id === workflowId)?.data.workflow ?? initial?.data.workflow;
   const setValue = (key: string, value: string) => setValues(current => ({ ...current, [key]: value }));
-  const field = (definition: { key: string; label: string; type?: string; required?: boolean; options?: string[]; help?: string }) => <label key={definition.key}>{definition.label}{definition.required ? " *" : ""}
-    {definition.type === "select" ? <select required={definition.required} value={values[definition.key] ?? ""} onChange={e => setValue(definition.key, e.target.value)}><option value="">Selecione</option>{definition.options?.map(option => <option key={option}>{option}</option>)}</select>
-      : ["cpfCnpj", "cep", "phone", "currency"].includes(definition.type ?? "") ? <MaskedInput kind={definition.type as "cpfCnpj" | "cep" | "phone" | "currency"} value={values[definition.key] ?? ""} onValueChange={value => setValue(definition.key, value)} required={definition.required} />
-        : <input type={definition.type === "number" ? "number" : definition.type === "date" ? "date" : "text"} step="any" value={values[definition.key] ?? ""} onChange={e => setValue(definition.key, e.target.value)} required={definition.required} />}
-    {definition.help && <small>{definition.help}</small>}</label>;
+  const field = (definition: FamilyField) => <WorkflowField key={definition.key} field={definition} value={values[definition.key] ?? ""} onChange={value => setValue(definition.key, value)} />;
   return <form onSubmit={async event => {
     event.preventDefault(); if (!leased) { setError("Aguarde a reserva exclusiva de edição."); return; } setError("");
     try { await onSave({ ...autoPayload, leaseToken, geometry: family === "camadas" ? JSON.parse(geometry) : undefined }); }
@@ -89,7 +87,32 @@ function WorkflowEditor({ value, onChange, options }: { value: Workflow; onChang
     {value.family === "ouvidoria" && <label>Ouvidoria — setor que pode consultar a identidade sigilosa<select required value={value.identityDepartmentId ?? ""} onChange={e => onChange({ ...value, identityDepartmentId: e.target.value || undefined })}><option value="">Selecione</option>{options.departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}</select></label>}
     <h3>Etapas em ordem de execução</h3>{value.steps.map((step, index) => <fieldset key={index}><legend>Etapa {index + 1}</legend><label>Nome<input required value={step.name} onChange={e => onChange({ ...value, steps: value.steps.map((s, i) => i === index ? { ...s, name: e.target.value } : s) })} /></label><label>Setores responsáveis<select multiple value={step.departments} onChange={e => onChange({ ...value, steps: value.steps.map((s, i) => i === index ? { ...s, departments: Array.from(e.target.selectedOptions).map(o => o.value) } : s) })}>{options.departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}</select></label><label>Prazo em horas<input type="number" min={1} max={87600} value={step.hours} onChange={e => onChange({ ...value, steps: value.steps.map((s, i) => i === index ? { ...s, hours: Number(e.target.value) } : s) })} /></label><label><input type="checkbox" checked={step.decision} onChange={e => onChange({ ...value, steps: value.steps.map((s, i) => i === index ? { ...s, decision: e.target.checked } : s) })} /> Permite decisão final</label><button type="button" onClick={() => onChange({ ...value, steps: value.steps.filter((_, i) => i !== index) })}>Remover etapa</button></fieldset>)}
     <button className="btn" type="button" onClick={() => onChange({ ...value, steps: [...value.steps, { name: "", departments: [], hours: 24, decision: false }] })}>Adicionar etapa</button>
-    <h3>Formulário</h3>{value.fields.map((field, index) => <fieldset key={index}><legend>Campo {index + 1}</legend><label>Chave<input required pattern="[a-z][a-zA-Z0-9_]{0,49}" value={field.key} onChange={e => updateField(index, { key: e.target.value })} /></label><label>Rótulo<input required value={field.label} onChange={e => updateField(index, { label: e.target.value })} /></label><label>Tipo<select value={field.type} onChange={e => updateField(index, { type: e.target.value as Field["type"] })}>{["text", "number", "date", "select", "cpfCnpj", "cep", "phone", "currency"].map(type => <option key={type}>{type}</option>)}</select></label><label><input type="checkbox" checked={field.required} onChange={e => updateField(index, { required: e.target.checked })} /> Obrigatório</label><label>Ajuda<input value={field.help} onChange={e => updateField(index, { help: e.target.value })} /></label>{field.type === "select" && <label>Opções (separadas por vírgula)<input value={field.options.join(",")} onChange={e => updateField(index, { options: e.target.value.split(",") })} /></label>}<label>Exibir quando o campo<select value={field.condition?.field ?? ""} onChange={e => updateField(index, { condition: e.target.value ? { field: e.target.value, equals: field.condition?.equals ?? "" } : undefined })}><option value="">Sempre visível</option>{value.fields.filter((_, i) => i !== index).map(f => <option key={f.key} value={f.key}>{f.label || f.key}</option>)}</select></label>{field.condition && <label>For igual a<input value={field.condition.equals} onChange={e => updateField(index, { condition: { field: field.condition!.field, equals: e.target.value } })} /></label>}<button type="button" onClick={() => onChange({ ...value, fields: value.fields.filter((_, i) => i !== index) })}>Remover campo</button></fieldset>)}
+    <h3>Formulário</h3>{value.fields.map((field, index) => <fieldset key={index}>
+      <legend>Campo {index + 1}</legend>
+      <label>Chave<input required pattern="[a-z][a-zA-Z0-9_]{0,49}" value={field.key} onChange={e => updateField(index, { key: e.target.value })} /></label>
+      <label>Rótulo<input required value={field.label} onChange={e => updateField(index, { label: e.target.value })} /></label>
+      <label>Tipo<select value={field.type} onChange={e => updateField(index, { type: e.target.value as Field["type"] })}>{Object.entries({ text: "Texto curto", textarea: "Texto longo", number: "Número decimal", integer: "Número inteiro", date: "Data", select: "Lista de seleção", radio: "Escolha única", checkbox: "Múltipla escolha", cpfCnpj: "CPF/CNPJ", cep: "CEP", phone: "Telefone", currency: "Moeda" }).map(([type, label]) => <option key={type} value={type}>{label}</option>)}</select></label>
+      <label><input type="checkbox" checked={field.required} onChange={e => updateField(index, { required: e.target.checked })} /> Obrigatório</label>
+      <label>Ajuda<input value={field.help} onChange={e => updateField(index, { help: e.target.value })} /></label>
+      <label>Texto de orientação no campo<input maxLength={500} value={field.placeholder ?? ""} onChange={e => updateField(index, { placeholder: e.target.value })} /></label>
+      {["text", "textarea"].includes(field.type) && <>
+        <label>Mínimo de caracteres<input type="number" min={0} max={field.maxLength ?? 5000} value={field.minLength ?? ""} onChange={e => updateField(index, { minLength: e.target.value === "" ? undefined : Number(e.target.value) })} /></label>
+        <label>Máximo de caracteres<input type="number" min={Math.max(1, field.minLength ?? 1)} max={5000} value={field.maxLength ?? ""} onChange={e => updateField(index, { maxLength: e.target.value === "" ? undefined : Number(e.target.value) })} /></label>
+      </>}
+      {["select", "radio", "checkbox"].includes(field.type) && <label>Opções (separadas por vírgula)<input value={field.options.join(",")} onChange={e => updateField(index, { options: e.target.value.split(",") })} /></label>}
+      <label>Exibir quando o campo<select value={field.condition?.field ?? ""} onChange={e => updateField(index, { condition: e.target.value ? { ...field.condition, field: e.target.value, equals: field.condition?.equals ?? "" } : undefined })}><option value="">Sempre visível</option>{value.fields.filter((_, i) => i !== index).map(f => <option key={f.key} value={f.key}>{f.label || f.key}</option>)}</select></label>
+      {field.condition && <>
+        <label>Comparação<select value={field.condition.operator ?? "eq"} onChange={e => updateField(index, { condition: { ...field.condition!, operator: e.target.value as NonNullable<Field["condition"]>["operator"] } })}>{Object.entries({ eq: "Igual a", neq: "Diferente de", gt: "Maior que", gte: "Maior ou igual", lt: "Menor que", lte: "Menor ou igual", contains: "Contém opção ou texto", in: "Está entre os valores separados por |" }).map(([operator, label]) => <option key={operator} value={operator}>{label}</option>)}</select></label>
+        <label>Valor de comparação<input value={field.condition.equals} onChange={e => updateField(index, { condition: { ...field.condition!, equals: e.target.value } })} /></label>
+      </>}
+      <button type="button" onClick={() => onChange({ ...value, fields: value.fields.filter((_, i) => i !== index) })}>Remover campo</button>
+    </fieldset>)}
+    {!!value.fields.length && <fieldset><legend>Prévia do formulário</legend><WorkflowPreview fields={value.fields} /></fieldset>}
     <button type="button" className="btn" onClick={() => onChange({ ...value, fields: [...value.fields, { key: `campo${value.fields.length + 1}`, label: "", type: "text", required: false, options: [], help: "" }] })}>Adicionar campo</button><label>Tipos de anexo obrigatórios (um por linha)<textarea value={value.requiredFiles.join("\n")} onChange={e => onChange({ ...value, requiredFiles: e.target.value.split("\n").filter(Boolean) })} /></label>
   </fieldset>;
+}
+
+function WorkflowPreview({ fields }: { fields: Field[] }) {
+  const [values, setValues] = useState<Record<string, string>>({});
+  return <div>{fields.filter(field => !field.calculation && conditionMatches(field, values)).map(field => <WorkflowField key={field.key} field={field} preview value={values[field.key] ?? ""} onChange={value => setValues(current => ({ ...current, [field.key]: value }))} />)}</div>;
 }
