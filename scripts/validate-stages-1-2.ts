@@ -283,6 +283,7 @@ async function execute() {
 }
 async function main() {
   if (args.includes("--snapshot")) return snapshot();
+  if (args.includes("--verify-preserved")) return verifyPreserved();
   if (args.includes("--cleanup")) { await cleanup(); return verifyPreserved(); }
   assert.ok(args.includes("--allow-write") && args.includes("--directory"));
   save();

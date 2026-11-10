@@ -36,7 +36,7 @@ export async function api(path: string, init?: RequestInit) {
       ...(token ? { authorization: `Bearer ${token}` } : {}),
       ...(init?.headers ?? {}),
     },
-  });
+  }).catch(() => { throw new Error("Não foi possível conectar ao serviço. Confira sua conexão e tente novamente."); });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const message = (data as { error?: string }).error;

@@ -3,6 +3,7 @@ import { can, PERMS, type Role } from "@/lib/rbac";
 import { db } from "@/db";
 import { appUser, role, userRole, userDepartment, document, documentParticipation, documentRecipient, department, userProfile } from "@/db/schema";
 import { and, eq, inArray, or, sql } from "drizzle-orm";
+import { effectiveDepartmentIds } from "./department-scope";
 
 export type Session = { uid: string; userId: string; role?: Role; roles: Role[]; email?: string; departmentId: string | null; departmentIds: string[] };
 export async function getSession(req: Request): Promise<Session | null> {
@@ -36,18 +37,13 @@ export async function getSession(req: Request): Promise<Session | null> {
         SELECT 'SYSTEM',null,'USER_INACTIVITY_SUSPENDED','app_user',id::text,jsonb_build_object('days',${days}::int) FROM suspended`);
       return null;
     }
-    const ids = new Set([user.departmentId, ...sectors.map(s => s.departmentId)].filter((id): id is string => !!id && departments.some(d => d.id === id)));
-    if (roles.includes("AUDITOR")) departments.forEach(d => ids.add(d.id));
-    else if (roles.includes("NIVEL_1")) {
-      let changed = true;
-      while (changed) { changed = false; for (const d of departments) if (d.parentId && ids.has(d.parentId) && !ids.has(d.id)) { ids.add(d.id); changed = true; } }
-    }
+    const ids = effectiveDepartmentIds(user.departmentId, sectors.map(s => s.departmentId), roles, departments);
     await db.execute(sql`WITH accessed AS (
       INSERT INTO user_profile(user_id,last_access_at) VALUES(${user.id}::uuid,now())
       ON CONFLICT(user_id) DO UPDATE SET last_access_at=now() WHERE user_profile.last_access_at IS NULL OR user_profile.last_access_at < now()-interval '1 minute' RETURNING user_id
     ) INSERT INTO audit_log(actor_type,actor_id,action,entity_type,entity_id,metadata)
       SELECT 'USER',${user.id},'SESSION_ACCESSED','app_user',${user.id},jsonb_build_object('ip',${req.headers.get("x-forwarded-for")}::text,'userAgent',${req.headers.get("user-agent")}::text,'applicationVersion',${process.env.VERCEL_GIT_COMMIT_SHA ?? "local-0.1.0"}::text) FROM accessed`);
-    return { uid: user.firebaseUid!, userId: user.id, email: user.email, role: roles[0], roles, departmentId: user.departmentId, departmentIds: Array.from(ids) };
+    return { uid: user.firebaseUid!, userId: user.id, email: user.email, role: roles[0], roles, departmentId: user.departmentId, departmentIds: ids };
   } catch { return null; }
 }
 export function requirePerm(session: Session | null, action: string): { ok: true; session: Session } | { ok: false; status: 401 | 403 } {

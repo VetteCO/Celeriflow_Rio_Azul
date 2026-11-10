@@ -30,7 +30,8 @@ const root = resolve(process.env.LOCALAPPDATA ?? "", "Temp/opencode");
 const resume = option("--resume-cleanup");
 if (resume && !resolve(resume).startsWith(root + "\\") && !resolve(resume).startsWith(root + "/")) throw new Error("MANIFESTO_FORA_TEMP_APROVADO");
 const runId = randomUUID();
-const dir = resume ? resolve(resume, "..") : join(root, `integrated-${runId}`);
+const dir = resume ? resolve(resume, "..") : option("--directory") ? resolve(option("--directory")!) : join(root, `integrated-${runId}`);
+if (!dir.startsWith(root + "\\") && !dir.startsWith(root + "/")) throw new Error("DIRECTORY_OUTSIDE_APPROVED_TEMP");
 mkdirSync(dir, { recursive: true, mode: 0o700 });
 const manifestPath = join(dir, "manifest.private.json");
 const journal: { version: number; runId: string; base: string; databaseFingerprint: string; project: string; entries: Entry[]; firebase: { id: string; uid: string }[]; blobs: string[]; pending: string[] } = resume
@@ -168,8 +169,9 @@ async function main() {
   const users: Row[] = [];
   for (const [i, name] of ["Helena Duarte", "Marcos Azevedo", "Clara Ribeiro", "Rafael Martins"].entries()) {
     const email = `servidor.${randomUUID()}@example.invalid`;
-    const u = await api("provision-temporary-firebase-user", "/api/admin/users", admin, "POST", { name, email, departmentId: sectors[Math.min(i, 2)], secondaryDepartmentIds: i === 3 ? [a] : [], role: i === 3 ? "NIVEL_3_VISUALIZACAO" : "ADMIN_GERAL", password: randomBytes(30).toString("base64url") }, [201]);
-    users.push({ ...u, email, token: await token(u.firebaseUid) });
+    const password = randomBytes(30).toString("base64url");
+    const u = await api("provision-temporary-firebase-user", "/api/admin/users", admin, "POST", { name, email, departmentId: sectors[Math.min(i, 2)], secondaryDepartmentIds: i === 3 ? [a] : [], role: i === 3 ? "NIVEL_3_VISUALIZACAO" : "ADMIN_GERAL", password }, [201]);
+    users.push({ ...u, name, email, password, token: await token(u.firebaseUid) });
   }
   const [ua, ub, uc, n3] = users;
   const body = { type: "MEMORANDUM", subject: "Organização dos serviços municipais", body: "Encaminhamos o planejamento das atividades de Aurora das Veredas.", originDepartmentId: a };
@@ -256,7 +258,7 @@ async function main() {
     await api("urgent-update-recipients", `/api/circulars/${circular.id}/recipients`, ua.token, "PATCH", { departmentIds: [c] });
     const updated = await api("urgent-updated-count", `/api/circulars/${circular.id}`, ua.token);
     check("urgent-cancelled-recipient-excluded", updated.stats.total === 2 && updated.stats.read === 1 && updated.stats.unread === 1 && !updated.recipients.some((r: Row) => r.userId === ub.id));
-    await api("urgent-removed-recipient-read-denied", `/api/circulars/${circular.id}/read`, ub.token, "POST", {}, [403]);
+    await api("urgent-removed-recipient-read-denied", `/api/circulars/${circular.id}/read`, ub.token, "POST", {}, [404]);
   });
   // Existing intake is explicit and read-only; the interactive exclusive intake remains optional.
   if (intakeId || args.includes("--protocol-pause") && process.stdin.isTTY) await scenario("anonymous-core-protocol", async () => {
@@ -486,6 +488,10 @@ async function main() {
     check("anonymous-evaluation-cycle-incremented", (await readAnonymous()).evaluation?.cycle === 1);
     await api("wrong-anonymous-key-denied", "/api/modules/anonymous", undefined, "POST", { action: "READ", key: randomBytes(32).toString("hex") }, [404]);
   });
+  if (args.includes("--stages57")) {
+    const { stages57 } = await import("./stages57-scenarios");
+    await stages57({ base: base.origin, dir, users, sectors, api, check, scenario, own, ownModuleFile, values });
+  }
 }
 
 async function cleanup() {
@@ -499,11 +505,11 @@ async function cleanup() {
     ["module_version", "record_id", "module_record"], ["module_file", "record_id", "module_record"], ["module_edit_lease", "record_id", "module_record"],
     ["module_anonymous_access", "record_id", "module_record"], ["module_sector_tag", "record_id", "module_record"], ["module_passcode", "record_id", "module_record"],
     ["module_anonymous_operation", "record_id", "module_record"], ["citizen_identity", "citizen_id", "citizen"],
-    ["module_business_hours", "department_id", "department"], ["document_job_text", "job_id", "document_job"],
+    ["module_business_hours", "department_id", "department"], ["document_job_text", "job_id", "document_job"], ["document_job_blob", "job_id", "document_job"],
     ["user_role", "user_id", "app_user"], ["user_profile", "user_id", "app_user"], ["user_department", "user_id", "app_user"],
     ["user_admin_department", "user_id", "app_user"],
   ];
-  const allowed = new Set(["department:id", "app_user:id", "document:id", "citizen:id", "attachment:id", "module_file:id", "module_record:id", "module_mandate:id", "document_job:id", ...relations.map(([t, k]) => `${t}:${k}`)]);
+  const allowed = new Set(["department:id", "app_user:id", "document:id", "citizen:id", "attachment:id", "module_file:id", "module_record:id", "module_mandate:id", "document_job:id", "module_diary_catalog:id", ...relations.map(([t, k]) => `${t}:${k}`)]);
   if (journal.entries.some(e => !allowed.has(`${e.table}:${e.key}`) || !/^[0-9a-f-]{36}$/i.test(e.value))) throw new Error("MANIFESTO_NAO_RECONHECIDO");
   const tables = new Set((await sql(`SELECT table_name FROM information_schema.tables WHERE table_schema='public'`)).map(r => r.table_name));
   // Recover only jobs owned by endpoint-created users from this manifest. No assignee/global scan.
@@ -513,14 +519,17 @@ async function cleanup() {
     for (const job of jobs) own("document_job", job.id);
   }
   for (const e of journal.entries.filter(e => e.table === "document_job")) {
-    const jobs = await sql(`SELECT owner_id,status,output_key FROM document_job WHERE id=$1`, [e.value]);
-    if (jobs.some(j => !owners.includes(j.owner_id) || j.status !== "QUEUED" || j.output_key)) throw new Error("JOB_NOT_QUEUED_PRESERVE_OUTPUT_AND_RECOVER");
+    const jobs = await sql(`SELECT owner_id,status,output_key,lease_token FROM document_job WHERE id=$1`, [e.value]);
+    if (jobs.some(j => !owners.includes(j.owner_id) || !["QUEUED", "SUCCEEDED", "FAILED", "BLOCKED", "EXPIRED"].includes(j.status) || j.lease_token)) throw new Error("JOB_ACTIVE_PRESERVE_OUTPUT_AND_RECOVER");
   }
   for (const [table, key, parent] of relations) if (tables.has(table)) {
     for (const e of [...journal.entries].filter(e => e.table === parent && e.key === "id")) {
       const rows = await sql(`SELECT * FROM ${ident(table)} WHERE ${ident(key)}=$1`, [e.value]);
       if (rows.length) own(table, e.value, key);
-      for (const row of rows) if (["attachment", "module_file"].includes(table) && row.storage_key && !journal.blobs.includes(row.storage_key)) journal.blobs.push(row.storage_key);
+      for (const row of rows) {
+        const storageKey = table === "document_job_blob" ? row.pathname : ["attachment", "module_file"].includes(table) ? row.storage_key : undefined;
+        if (storageKey && !journal.blobs.includes(storageKey)) journal.blobs.push(storageKey);
+      }
     }
   }
   // Recover Firebase UID only through a journaled SQL ID, including partial provisioning.
@@ -553,7 +562,7 @@ async function cleanup() {
   if (history.length) writeFileSync(join(dir, "history.redacted.json"), JSON.stringify(history, null, 2), { mode: 0o600 });
   // audit_log is retained in the database; no global counters, roles or calendars are changed.
   // Delete dependents first in ONE transaction. Unknown/new FKs fail closed and rollback.
-  const order = [...relations.map(([t]) => t), "document_job", "module_mandate", "module_record", "document", "citizen", "app_user", "department"];
+  const order = [...relations.map(([t]) => t), "document_job", "module_mandate", "module_record", "module_diary_catalog", "document", "citizen", "app_user", "department"];
   const ordered = [...journal.entries].sort((a, b) => order.indexOf(a.table) - order.indexOf(b.table));
   // Immutable history is archived above. DDL and scoped deletes share a transaction:
   // exclusive locks prevent concurrent writes while these known guards are suspended.
@@ -565,7 +574,7 @@ async function cleanup() {
       sql(`SET LOCAL lock_timeout='10s'`),
       // Lock/recheck job state before deleting any dependents. A worker claim causes rollback,
       // never removal of its text/output or account. Missing rows are safe on cleanup resume.
-      ...ordered.filter(e => e.table === "document_job").map(e => sql(`WITH locked AS (SELECT owner_id,status,output_key FROM document_job WHERE id=$1 FOR UPDATE) SELECT 1 / CASE WHEN NOT EXISTS(SELECT 1 FROM locked WHERE status <> 'QUEUED' OR output_key IS NOT NULL OR NOT(owner_id=ANY($2::uuid[]))) THEN 1 ELSE 0 END AS guarded`, [e.value, owners])),
+      ...ordered.filter(e => e.table === "document_job").map(e => sql(`WITH locked AS (SELECT owner_id,status,lease_token FROM document_job WHERE id=$1 FOR UPDATE) SELECT 1 / CASE WHEN NOT EXISTS(SELECT 1 FROM locked WHERE status NOT IN ('QUEUED','SUCCEEDED','FAILED','BLOCKED','EXPIRED') OR lease_token IS NOT NULL OR NOT(owner_id=ANY($2::uuid[]))) THEN 1 ELSE 0 END AS guarded`, [e.value, owners])),
       ...activeGuards.map(([t]) => sql(`LOCK TABLE ${ident(t)} IN ACCESS EXCLUSIVE MODE`)),
       ...activeGuards.map(([t, g]) => sql(`ALTER TABLE ${ident(t)} DISABLE TRIGGER ${ident(g)}`)),
       ...ordered.map(e => sql(`DELETE FROM ${ident(e.table)} WHERE ${ident(e.key)}=$1`, [e.value])),

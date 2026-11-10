@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { and, asc, desc, eq, inArray, or, sql, ilike, count } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { appUser, attachment, auditLog, role, userRole, userDepartment } from "@/db/schema";
+import { appUser, attachment, auditLog, role, userRole, userDepartment, department } from "@/db/schema";
 import { moduleFile } from "@/db/modules-schema";
 import { documentJob, type DocumentJob } from "@/db/jobs-schema";
 import { canAccessDocument, documentScope, requirePerm, type Session } from "@/lib/auth";
@@ -10,6 +10,7 @@ import { PERMS, type Role } from "@/lib/rbac";
 import { context, getRecord, scope, ModuleError, type Context } from "@/lib/modules/server";
 import { JobError, jobInputSchema, type JobPayload, type SourceRef } from "./types";
 import { processTree } from "@/lib/process-tree";
+import { effectiveDepartmentIds } from "@/lib/department-scope";
 
 export { context };
 export function failure(error: unknown) {
@@ -22,12 +23,13 @@ export function failure(error: unknown) {
 export async function userContext(id: string): Promise<Context> {
   const [user] = await db.select().from(appUser).where(and(eq(appUser.id, id), eq(appUser.active, true)));
   if (!user?.firebaseUid) throw new JobError("Servidor indisponível para processamento.", 403);
-  const [links, sectors] = await Promise.all([
+  const [links, sectors, departments] = await Promise.all([
     db.select({ name: role.name }).from(userRole).innerJoin(role, eq(role.id, userRole.roleId)).where(eq(userRole.userId, id)),
     db.select().from(userDepartment).where(eq(userDepartment.userId, id)),
+    db.select().from(department).where(eq(department.active, true)),
   ]);
   const roles = links.map(r => r.name).filter((r): r is Role => Object.prototype.hasOwnProperty.call(PERMS, r));
-  const session: Session = { uid: user.firebaseUid, userId: id, roles, departmentId: user.departmentId, departmentIds: Array.from(new Set([user.departmentId, ...sectors.map(s => s.departmentId)].filter((s): s is string => !!s))) };
+  const session: Session = { uid: user.firebaseUid, userId: id, roles, departmentId: user.departmentId, departmentIds: effectiveDepartmentIds(user.departmentId, sectors.map(s => s.departmentId), roles, departments) };
   if (!requirePerm(session, "doc:view").ok) throw new JobError("Permissão de leitura revogada.", 403);
   return { user, session };
 }

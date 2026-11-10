@@ -1,10 +1,12 @@
 import type { ModuleRecord } from "@/db/modules-schema";
 import { configFamilies, type Family } from "./domain";
-export type ScopeContext = { user: { id: string }; session: { departmentIds: string[] } };
+export type ScopeContext = { user: { id: string }; session: { departmentIds: string[]; roles?: string[] } };
 export function canManage(row: ModuleRecord, ctx: ScopeContext) {
+  if (ctx.session.roles?.includes("AUDITOR")) return true;
   return row.ownerId === ctx.user.id || row.access !== "RESTRITO" && ctx.session.departmentIds.some(id => row.departmentId === id || row.participants.includes(id));
 }
 export function canRead(row: ModuleRecord, ctx: ScopeContext) {
+  if (ctx.session.roles?.includes("AUDITOR")) return true;
   if (configFamilies.includes(row.family as Family)) return true;
   if (row.ownerId === ctx.user.id) return true;
   if (row.data.signatures?.some(s => s.userId === ctx.user.id && s.status === "PENDENTE")) return true;

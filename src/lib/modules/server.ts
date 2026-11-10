@@ -9,6 +9,7 @@ import { blockSchema, configFamilies, familyFields, familySchema, processFamilie
 import { canManage, canRead, redacted } from "./policy";
 import { workflowDeadline } from "./business-hours";
 import { validatePublication } from "./diary-catalog";
+import { availableActions } from "./actions";
 export { canRead, redacted } from "./policy";
 
 export class ModuleError extends Error { constructor(message: string, public status = 400) { super(message); } }
@@ -33,6 +34,7 @@ export function admin(ctx: Context) {
   if (!ctx.session.roles.includes("ADMIN_GERAL")) throw new ModuleError("A configuração exige Administrador Geral.", 403);
 }
 export function scope(ctx: Context) {
+  if (ctx.session.roles.includes("AUDITOR")) return sql`true`;
   // Configuration is readable to staff; document administration is not unrestricted reading.
   return or(inArray(moduleRecord.family, configFamilies), eq(moduleRecord.ownerId, ctx.user.id),
     sql`${moduleRecord.data}->'signatures' @> ${JSON.stringify([{ userId: ctx.user.id, status: "PENDENTE" }])}::jsonb`,
@@ -344,5 +346,8 @@ export async function detail(id: string, ctx: Context) {
     db.select({ id: moduleFile.id, filename: moduleFile.filename, category: moduleFile.category, mimeType: moduleFile.mimeType, size: moduleFile.size, sha256: moduleFile.sha256, createdAt: moduleFile.createdAt }).from(moduleFile).where(eq(moduleFile.recordId, id)).orderBy(asc(moduleFile.createdAt)),
   ]);
   await db.insert(auditLog).values({ actorType: "USER", actorId: ctx.user.id, action: "MODULE_READ", entityType: row.family, entityId: id });
-  return { record: redacted(row, ctx), files, versions: versions.map(v => ({ id: v.id, revision: v.revision, action: v.action, note: v.note, actorId: v.actorId, createdAt: v.createdAt })), permissions: { edit: requirePerm(ctx.session, "doc:edit").ok && (!configFamilies.includes(row.family as Family) || ctx.session.roles.includes("ADMIN_GERAL")) } };
+  const edit = requirePerm(ctx.session, "doc:edit").ok && (configFamilies.includes(row.family as Family) ? ctx.session.roles.includes("ADMIN_GERAL") : canManage(row, ctx)) && (row.family !== "delegacoes" || row.ownerId === ctx.user.id);
+  const actions = availableActions(row, { writable: edit, admin: ctx.session.roles.includes("ADMIN_GERAL"), userId: ctx.user.id, departmentIds: ctx.session.departmentIds });
+  if (!edit && row.status !== "PUBLICADO" && !configFamilies.includes(row.family as Family) && requirePerm(ctx.session, "doc:edit").ok && row.data.signatures?.some(s => s.userId === ctx.user.id && s.status === "PENDENTE")) actions.push("RECUSAR_ASSINATURA");
+  return { record: redacted(row, ctx), files, versions: versions.map(v => ({ id: v.id, revision: v.revision, action: v.action, note: v.note, actorId: v.actorId, createdAt: v.createdAt })), permissions: { edit, actions } };
 }

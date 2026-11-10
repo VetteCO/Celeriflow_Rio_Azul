@@ -20,8 +20,13 @@ const links = [
 ];
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { user, role } = useSession();
-  const visibleLinks = links.filter(([href]) => role || ["/", "/cidadao", "/publico", "/ajuda"].includes(href));
+   const { user, role, permissions } = useSession();
+   const visibleLinks = links.filter(([href]) => {
+     if (["/", "/cidadao", "/publico", "/ajuda"].includes(href)) return true;
+     if (!role) return false;
+     if (href === "/admin") return permissions.includes("*") || permissions.includes("admin:users");
+     return true;
+   });
   const [expanded, setExpanded] = useState(false);
   const toggle = useRef<HTMLButtonElement>(null);
   useEffect(() => setExpanded(pathname === "/"), [pathname]);

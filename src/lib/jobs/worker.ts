@@ -149,4 +149,4 @@ export async function processJob(job: DocumentJob) {
     await fail(job, error);
   } finally { clearInterval(pulse); clearTimeout(timeout); controller.abort(); await rm(directory, { recursive: true, force: true }); }
 }
-export async function workerTick() { await cleanup(); const job = await claim(); if (job) await processJob(job); return !!job; }
+export async function workerTick(jobId?: string) { if (!jobId) await cleanup(); const job = await claim(jobId); if (job) await processJob(job); return !!job; }

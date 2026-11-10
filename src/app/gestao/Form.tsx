@@ -26,6 +26,7 @@ export function ModuleForm({ family, options, initial, onSave, onAutoSave, busy 
   const [agenda, setAgenda] = useState(initial?.data.agenda ?? []); const [attendees, setAttendees] = useState(initial?.data.attendees?.join("\n") ?? "");
   const [error, setError] = useState(""); const [fullscreen, setFullscreen] = useState(false);
   const [autoStatus, setAutoStatus] = useState("");
+  const submitting = useRef(false);
   const [leased, setLeased] = useState(!initial);
   const [leaseToken,setLeaseToken]=useState("");
   useEffect(() => {
@@ -49,13 +50,14 @@ export function ModuleForm({ family, options, initial, onSave, onAutoSave, busy 
     }, 2500);
     return () => clearTimeout(timer);
   }, [autoPayload, family, leased,leaseToken,busy]);
-  const selectedWorkflow = options.configurations.find(c => c.id === workflowId)?.data.workflow ?? initial?.data.workflow;
+  const selectedWorkflow = initial?.data.workflow ?? options.configurations.find(c => c.id === workflowId)?.data.workflow;
   const setValue = (key: string, value: string) => setValues(current => ({ ...current, [key]: value }));
   const field = (definition: FamilyField) => <WorkflowField key={definition.key} field={definition} value={values[definition.key] ?? ""} onChange={value => setValue(definition.key, value)} />;
   return <form onSubmit={async event => {
-    event.preventDefault(); if (!leased) { setError("Aguarde a reserva exclusiva de edição."); return; } setError("");
+    event.preventDefault(); if (submitting.current || busy) return; if (!leased) { setError("Aguarde a reserva exclusiva de edição."); return; } setError(""); submitting.current = true;
     try { await onSave({ ...autoPayload, leaseToken, geometry: family === "camadas" ? JSON.parse(geometry) : undefined }); }
     catch (e) { setError((e as Error).message); }
+    finally { submitting.current = false; }
   }} style={{ display: "grid", gap: 12 }}>
     {error && <p role="alert" className="alert alert-error">{error}</p>}
     {autoStatus && <p role="status">{autoStatus}</p>}

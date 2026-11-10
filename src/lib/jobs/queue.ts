@@ -8,13 +8,13 @@ import { JobError } from "./types";
 import { ModuleError } from "@/lib/modules/server";
 
 export const blobToken = () => (process.env.BLOB_READ_WRITE_TOKEN ?? "").trim().replace(/^"|"$/g, "");
-export async function claim(): Promise<DocumentJob | null> {
+export async function claim(jobId?: string): Promise<DocumentJob | null> {
   const token = randomUUID();
   // Single statement transaction: two workers never own the same lease. Expired leases consume attempts.
   await db.execute(sql`UPDATE document_job SET status='FAILED',error='Limite de tentativas atingido após interrupção do executor.',lease_token=NULL,lease_until=NULL,updated_at=now()
-    WHERE status='RUNNING' AND lease_until<now() AND attempts>=max_attempts`);
+    WHERE status='RUNNING' AND lease_until<now() AND attempts>=max_attempts AND ${jobId ? sql`id=${jobId}::uuid` : sql`true`}`);
   await db.execute(sql`WITH next AS (
-    SELECT id FROM document_job WHERE attempts<max_attempts AND
+    SELECT id FROM document_job WHERE ${jobId ? sql`id=${jobId}::uuid` : sql`true`} AND attempts<max_attempts AND
       ((status IN ('QUEUED','RETRY') AND available_at<=now()) OR (status='RUNNING' AND lease_until<now()))
     ORDER BY available_at,created_at FOR UPDATE SKIP LOCKED LIMIT 1
   ) UPDATE document_job j SET status='RUNNING',attempts=j.attempts+1,lease_token=${token}::uuid,
