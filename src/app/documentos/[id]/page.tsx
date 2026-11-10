@@ -22,6 +22,9 @@ type Detail = {
     type: string;
     accessLevel: string;
     urgency?: string;
+    assigneeId?: string | null;
+    assignee?: string;
+    circularReplyMode?: string;
   };
   deadlines: Array<{ id: string; title: string; dueAt: string; status: string }>;
   timeline: Array<{
@@ -56,6 +59,7 @@ export default function DocDetail() {
   const [editingDeadline, setEditingDeadline] = useState<string | null>(null);
   const [deadlineStatus, setDeadlineStatus] = useState("PENDING");
   const [myDepartmentIds, setMyDepartmentIds] = useState<string[]>([]);
+  const [assignees, setAssignees] = useState<Array<{ id: string; name: string }>>([]);
   const uploadRef = useRef<HTMLInputElement>(null);
   const [deadlineFilter, setDeadlineFilter] = useState("");
   const [busy, setBusy] = useState<"forward" | "receive" | "deadline" | null>(null);
@@ -65,7 +69,8 @@ export default function DocDetail() {
   const load = useCallback(() => {
     Promise.all([api(`/api/documents/${params.id}`), api("/api/admin/departments"), api("/api/admin/me")])
       .then(async ([detail, departments, account]) => {
-        if (detail.document.type === "CIRCULAR") { const circular = await api(`/api/circulars/${params.id}`); detail.document.urgency = circular.circular.urgency; }
+         if (detail.document.type === "CIRCULAR") { const circular = await api(`/api/circulars/${params.id}`); detail.document.urgency = circular.circular.urgency; }
+         if (detail.document.type === "EXTERNAL_REQUEST") { const assignment = await api(`/api/documents/${params.id}/assignment`); setAssignees(assignment.users); }
         setData(detail); setMyDepartmentIds(departments.myDepartmentIds ?? []); setErr(null); setAttachmentPreview(account.profile?.details?.attachmentView === "PREVIA");
       })
       .catch((e) => setErr((e as Error).message));
@@ -196,6 +201,11 @@ export default function DocDetail() {
     try { await api(`/api/attachments/${id}`, { method: "PATCH", body: JSON.stringify({ citizenVisible }) }); setData((current) => current ? { ...current, attachments: current.attachments.map((a) => a.id === id ? { ...a, citizenVisible } : a) } : current); }
     catch (e) { setErr((e as Error).message); } finally { setBusy(null); }
   }
+  async function assign(assigneeId: string) {
+    if (busy) return; setBusy("forward"); setErr(null);
+    try { await api(`/api/documents/${params.id}/assignment`, { method: "PATCH", body: JSON.stringify({ assigneeId: assigneeId || null, departmentId: actingDepartment || undefined }) }); load(); }
+    catch (error) { setErr((error as Error).message); } finally { setBusy(null); }
+  }
   const navigation = <><Link className="btn" href="/documentos">Documentos</Link><button className="btn" aria-pressed={view === "document"} onClick={() => setView("document")}>Documento</button><button className="btn" aria-pressed={view === "deadlines"} onClick={() => setView("deadlines")}>Prazos</button><button className="btn" aria-pressed={view === "attachments"} onClick={() => setView("attachments")}>Anexos</button></>;
 
     if (view === "attachments") return <DataTable id="document-attachments" title={`Anexos — ${data.document.displayNumber}`} rows={data.attachments} rowKey={(a) => a.id} error={err} actions={<>{navigation}{canEditActivities && <><button className="btn btn-primary" disabled={!!busy} onClick={() => uploadRef.current?.click()}>Anexar arquivo</button><input type="file" hidden ref={uploadRef} onChange={(e) => { if (e.target.files?.[0]) void upload(e.target.files[0]); }} /></>}</>} columns={[
@@ -222,7 +232,9 @@ export default function DocDetail() {
           {new Date(data.document.createdAt).toLocaleString("pt-BR")}
         </span>
       </p>
-      <div className="doc-body" dangerouslySetInnerHTML={{ __html: data.document.body }} />
+       <div className="doc-body" dangerouslySetInnerHTML={{ __html: data.document.body }} />
+       {data.document.type === "EXTERNAL_REQUEST" && <section className="card plain"><h2>Atendimento ao cidadão</h2><p>Responsável: {data.document.assignee ?? "Sem responsável individual"}</p>{canEditActivities && <label>Atribuir responsável<select value={data.document.assigneeId ?? ""} disabled={!!busy} onChange={e => assign(e.target.value)}><option value="">Sem responsável individual</option>{assignees.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}</select></label>}<p className="muted">Notas internas ficam no atendimento. Use “Resposta ao cidadão” para liberar o texto à conta do requerente.</p></section>}
+       {data.document.type === "CIRCULAR" && <p>{data.document.urgency === "INFORMATIVE" ? "Meramente Informativa — sem respostas ou encaminhamento." : data.document.circularReplyMode === "RESTRICTED" ? "Respostas restritas ao setor remetente." : "Respostas abertas a todos os envolvidos."}</p>}
        {data.document.accessLevel === "PUBLIC" && <p><Link href={`/publico/${data.document.publicKey}`}>Consulta pública / QR →</Link></p>}
       {err && (
         <p className="alert alert-error" role="alert">

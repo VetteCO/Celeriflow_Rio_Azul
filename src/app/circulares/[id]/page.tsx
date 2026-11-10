@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { api, useSession } from "@/components/session";
 import { DataTable } from "@/components/DataTable";
+import { DepartmentPicker, type PickDepartment } from "@/components/DepartmentPicker";
 
 type Detail = {
   circular: {
@@ -14,10 +15,13 @@ type Detail = {
     body: string;
     urgency: string | null;
     status: string;
+    circularReplyMode: string;
     createdAt: string;
   };
   myReceipt: { firstReadAt: string } | null;
   stats: { total: number; read: number; unread: number };
+  canEditRecipients: boolean;
+  departmentIds: string[];
   recipients: Array<{
     userId: string;
     name: string;
@@ -35,6 +39,11 @@ export default function CircularDetail() {
   const [err, setErr] = useState<string | null>(null);
   const [onlyUnread, setOnlyUnread] = useState(false);
   const [showRecipients, setShowRecipients] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [departments, setDepartments] = useState<PickDepartment[]>([]);
+  const [picked, setPicked] = useState<string[]>([]);
+  const [includeChildren, setIncludeChildren] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const load = useCallback(
      () => {
@@ -64,6 +73,16 @@ export default function CircularDetail() {
       </p>
     );
   if (!data) return <p role="status">Carregando circular…</p>;
+  async function editRecipients() {
+    try { const response = await api("/api/admin/departments"); setDepartments(response.departments); setPicked(data!.departmentIds); setEditing(true); setErr(null); }
+    catch (error) { setErr((error as Error).message); }
+  }
+  async function saveRecipients() {
+    if (saving) return; setSaving(true); setErr(null);
+    try { await api(`/api/circulars/${params.id}/recipients`, { method: "PATCH", body: JSON.stringify({ departmentIds: picked, includeSubdepartments: includeChildren }) }); setEditing(false); load(); }
+    catch (error) { setErr((error as Error).message); } finally { setSaving(false); }
+  }
+  if (editing) return <section><h1>Destinatários da circular</h1>{err && <p role="alert">{err}</p>}<p>Destinatários removidos perdem o acesso. Recibos anteriores permanecem no histórico e serão preservados se o servidor voltar a receber a circular.</p><DepartmentPicker departments={departments} value={picked} onChange={setPicked} disabled={saving} /><label><input type="checkbox" checked={includeChildren} onChange={e => setIncludeChildren(e.target.checked)} /> Incluir subsetores</label><div className="form-row"><button className="btn btn-primary" disabled={saving || !picked.length} onClick={saveRecipients}>Salvar destinatários</button><button className="btn" disabled={saving} onClick={() => setEditing(false)}>Cancelar</button></div></section>;
 
   if (showRecipients) return <DataTable id="circular-recipients" title={`Destinatários — ${data.circular.displayNumber}`} rows={data.recipients.filter((r) => !onlyUnread || !r.read)} rowKey={(r) => r.userId} error={err}
     actions={<><Link className="btn" href="/circulares">Circulares</Link><button className="btn" onClick={() => setShowRecipients(false)}>Voltar à circular</button><button className="btn" onClick={load}>Atualizar</button></>} filters={<label><input type="checkbox" checked={onlyUnread} onChange={(e) => setOnlyUnread(e.target.checked)} /> Somente não lidos</label>} columns={[
@@ -82,7 +101,7 @@ export default function CircularDetail() {
         <span
           className={`badge ${data.circular.urgency === "URGENT" ? "badge-IN_TRANSIT" : "badge-DRAFT"}`}
         >
-          {data.circular.urgency === "URGENT" ? "Urgente" : "Informativa"}
+          {data.circular.urgency === "URGENT" ? "Urgente" : "Meramente Informativa"}
         </span>{" "}
         <span className="muted">
           Criada em {new Date(data.circular.createdAt).toLocaleString("pt-BR")}
@@ -97,11 +116,13 @@ export default function CircularDetail() {
       )}
 
       <h2>Acompanhamento de leitura</h2>
+      <p>{data.circular.urgency === "INFORMATIVE" ? "Sem respostas ou encaminhamento pelos destinatários." : data.circular.circularReplyMode === "RESTRICTED" ? "Respostas restritas ao setor remetente e ao próprio autor da resposta." : "Respostas abertas a todos os envolvidos."}</p>
       <p>
         <strong>{data.stats.read}</strong> lidos · <strong>{data.stats.unread}</strong> não
         lidos · {data.stats.total} destinatários
       </p>
-       <button className="btn" onClick={() => setShowRecipients(true)}>Consultar destinatários e recibos</button>
+        <button className="btn" onClick={() => setShowRecipients(true)}>Consultar destinatários e recibos</button>
+        {data.canEditRecipients && <button className="btn" onClick={editRecipients}>Alterar destinatários</button>}
        <Link className="btn" href={`/documentos/${params.id}`}>Anexos, prazos e tramitação</Link>
     </div>
   );

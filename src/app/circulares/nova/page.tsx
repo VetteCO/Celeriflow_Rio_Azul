@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api, useSession } from "@/components/session";
 import { RichText } from "@/components/RichText";
+import { DepartmentPicker } from "@/components/DepartmentPicker";
 
 type Dept = { id: string; name: string; acronym: string | null; parentId?: string | null; active?: boolean };
 
@@ -16,6 +17,7 @@ export default function NovaCircular() {
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [urgency, setUrgency] = useState("URGENT");
+  const [circularReplyMode, setCircularReplyMode] = useState("OPEN");
   const [origin, setOrigin] = useState("");
   const [picked, setPicked] = useState<string[]>([]);
   const [includeSubdepartments, setIncludeSubdepartments] = useState(false);
@@ -27,18 +29,18 @@ export default function NovaCircular() {
     if (!user) return;
     try {
       const raw = sessionStorage.getItem(`circular-draft:${user.uid}`);
-      if (raw) { const draft = JSON.parse(raw); setSubject(draft.subject ?? ""); setBody(draft.body ?? ""); setUrgency(draft.urgency ?? "URGENT"); setOrigin(draft.origin ?? ""); setIncludeSubdepartments(draft.includeSubdepartments === true); if (Array.isArray(draft.picked)) setPicked(draft.picked); setDraftNotice("Rascunho recuperado desta sessão do navegador."); }
+      if (raw) { const draft = JSON.parse(raw); setSubject(draft.subject ?? ""); setBody(draft.body ?? ""); setUrgency(draft.urgency ?? "URGENT"); setCircularReplyMode(draft.circularReplyMode === "RESTRICTED" ? "RESTRICTED" : "OPEN"); setOrigin(draft.origin ?? ""); setIncludeSubdepartments(draft.includeSubdepartments === true); if (Array.isArray(draft.picked)) setPicked(draft.picked); setDraftNotice("Rascunho recuperado desta sessão do navegador."); }
     } catch { setDraftNotice("Não foi possível recuperar o rascunho local."); }
     setDraftReady(true);
   }, [user]);
   useEffect(() => {
     if (!user || !draftReady || saving) return;
     const timer = window.setTimeout(() => {
-      try { sessionStorage.setItem(`circular-draft:${user.uid}`, JSON.stringify({ subject, body, urgency, origin, picked, includeSubdepartments })); setDraftNotice("Rascunho salvo nesta sessão do navegador."); }
+      try { sessionStorage.setItem(`circular-draft:${user.uid}`, JSON.stringify({ subject, body, urgency, circularReplyMode, origin, picked, includeSubdepartments })); setDraftNotice("Rascunho salvo nesta sessão do navegador."); }
       catch { setDraftNotice("O armazenamento local está indisponível. Salve a circular para preservar o conteúdo."); }
     }, 600);
     return () => window.clearTimeout(timer);
-  }, [user, draftReady, saving, subject, body, urgency, origin, picked, includeSubdepartments]);
+  }, [user, draftReady, saving, subject, body, urgency, circularReplyMode, origin, picked, includeSubdepartments]);
 
   useEffect(() => {
     if (!user) return;
@@ -61,10 +63,6 @@ export default function NovaCircular() {
       </p>
     );
 
-  function toggle(id: string) {
-    setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
-  }
-
   async function save(e: React.FormEvent) {
     e.preventDefault();
     if (saving) return;
@@ -77,7 +75,8 @@ export default function NovaCircular() {
         body: JSON.stringify({
           subject,
           body,
-          urgency,
+           urgency,
+           circularReplyMode,
           originDepartmentId: origin || null,
           departmentIds: picked,
           includeSubdepartments,
@@ -137,23 +136,15 @@ export default function NovaCircular() {
           Corpo
           <RichText value={body} onChange={setBody} />
         </label>
+        {urgency === "URGENT" && <label>Respostas<select value={circularReplyMode} onChange={e => setCircularReplyMode(e.target.value)}><option value="OPEN">Abertas a todos os envolvidos</option><option value="RESTRICTED">Restritas ao setor remetente</option></select></label>}
+        {urgency === "INFORMATIVE" && <p className="muted">Circular meramente informativa: os destinatários podem registrar leitura, sem responder ou encaminhar.</p>}
         <fieldset className="card plain">
           <legend>
             <strong>Setores destinatários ({picked.length})</strong>
           </legend>
           <label><input type="checkbox" checked={includeSubdepartments} onChange={(e) => setIncludeSubdepartments(e.target.checked)} /> Incluir os subsetores dos setores selecionados</label>
-           {depts.filter((d) => d.active !== false).map((d) => (
-            <label key={d.id} style={{ display: "flex", gap: 8, alignItems: "center", fontWeight: 400 }}>
-              <input
-                type="checkbox"
-                style={{ width: "auto", minHeight: "auto" }}
-                checked={picked.includes(d.id)}
-                onChange={() => toggle(d.id)}
-              />
-               {d.parentId && `${depts.find((p) => p.id === d.parentId)?.name ?? "Setor superior"} / `}{d.name}{d.acronym ? ` (${d.acronym})` : ""}
-            </label>
-          ))}
         </fieldset>
+        <DepartmentPicker departments={depts} value={picked} onChange={setPicked} disabled={saving} />
         <button type="submit" className="btn btn-primary" disabled={saving || picked.length === 0}>
           {saving ? "Enviando…" : `Enviar para ${picked.length} setor(es)`}
         </button>

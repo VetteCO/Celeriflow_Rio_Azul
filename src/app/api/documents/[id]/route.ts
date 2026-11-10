@@ -15,6 +15,7 @@ import {
 } from "@/db/schema";
 import { getSession, requirePerm, canAccessDocument } from "@/lib/auth";
 import { formatNumber, sanitizeDocumentHtml } from "@/lib/numbering";
+import { internalHistory } from "@/lib/document-visibility";
 
 export async function GET(
   _req: Request,
@@ -62,6 +63,10 @@ export async function GET(
       year: doc.year,
       type: doc.type,
       accessLevel: doc.accessLevel,
+      assigneeId: doc.assigneeId,
+      assignee: doc.assigneeId ? userName(doc.assigneeId) : null,
+      circularReplyMode: doc.circularReplyMode,
+      urgency: doc.urgency,
       subject: doc.subject,
       body: sanitizeDocumentHtml(doc.body),
       status: doc.status,
@@ -75,7 +80,7 @@ export async function GET(
       dueAt: d.dueAt,
       status: d.status,
     })),
-    timeline: movements.map((m) => ({
+    timeline: internalHistory(doc, movements, check.session).map((m) => ({
       id: m.id,
       action: m.action,
       from: deptName(m.fromDepartmentId),

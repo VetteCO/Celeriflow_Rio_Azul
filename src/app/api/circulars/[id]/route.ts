@@ -2,35 +2,19 @@
 // Ao abrir como destinatário, registra firstReadAt (imutável via unique +
 // onConflictDoNothing) e retorna o recibo.
 import { NextResponse } from "next/server";
-import { and, eq, asc } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { db } from "@/db";
 import {
   appUser,
   department,
-  document,
   documentMovement,
   documentReadReceipt,
   documentRecipient,
 } from "@/db/schema";
 import { getSession, requirePerm, canAccessDocument, isRecipient } from "@/lib/auth";
 import { formatNumber, sanitizeDocumentHtml } from "@/lib/numbering";
-
-async function recordRead(documentId: string, userId: string) {
-  await db
-    .insert(documentReadReceipt)
-    .values({ documentId, userId })
-    .onConflictDoNothing();
-  const rows = await db
-    .select()
-    .from(documentReadReceipt)
-    .where(
-      and(
-        eq(documentReadReceipt.documentId, documentId),
-        eq(documentReadReceipt.userId, userId)
-      )
-    );
-  return rows[0] ?? null;
-}
+import { circularPopulation, recordCircularRead } from "@/lib/circulars";
+import { internalHistory } from "@/lib/document-visibility";
 
 export async function GET(req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = await paramsPromise;
@@ -58,7 +42,10 @@ export async function GET(req: Request, { params: paramsPromise }: { params: Pro
 
   // Leitura do próprio visualizador (prova individual de leitura).
   let myReceipt = null;
-  if (me && await isRecipient(check.session, doc.id)) myReceipt = await recordRead(doc.id, me.id);
+  if (me && await isRecipient(check.session, doc.id)) {
+    const firstReadAt = await recordCircularRead(check.session, doc.id);
+    if (firstReadAt) myReceipt = { firstReadAt };
+  }
 
   const [recipients, receipts, users, depts, movements] = await Promise.all([
     db.select().from(documentRecipient).where(eq(documentRecipient.documentId, doc.id)),
@@ -68,9 +55,8 @@ export async function GET(req: Request, { params: paramsPromise }: { params: Pro
     db.select().from(documentMovement).where(eq(documentMovement.documentId, doc.id)).orderBy(asc(documentMovement.createdAt), asc(documentMovement.id)),
   ]);
 
-  const individual = recipients
-    .filter(r => r.recipientType !== "CANCELLED")
-    .filter((r, i, all) => r.userId && all.findIndex(x => x.userId === r.userId) === i)
+  const { population, stats } = circularPopulation(recipients, receipts);
+  const individual = population
     .map((r) => {
       const u = users.find((x) => x.id === r.userId);
       const d = depts.find((x) => x.id === (r.departmentId ?? u?.departmentId));
@@ -94,17 +80,16 @@ export async function GET(req: Request, { params: paramsPromise }: { params: Pro
       body: sanitizeDocumentHtml(doc.body),
       urgency: doc.urgency,
       status: doc.status,
+      circularReplyMode: doc.circularReplyMode,
       createdAt: doc.createdAt,
     },
     myReceipt: myReceipt
       ? { firstReadAt: myReceipt.firstReadAt }
       : null,
-    stats: {
-      total: individual.length,
-      read: individual.filter((r) => r.read).length,
-      unread: individual.filter((r) => !r.read).length,
-    },
+    stats,
+    canEditRecipients: doc.createdById === check.session.userId && ["OPEN", "IN_TRANSIT"].includes(doc.status),
+    departmentIds: Array.from(new Set(recipients.filter(r => r.recipientType !== "CANCELLED").map(r => r.departmentId).filter(Boolean))),
     recipients: filtered,
-    movements: movements.map((m) => ({ action: m.action, note: m.note, at: m.createdAt })),
+    movements: internalHistory(doc, movements, check.session).map((m) => ({ action: m.action, note: m.note, at: m.createdAt })),
   });
 }

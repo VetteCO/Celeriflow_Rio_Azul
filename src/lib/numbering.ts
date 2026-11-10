@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 import { randomUUID } from "crypto";
 import sanitizeHtml from "sanitize-html";
 import { coreWriteGuard, coreWriteLock } from "./core-write-guard";
+import { recipientSnapshotGuard } from "./circulars";
 
 export type DocumentType = typeof document.$inferInsert.type;
 const PREFIX: Record<DocumentType, string> = { MEMORANDUM: "MEM", OFICIO: "OFI", CIRCULAR: "CIR", EXTERNAL_REQUEST: "REQ", DISPATCH: "DES", OTHER: "DOC" };
@@ -39,7 +40,7 @@ export function sanitizeDocumentHtml(value: string) {
 export async function createDocumentWithNumber(opts: {
   type: DocumentType; subject: string; body: string; originDepartmentId: string | null; createdById: string | null;
   toDepartmentId?: string | null; departmentIds?: string[]; recipientUsers?: { id: string; departmentId: string | null }[];
-  urgency?: string; accessLevel?: string; deadlines?: { title: string; dueAt: string }[];
+  urgency?: string; circularReplyMode?: string; accessLevel?: string; deadlines?: { title: string; dueAt: string }[];
   external?: { person: typeof citizen.$inferInsert & { id: string }; existing: boolean; requestType: string };
 }) {
   const now = new Date();
@@ -55,13 +56,14 @@ export async function createDocumentWithNumber(opts: {
   // Counters and every dependent row share a transaction. A rejected insert does
   // not reserve a number or leave a partial document. One lock order for all types.
   const authorization = opts.createdById ? [coreWriteGuard(opts.createdById, "doc:create", null, opts.originDepartmentId)] : [];
+  if (opts.type === "CIRCULAR" && opts.recipientUsers?.length && targets.length) authorization.push(recipientSnapshotGuard(targets, opts.recipientUsers));
   const results = await db.batch([
     coreWriteLock(),
     ...authorization,
     db.execute(sql`SELECT pg_advisory_xact_lock(20261110, 42)`),
     db.execute(sql`WITH allocated AS (INSERT INTO business_counter(key,value) VALUES(${businessKey},1) ON CONFLICT(key) DO UPDATE SET value=business_counter.value+1 WHERE business_counter.value<99999 RETURNING value) SELECT 1/count(*)::int FROM allocated`),
     db.execute(sql`INSERT INTO business_counter(key,value) SELECT ${documentKey},coalesce(max(number),0)+1 FROM document WHERE type=${opts.type} AND year=${year} ON CONFLICT(key) DO UPDATE SET value=greatest(business_counter.value,(SELECT coalesce(max(number),0) FROM document WHERE type=${opts.type} AND year=${year}))+1`),
-    db.insert(document).values({ id, businessCode, type: opts.type, number, year, subject: opts.subject, body: sanitizeDocumentHtml(opts.body), status: "OPEN", originDepartmentId: opts.originDepartmentId, createdById: opts.createdById, publicKey, urgency: opts.urgency, accessLevel: opts.accessLevel ?? "INTERNAL" }).returning(),
+    db.insert(document).values({ id, businessCode, type: opts.type, number, year, subject: opts.subject, body: sanitizeDocumentHtml(opts.body), status: "OPEN", originDepartmentId: opts.originDepartmentId, createdById: opts.createdById, publicKey, urgency: opts.urgency, circularReplyMode: opts.circularReplyMode ?? "OPEN", accessLevel: opts.accessLevel ?? "INTERNAL" }).returning(),
     ...departments.map(departmentId => db.insert(documentParticipation).values({ documentId: id, departmentId, state: targets.includes(departmentId) ? "PENDING" : "OPEN" })),
     ...(opts.deadlines ?? []).map(d => db.insert(documentDeadline).values({ documentId: id, title: d.title, dueAt: new Date(d.dueAt) })),
     ...(opts.recipientUsers ?? []).map(u => db.insert(documentRecipient).values({ documentId: id, departmentId: u.departmentId, userId: u.id })),

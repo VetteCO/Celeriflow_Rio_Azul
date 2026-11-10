@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { department } from "@/db/schema";
 import { canAccessDocument, getSession, requirePerm } from "./auth";
 import { coreWriteGuard, coreWriteLock, isCoreWriteConflict } from "./core-write-guard";
+import { nanoid } from "nanoid";
 
 const actionSchema = z.object({ departmentId: z.string().uuid().optional(), toDepartmentId: z.string().uuid().optional(), toDepartmentIds: z.array(z.string().uuid()).max(20).optional(), note: z.string().max(20000).default(""), visibility: z.enum(["INTERNAL", "CITIZEN"]).default("INTERNAL") });
 export async function documentAction(req: Request, id: string, action: "forward" | "receive" | "conclude" | "archive" | "reopen" | "reply") {
@@ -16,6 +17,7 @@ export async function documentAction(req: Request, id: string, action: "forward"
   if (!doc) return NextResponse.json({ error: "not_found" }, { status: 404 });
   const b = parsed.data, from = b.departmentId ?? check.session.departmentId;
   if (action === "reply" && !b.note.trim()) return NextResponse.json({ error: "reply_required" }, { status: 400 });
+  if (b.visibility === "CITIZEN" && (action !== "reply" || doc.type !== "EXTERNAL_REQUEST" || doc.accessLevel === "CONFIDENTIAL")) return NextResponse.json({ error: "invalid_visibility" }, { status: 400 });
   if (!from || !check.session.departmentIds.includes(from)) return NextResponse.json({ error: "department_forbidden" }, { status: 403 });
   if (doc.urgency === "INFORMATIVE" && ["forward", "reply"].includes(action)) return NextResponse.json({ error: "informative_circular" }, { status: 409 });
   const targets = Array.from(new Set([b.toDepartmentId, ...(b.toDepartmentIds ?? [])].filter((s): s is string => !!s)));
@@ -25,7 +27,8 @@ export async function documentAction(req: Request, id: string, action: "forward"
   }
   const nextState = { forward: "FORWARDED", receive: "OPEN", conclude: "CONCLUDED", archive: "ARCHIVED", reopen: "OPEN", reply: "OPEN" }[action];
   const expected = { forward: ["OPEN"], receive: ["PENDING"], conclude: ["OPEN"], archive: ["CONCLUDED"], reopen: ["CONCLUDED", "ARCHIVED"], reply: ["OPEN"] }[action];
-  const event = { forward: "FORWARDED", receive: "RECEIVED", conclude: "CONCLUDED", archive: "ARCHIVED", reopen: "REOPENED", reply: b.visibility === "CITIZEN" ? "CITIZEN_REPLY" : "INTERNAL_NOTE" }[action];
+  const visibility = action === "reply" && doc.type === "CIRCULAR" ? doc.circularReplyMode === "RESTRICTED" ? "CIRCULAR_RESTRICTED" : "CIRCULAR_OPEN" : b.visibility;
+  const event = { forward: "FORWARDED", receive: "RECEIVED", conclude: "CONCLUDED", archive: "ARCHIVED", reopen: "REOPENED", reply: doc.type === "CIRCULAR" ? "CIRCULAR_REPLY" : b.visibility === "CITIZEN" ? "CITIZEN_REPLY" : "INTERNAL_NOTE" }[action];
   const targetSql = action === "forward" ? sql`INSERT INTO document_participation(document_id,department_id,state) SELECT ${id}::uuid, t::uuid, 'PENDING' FROM unnest(ARRAY[${sql.join(targets.map(t => sql`${t}`), sql`, `)}]::text[]) t WHERE EXISTS(SELECT 1 FROM changed) ON CONFLICT(document_id,department_id) DO UPDATE SET state='PENDING',updated_at=now() RETURNING department_id` : sql`SELECT ${from}::uuid AS department_id WHERE EXISTS(SELECT 1 FROM changed)`;
   // One SQL statement: row-lock/check state, update sector, open destinations, record events and audit.
   try {
@@ -44,7 +47,13 @@ export async function documentAction(req: Request, id: string, action: "forward"
     INSERT INTO document_movement(document_id,from_department_id,to_department_id,action,note,visibility,actor_user_id)
     SELECT ${id}::uuid,CASE WHEN ${action}='receive' THEN
       (SELECT m.from_department_id FROM document_movement m WHERE m.document_id=${id}::uuid AND m.to_department_id=${from}::uuid AND m.action IN ('CREATED','FORWARDED','SECTOR_REALLOCATED') ORDER BY m.created_at DESC,m.id DESC LIMIT 1)
-      ELSE ${from}::uuid END,department_id,${event},${b.note || null},${b.visibility},${check.session.userId}::uuid FROM targets RETURNING id
+       ELSE ${from}::uuid END,department_id,${event},${b.note || null},${visibility},${check.session.userId}::uuid FROM targets RETURNING id
+  ), notification AS (
+    INSERT INTO email_message(document_id,direction,from_addr,to_addr,subject,body_text,reply_token,status)
+    SELECT d.id,'OUTBOUND',${process.env.EMAIL_FROM ?? "pendente@configurar"},c.email,'Atualização do protocolo '||e.protocol_number,
+      'Há uma resposta disponível na sua conta. Protocolo '||e.protocol_number,${nanoid(32)},'PENDING'
+    FROM document d JOIN external_request e ON e.document_id=d.id JOIN citizen c ON c.id=e.citizen_id
+    WHERE d.id=${id}::uuid AND ${event}='CITIZEN_REPLY' AND EXISTS(SELECT 1 FROM moves) RETURNING id
   ), status_update AS (
     UPDATE document SET status=CASE WHEN ${action}='forward' THEN 'IN_TRANSIT'::document_status WHEN ${action} IN ('receive','reopen','reply') THEN 'OPEN'::document_status
     WHEN EXISTS(SELECT 1 FROM document_participation p WHERE p.document_id=${id}::uuid AND p.department_id<>${from}::uuid AND p.state IN ('OPEN','PENDING')) THEN 'OPEN'::document_status

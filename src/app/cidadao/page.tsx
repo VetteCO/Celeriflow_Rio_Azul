@@ -44,13 +44,17 @@ export default function CidadaoPage() {
   const [tracking, setTracking] = useState(false);
   const [profileRequired,setProfileRequired]=useState(false);
   const [profileLoaded,setProfileLoaded]=useState(false);
+  const [registrationReady, setRegistrationReady] = useState(false);
+  const [addressConfirmed, setAddressConfirmed] = useState(false);
   useEffect(()=>{let live=true;fetch("/api/modules/contatos/perfis/publicos",{cache:"no-store"}).then(async r=>{if(!r.ok)throw new Error("Perfis de cadastro indisponíveis.");return r.json();}).then(p=>{if(live){setProfileRequired(p.length>0);setProfileLoaded(true);}}).catch(e=>{if(live)setErr(e.message);});return()=>{live=false;};},[]);
-  useEffect(()=>{if(!user?.emailVerified||!profileRequired)return;let live=true;user.getIdToken().then(token=>fetch("/api/cidadao/conta/cadastro",{headers:{authorization:`Bearer ${token}`},cache:"no-store"})).then(async r=>{if(!r.ok)return;const d=await r.json();if(live)setForm(f=>({...f,...d.address,name:d.name||f.name,cpfCnpj:d.values.cpfCnpj??"",phone:d.values.phone??"",cep:d.values.cep??""}));}).catch(()=>{});return()=>{live=false;};},[user,profileRequired]);
+  useEffect(()=>{setRegistrationReady(false);if(!user?.emailVerified||!profileRequired)return;let live=true;user.getIdToken().then(token=>fetch("/api/cidadao/conta/cadastro",{headers:{authorization:`Bearer ${token}`},cache:"no-store"})).then(async r=>{if(!r.ok)throw new Error("Não foi possível carregar o cadastro. Acesse Meu cadastro para conferir os dados.");const d=await r.json();if(live){setForm(f=>({...f,...d.address,name:d.name||f.name,cpfCnpj:d.values.cpfCnpj??"",phone:d.values.phone??"",cep:d.values.cep??""}));setRegistrationReady(true);}}).catch(e=>{if(live)setErr(e.message);});return()=>{live=false;};},[user,profileRequired]);
   useEffect(() => {
     if (user?.email) setForm((current) => ({ ...current, email: user.email!, name: current.name || user.displayName || "" }));
   }, [user]);
 
   function set<K extends keyof typeof form>(k: K, v: string) {
+    if (["cep", "street", "district", "city", "state", "number", "complement"].includes(k)) setAddressConfirmed(false);
+    if (k === "cep") setCepState("idle");
     setForm((f) => ({ ...f, [k]: v }));
   }
 
@@ -67,7 +71,7 @@ export default function CidadaoPage() {
       const d = (await r.json()) as Addr & { error?: string };
       if (!r.ok) throw new Error(d.error ?? "falha na busca");
        setForm((f) => f.cep.replace(/\D/g, "") === cep ? ({ ...f, street: d.street, district: d.district, city: d.city, state: d.state }) : f);
-      setCepState("ok");
+      setAddressConfirmed(false); setCepState("ok");
     } catch (e) {
       setCepState("error");
       setErr((e as Error).message);
@@ -77,9 +81,11 @@ export default function CidadaoPage() {
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
     if (saving) return;
+    if (!addressConfirmed && !profileRequired) { setErr("Confira e confirme o endereço antes de protocolar."); return; }
     setErr(null);
     if(!profileLoaded){setErr("Aguarde o carregamento das regras de cadastro.");return;}
     if(profileRequired&&!user?.emailVerified){setErr("Entre e complete seu cadastro por perfil em Minha conta.");return;}
+    if(profileRequired&&!registrationReady){setErr("Aguarde o carregamento do cadastro da sua conta.");return;}
     if ((!profileRequired||form.cpfCnpj)&&!validCpfCnpj(form.cpfCnpj)) { setErr("Informe um CPF ou CNPJ válido."); return; }
     if (user && !user.emailVerified) { setErr("Confirme o e-mail da sua conta antes de registrar o requerimento autenticado."); return; }
     setSaving(true);
@@ -158,6 +164,7 @@ export default function CidadaoPage() {
       <form onSubmit={enviar} className="form" style={{ maxWidth: 640 }}>
         <h2>Cadastro</h2>
         {profileRequired&&<p>Os dados do titular serão obtidos do cadastro por perfil da sua conta. <Link href="/cidadao/conta/cadastro">Preencher ou atualizar meu cadastro</Link></p>}
+        {profileRequired && user?.emailVerified && <p role="status">{registrationReady ? `Titular do requerimento: ${form.name}.` : "Carregando cadastro do titular…"}</p>}
         {!profileRequired&&<>
         <div className="form-row">
           <label style={{ flex: 2 }}>
@@ -223,6 +230,7 @@ export default function CidadaoPage() {
           </label>
         </div>
 
+        <label><input required type="checkbox" checked={addressConfirmed} onChange={e => setAddressConfirmed(e.target.checked)} /> Conferi o endereço, número e complemento informados.</label>
         </>}
         <h2>Requerimento</h2>
         <label>
@@ -238,7 +246,7 @@ export default function CidadaoPage() {
           Descrição
            <textarea required minLength={10} rows={5} value={form.description} onChange={(e) => set("description", e.target.value)} />
         </label>
-        <button type="submit" className="btn btn-primary" disabled={saving}>
+        <button type="submit" className="btn btn-primary" disabled={saving || user === undefined || !profileLoaded || profileRequired && !!user?.emailVerified && !registrationReady}>
           {saving ? "Enviando…" : "Enviar requerimento"}
         </button>
       </form>

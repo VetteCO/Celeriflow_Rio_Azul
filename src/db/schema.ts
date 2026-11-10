@@ -108,6 +108,8 @@ export const document = pgTable("document", {
   createdById: uuid("created_by_id").references(() => appUser.id),
   // Só usado em CIRCULAR: URGENT | INFORMATIVE
   urgency: text("urgency"),
+  circularReplyMode: text("circular_reply_mode").notNull().default("OPEN"),
+  assigneeId: uuid("assignee_id").references(() => appUser.id),
   publicKey: text("public_key").notNull().unique(),
   createdAt: timestamp("created_at").notNull().defaultNow()
 },

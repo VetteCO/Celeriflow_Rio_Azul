@@ -19,5 +19,9 @@ export function coreWriteGuard(userId: string, permission: string, documentId: s
     AND (${departmentId}::uuid IS NULL OR ${departmentId}::uuid IN(SELECT id FROM scope))
     AND (${documentId}::uuid IS NULL OR EXISTS(SELECT 1 FROM document_participation p WHERE p.document_id=${documentId}::uuid AND p.department_id IN(SELECT id FROM scope)
       AND (${departmentId}::uuid IS NULL OR p.department_id=${departmentId}::uuid) AND (NOT ${openOnly} OR p.state IN('OPEN','PENDING'))))
+    AND (${documentId}::uuid IS NULL OR EXISTS(SELECT 1 FROM document d WHERE d.id=${documentId}::uuid AND
+      (d.type<>'CIRCULAR' OR EXISTS(SELECT 1 FROM roles WHERE name='AUDITOR')
+       OR d.origin_department_id IN(SELECT id FROM scope)
+       OR EXISTS(SELECT 1 FROM document_recipient r WHERE r.document_id=d.id AND r.user_id=${userId}::uuid AND r.recipient_type<>'CANCELLED' AND r.department_id IN(SELECT id FROM scope)))))
   ) SELECT 1/(SELECT count(*)::int FROM permitted) AS authorized`);
 }

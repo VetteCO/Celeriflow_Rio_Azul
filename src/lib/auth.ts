@@ -60,6 +60,7 @@ export function documentScope(session: Session) {
   if (session.roles.includes("AUDITOR")) return sql`true`;
   const sectors = session.departmentIds;
   return or(
+    sectors.length ? and(eq(document.type, "CIRCULAR"), inArray(document.originDepartmentId, sectors)) : sql`false`,
     sectors.length ? and(eq(document.createdById, session.userId), inArray(document.originDepartmentId, sectors)) : sql`false`,
     sectors.length ? sql`exists (select 1 from document_recipient r where r.document_id = ${document.id} and r.user_id = ${session.userId} and r.recipient_type <> 'CANCELLED' and r.department_id in (${sql.join(sectors.map(s => sql`${s}::uuid`), sql`, `)}))` : sql`false`,
     sectors.length ? and(sql`${document.type} <> 'CIRCULAR'`, or(inArray(document.originDepartmentId, sectors), sql`exists (select 1 from document_participation p where p.document_id = ${document.id} and p.department_id in (${sql.join(sectors.map(s => sql`${s}::uuid`), sql`, `)}))`)) : sql`false`);

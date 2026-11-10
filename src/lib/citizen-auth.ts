@@ -2,6 +2,7 @@ import { verifyIdToken } from "./firebase-admin";
 import { db } from "@/db";
 import { citizen, citizenIdentity, externalRequest, document } from "@/db/schema";
 import { and, eq, sql } from "drizzle-orm";
+import { citizenDocumentAllowed } from "./document-visibility";
 export async function getCitizenSession(req: Request) {
   const token = req.headers.get("authorization")?.match(/^Bearer (.+)$/)?.[1];
   if (!token) return null;
@@ -12,10 +13,17 @@ export async function getCitizenSession(req: Request) {
   } catch { return null; }
 }
 export async function ownedCitizenDocument(req: Request, key: string) {
+  if (!/^[A-Za-z0-9_-]{16,100}$/.test(key)) return null;
   const session = await getCitizenSession(req);
   if (!session) return null;
   const [record] = await db.select({ doc: document, request: externalRequest }).from(externalRequest).innerJoin(citizen, eq(citizen.id, externalRequest.citizenId)).innerJoin(document, eq(document.id, externalRequest.documentId)).where(and(eq(externalRequest.publicKey, key), sql`lower(${citizen.email})=${session.email} AND NOT EXISTS(SELECT 1 FROM module_contact_account WHERE citizen_id=${citizen.id} AND uid<>${session.uid})`));
-  return record ? { ...record, session } : null;
+  return record && citizenDocumentAllowed(record.doc) ? { ...record, session } : null;
+}
+
+export function citizenWriteGuard(documentId: string, session: { uid: string; email: string }) {
+  return db.execute(sql`SELECT 1/count(*)::int FROM external_request e JOIN document d ON d.id=e.document_id JOIN citizen c ON c.id=e.citizen_id
+    WHERE d.id=${documentId}::uuid AND d.type='EXTERNAL_REQUEST' AND d.access_level IN('PUBLIC','INTERNAL') AND d.status IN('OPEN','IN_TRANSIT')
+    AND lower(c.email)=${session.email} AND NOT EXISTS(SELECT 1 FROM module_contact_account WHERE citizen_id=c.id AND uid<>${session.uid})`);
 }
 
 // Reserve a consistent registration before creating a protocol. No proof of CPF
