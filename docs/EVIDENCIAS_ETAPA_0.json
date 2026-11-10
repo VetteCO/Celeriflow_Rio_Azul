@@ -1,0 +1,268 @@
+{
+  "version": 1,
+  "executedAt": "2026-11-10T19:41:51.838Z",
+  "responsible": "Execução técnica Celeriflow assistida pelo agente; homologação municipal não atribuída",
+  "scope": "Organização e base de execução da etapa 0",
+  "groups": 172,
+  "individualRequirements": 909,
+  "published": {
+    "url": "https://rioazul.celeriflow.com.br",
+    "deployment": "4rCT9aejbqj2eorMQKR9sGFiyYgN",
+    "healthStatus": 200,
+    "healthOk": true,
+    "note": "Health verifica aplicação/banco, não todas as funções nem atualização do GitHub."
+  },
+  "localDataPreparation": {
+    "executedAt": "2026-11-10T19:34:01.255Z",
+    "scope": "isolated local preparation databases; no production connection",
+    "baselineSha256": "b8eeb25e5eea1ae20ce60c942479668b016f18a9fb7a8bd6448de23bfaf0bf0f",
+    "migrations": [
+      {
+        "name": "0001_core.sql",
+        "sha256": "bb9ab9049a49f51896c546dc865c0af27747afe1ca9df434a64e434f9639fdae"
+      },
+      {
+        "name": "002_modules.sql",
+        "sha256": "692a59e9ac43ca46a9693d20886b321b1ea4cd7770ae80ec70bc863396b74fb7"
+      },
+      {
+        "name": "003_operations.sql",
+        "sha256": "326bcdc7d0850fe5ec7aef6e331091864c1fb2f23d6a44509fb5a18c9a816053"
+      },
+      {
+        "name": "004_jobs.sql",
+        "sha256": "69eb926ef0389205567d9e7de2415419c919142ce4b2a8cd10a316d7a0de8e73"
+      },
+      {
+        "name": "005_modules_completion.sql",
+        "sha256": "4ed12a74721097e65c700bfc570c149cf86b4416856893f6baf1252acb279a52"
+      },
+      {
+        "name": "006_contacts_anonymous.sql",
+        "sha256": "81887c9e1489f7486001215be90f7084411ed4982bed27b4f094bfd0c2b3fc61"
+      },
+      {
+        "name": "007_workflow_diary.sql",
+        "sha256": "6795c782a14bc748d434706cd6a547feb7862eebbdfb13b4eb7551eb30ab9fc7"
+      },
+      {
+        "name": "008_operations_completion.sql",
+        "sha256": "c15d4768b0a0ec142af3525e6a2a373856bf898e23fe4649f5a976703a3b035a"
+      },
+      {
+        "name": "009_contacts_external.sql",
+        "sha256": "deb768cb2e0fe956101a1697437cdba5726f1ce2091ec93fcb59ebbd5a2d4431"
+      }
+    ],
+    "results": [
+      {
+        "environment": "desenvolvimento",
+        "database": "rio_desenvolvimento",
+        "tables": 50,
+        "applied": 10,
+        "fixtureFingerprint": "0f2675b44afc191b5e581c23b05d4841",
+        "users": 2,
+        "departments": 2,
+        "rollback": "PASS",
+        "foreignKeys": "PASS",
+        "checksums": "PASS",
+        "authProvisioned": false
+      },
+      {
+        "environment": "homologacao",
+        "database": "rio_homologacao",
+        "tables": 50,
+        "applied": 10,
+        "fixtureFingerprint": "a87c58904e26a11b7c7377a212cd5df3",
+        "users": 2,
+        "departments": 2,
+        "rollback": "PASS",
+        "foreignKeys": "PASS",
+        "checksums": "PASS",
+        "authProvisioned": false
+      },
+      {
+        "environment": "apresentacao",
+        "database": "rio_apresentacao",
+        "tables": 50,
+        "applied": 10,
+        "fixtureFingerprint": "8d7690b1071f8c5107123e01672a8e8f",
+        "users": 2,
+        "departments": 2,
+        "rollback": "PASS",
+        "foreignKeys": "PASS",
+        "checksums": "PASS",
+        "authProvisioned": false
+      }
+    ]
+  },
+  "artifactsRoot": "%LOCALAPPDATA%/Temp/opencode",
+  "privateArtifacts": [
+    {
+      "path": "stage0-1794339110524/results.json",
+      "sha256": "36bff437e2ef112badc2748cc046443d525ff0a581be562f5604993755d456a5"
+    },
+    {
+      "path": "rio-restored-20261110/restore-result.json",
+      "sha256": "6094e44793ff554954836baf09cccc24f9bf8952752d532418ba5f803227ed45"
+    },
+    {
+      "path": "integrated-a09deb90-e73d-4887-9d7e-69dd37ab5ca2/results.redacted.json",
+      "sha256": "c6729bf409f8a71bc00af727ac64fcf6553450260683d7ae7f24d39d9b5024b0"
+    },
+    {
+      "path": "contacts-4e6b4aaf-9938-4b2f-8d77-7e1aa4ad2979/results.redacted.json",
+      "sha256": "4bf045c9e2d22178adda1e6b0bc107b840fe44c6e340636bf581829db30926da"
+    },
+    {
+      "path": "learning-support-16c66554-83c1-486e-9b23-d87c0e254cb7/results.redacted.json",
+      "sha256": "86cb7b63edb066befcea8a53f2b29a7fe5a388da7633571461ca7ae580d64bbd"
+    },
+    {
+      "path": "operations-validation-85babb78-3843-4925-9bd1-04925492ed9b/results.redacted.json",
+      "sha256": "d4eaa10d136a0437a564b62a25d1b9a7c786adffc2a284bdc51728a0580c4493"
+    }
+  ],
+  "sources": [
+    {
+      "path": "docs/PLANO_DESENVOLVIMENTO_POC_E_IMPLANTACAO.md",
+      "normalization": "UTF-8 LF",
+      "sha256": "768385fdb453fb16fc41e17faa36501577448ff4563a5414ac4b94424d2998a4"
+    },
+    {
+      "path": "docs/MATRIZ_REQUISITOS_IMPLANTACAO.md",
+      "normalization": "UTF-8 LF",
+      "sha256": "10bdda72e899892db50e878222c585bf8183eecd01ddae63fef8a12cc2ac1502"
+    },
+    {
+      "path": "docs/CONTROLE_REQUISITOS.json",
+      "normalization": "UTF-8 LF",
+      "sha256": "8cdd2f155369fd61652c1016940650fd112691c8066979484f29fa0a943a6652"
+    },
+    {
+      "path": "docs/PLANO_DADOS_ENSAIO.md",
+      "normalization": "UTF-8 LF",
+      "sha256": "e0624c5501aad20d5fb01ea65e2e7472b68cef8efeefd17c13fdf8206913b7c1"
+    },
+    {
+      "path": "docs/TAREFAS_REGRESSAO_F01_F12.md",
+      "normalization": "UTF-8 LF",
+      "sha256": "40eb96b2a0f1a43c5eef6284a2a630f633e1ecac826672cd18ba090f2e2d7000"
+    },
+    {
+      "path": "docs/AMBIENTES_E_RELEASES.md",
+      "normalization": "UTF-8 LF",
+      "sha256": "853748d5356e1f6598ce263c9dcf5cd620fdeca99487ff5c5411fcb8e3c40dcd"
+    },
+    {
+      "path": "docs/FECHAMENTO_ETAPA_0.md",
+      "normalization": "UTF-8 LF",
+      "sha256": "f16a631d13cc9b8e72f0251c338036833ff0ce3a2412289216efc93268384259"
+    },
+    {
+      "path": "docs/IMPLANTACAO_ETAPAS_0_9.md",
+      "normalization": "UTF-8 LF",
+      "sha256": "2227e326d8b9f8c211ad2fa8a780c8835c965bf3ced4a340512335ac266dc84c"
+    },
+    {
+      "path": "docs/PREGÃO 60-2026 1 PROTOCOLO ELETRÔNICO.pdf",
+      "normalization": "binary",
+      "sha256": "e686936303b57fb799e0c2f85871f96d680115fe92377a90291e9bdf9507d8c5"
+    },
+    {
+      "path": "docs/03 TR.pdf",
+      "normalization": "binary",
+      "sha256": "3226873a803de994c666c731235c8f484f1b00a7605e163469b3fb20f9ddf6f6"
+    },
+    {
+      "path": "docs/edital retificado.docx",
+      "normalization": "binary",
+      "sha256": "e0a00d9af454dddf47708eb576b06abc300767646f37a1503dde7ee611b64f9a"
+    },
+    {
+      "path": "src/db/bootstrap/legacy-base.sql",
+      "normalization": "UTF-8 LF",
+      "sha256": "b8eeb25e5eea1ae20ce60c942479668b016f18a9fb7a8bd6448de23bfaf0bf0f"
+    },
+    {
+      "path": "scripts/migrate.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "ca9bc7f731a6d58de31558803361c0d6ca324d31bbe40d040c2311ee6f19c5a3"
+    },
+    {
+      "path": "scripts/stage0-register.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "4a6e216a09ea1abd7dc78a6b9c883e7c3e839543f60819099ca40e2eb98c066e"
+    },
+    {
+      "path": "scripts/validate-stage0-databases.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "18f304601e5209ce04c0e4282c4f595049c4d6fc39e2ab0397df069a3fadf5c7"
+    },
+    {
+      "path": "scripts/stage0-evidence.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "9bdf6d53acb4e3864ec9659256ed784eda5f61f936011632a1b3a97a6748cc56"
+    },
+    {
+      "path": "config/environment.example",
+      "normalization": "UTF-8 LF",
+      "sha256": "ec4eb0578e4e3b488557011aa67a9e943a58620b613325ec7b52db8d4931ade9"
+    },
+    {
+      "path": "package.json",
+      "normalization": "UTF-8 LF",
+      "sha256": "38dd3bac93bf01164127b36ac1e437473269209b9a9efb517e7a52e8b9f4c978"
+    },
+    {
+      "path": "package-lock.json",
+      "normalization": "UTF-8 LF",
+      "sha256": "f1b6ed53f12eab1d8e352a847cd96622fff47d88d98ada68a66a8891d90706a6"
+    },
+    {
+      "path": "src/db/migrations/0001_core.sql",
+      "normalization": "UTF-8 LF",
+      "sha256": "bb9ab9049a49f51896c546dc865c0af27747afe1ca9df434a64e434f9639fdae"
+    },
+    {
+      "path": "src/db/migrations/002_modules.sql",
+      "normalization": "UTF-8 LF",
+      "sha256": "692a59e9ac43ca46a9693d20886b321b1ea4cd7770ae80ec70bc863396b74fb7"
+    },
+    {
+      "path": "src/db/migrations/003_operations.sql",
+      "normalization": "UTF-8 LF",
+      "sha256": "326bcdc7d0850fe5ec7aef6e331091864c1fb2f23d6a44509fb5a18c9a816053"
+    },
+    {
+      "path": "src/db/migrations/004_jobs.sql",
+      "normalization": "UTF-8 LF",
+      "sha256": "69eb926ef0389205567d9e7de2415419c919142ce4b2a8cd10a316d7a0de8e73"
+    },
+    {
+      "path": "src/db/migrations/005_modules_completion.sql",
+      "normalization": "UTF-8 LF",
+      "sha256": "4ed12a74721097e65c700bfc570c149cf86b4416856893f6baf1252acb279a52"
+    },
+    {
+      "path": "src/db/migrations/006_contacts_anonymous.sql",
+      "normalization": "UTF-8 LF",
+      "sha256": "81887c9e1489f7486001215be90f7084411ed4982bed27b4f094bfd0c2b3fc61"
+    },
+    {
+      "path": "src/db/migrations/007_workflow_diary.sql",
+      "normalization": "UTF-8 LF",
+      "sha256": "6795c782a14bc748d434706cd6a547feb7862eebbdfb13b4eb7551eb30ab9fc7"
+    },
+    {
+      "path": "src/db/migrations/008_operations_completion.sql",
+      "normalization": "UTF-8 LF",
+      "sha256": "c15d4768b0a0ec142af3525e6a2a373856bf898e23fe4649f5a976703a3b035a"
+    },
+    {
+      "path": "src/db/migrations/009_contacts_external.sql",
+      "normalization": "UTF-8 LF",
+      "sha256": "deb768cb2e0fe956101a1697437cdba5726f1ce2091ec93fcb59ebbd5a2d4431"
+    }
+  ]
+}

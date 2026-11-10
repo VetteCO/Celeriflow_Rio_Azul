@@ -57,6 +57,8 @@ Ampliação final nesta mesma data: **307 verificações integradas** aprovadas 
 
 As linhas por família seguintes continuam sendo a decomposição contratual completa. Estes resultados alteram somente os recortes indicados; não atribuem aceite integral a alíneas não exercitadas.
 
+**Revisão incremental local posterior à publicação:** [REVISAO_FORMULARIOS_0_9_2026-11-10.md](REVISAO_FORMULARIOS_0_9_2026-11-10.md) registra correções dos recortes FOR-P86-02.c/d/f/g, FOR-P87-01.a/b/c/d, FOR-P87-02.e e validação de cálculos de PRO-P56-01.f/URB-P38-01.b. Build/lint/tipos, 32 testes de domínio/formatos e cinco cenários isolados de navegador aprovados. Não publicado e sem aceite integral dessas linhas; pendências programáveis identificadas estão discriminadas no registro.
+
 ## 3. Acesso, contas e identidade
 
 | ID / fonte | Subrequisitos preservados | Escopo / E | Verificação e critério de aceitação |
@@ -300,6 +302,8 @@ Fonte: [Padrão de Tabelas.md](Padr%C3%A3o%20de%20Tabelas.md), versão 1.2, **de
 **Etiquetas versus notas:** etiquetas digitais são a classificação setorial de ETQ-P76-01; não substituir plano de classificação de CLA-P85-01. Notas internas são conteúdo restrito do processo (incluídas na árvore integral quando autorizada), nunca respostas públicas automáticas. Nas tabelas, múltiplas etiquetas/conteúdo composto usam uma linha e detalhe acessível; esconder etiquetas para aparentar encaixe não entrega o requisito.
 
 ## 16. Rastreio das lacunas auditadas e fechamento da etapa 0 documental
+
+**Fechamento técnico atualizado em 10/11/2026:** consultar `FECHAMENTO_ETAPA_0.md`, `CONTROLE_REQUISITOS.json` (172 grupos/909 unidades individuais), `TAREFAS_REGRESSAO_F01_F12.md` e `EVIDENCIAS_ETAPA_0.json`. Os sete itens organizacionais da etapa 0 estão atendidos; as linhas funcionais abaixo não recebem aceite por esse fechamento. O registro inicial ao final desta seção permanece como histórico, superado apenas no escopo técnico da etapa 0 pelo novo dossiê.
 
 | Achado histórico | IDs para acompanhamento | Entrega / evidência a produzir |
 |---|---|---|

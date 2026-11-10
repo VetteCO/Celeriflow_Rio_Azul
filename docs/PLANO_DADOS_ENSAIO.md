@@ -1,64 +1,40 @@
-# Plano de Dados do Ensaio — todas as tabelas
+# Dados de desenvolvimento, homologação e apresentação
 
-Elenco fictício (nomes/emails realistas, dados inventados — nada real):
+Plano vigente em 10/11/2026. Substitui as antigas instruções de seed e reset manual deste arquivo.
 
-## Servidores (login Firebase + claim + app_user)
+## Separação efetivamente preparada
 
-| Nome | E-mail (senha do ensaio) | Setor | Perfil |
+`npm run stage0:databases` cria um cluster PostgreSQL 18 **novo**, restrito a `127.0.0.1:55439`, e três bancos independentes:
+
+| Finalidade | Banco | Dados | Arquivos |
 |---|---|---|---|
-| João da Silva | joaodasilva@email.com | ADM | ADMIN_GERAL |
-| Maria Oliveira | mariaoliveira@email.com | CPL | NIVEL_3 |
-| Carlos Souza | carlossouza@email.com | JUR | NIVEL_3 |
-| Ana Santos | anasantos@email.com | RH | NIVEL_3 |
-| Paulo Ferreira | pauloferreira@email.com | TI | NIVEL_3 |
-| Fernanda Lima | fernandalima@email.com | ADM | NIVEL_3 |
+| Desenvolvimento | `rio_desenvolvimento` | IDs/e-mails exclusivos, cadastro fictício | Diretório `desenvolvimento/files` |
+| Homologação | `rio_homologacao` | IDs/e-mails exclusivos, cadastro fictício | Diretório `homologacao/files` |
+| Apresentação | `rio_apresentacao` | IDs/e-mails exclusivos, cadastro fictício | Diretório `apresentacao/files` |
 
-Criação: `TEST_PASSWORD='...' npm run admin:bootstrap` (idempotente, upsert por e-mail).
+Cada execução fica em `%LOCALAPPDATA%/Temp/opencode/stage0-<instante>`, contendo cluster, `results.json`, configuração privada de acesso e `fixture.json` por finalidade. O executor ignora `DATABASE_URL` e `DIRECT_URL`, não copia dados da base existente, não usa os seeds históricos e encerra o cluster após verificar os resultados. Execuções simultâneas na mesma porta falham sem substituir o cluster existente.
 
-## Cidadão
+Essas são **bases locais de preparação de dados**, não três implantações completas do SaaS. Firebase, Blob remoto e login das contas ainda precisam ser provisionados nos respectivos ambientes antes de executar fluxos HTTP. As bases usam PostgreSQL nativo; o driver Neon da aplicação requer um destino compatível ou adaptador próprio. Não apontar a aplicação para esses bancos presumindo compatibilidade de transporte. A execução completa da aplicação restaurada e a infraestrutura contínua pertencem à etapa 9.
 
-| Nome | E-mail | CPF | Endereço |
-|---|---|---|---|
-| Ricardo Almeida | ricardoalmeida@email.com | 111.444.777-35 | Rua Barão do Rio Branco 250, Centro, Curitiba/PR, CEP 80010-180 |
+## Massa reproduzível
 
-## Cenário (documentos encadeados, como na vida real)
+- Município fictício: Aurora das Veredas/MG.
+- Secretaria Municipal de Administração e subsetor Protocolo Geral.
+- Helena Duarte, papel `ADMIN_GERAL`; Rafael Nogueira, papel `NIVEL_3_VISUALIZACAO`.
+- E-mails distintos por finalidade, no domínio fictício `aurora.mg.gov.br`; nenhum envio habilitado.
+- Contas de banco sem `firebase_uid`, sem senha embutida e sem indicação de login provisionado.
+- CPF `529.982.247-25` e CNPJ `11.222.333/0001-81` matematicamente válidos para roteiro; não comprovam existência cadastral.
+- UUIDs internos distintos entre as três bases. Códigos de negócio devem ser emitidos pela aplicação no formato vigente; não confundir UUIDs internos com códigos de negócio.
+- Cenários associados: Admin × leitura; memorando com dois prazos; circular/subsetores; requerimento no Protocolo; consulta com sigilo. Os roteiros funcionais constam em `VALIDACAO_INTEGRADA_ROTEIRO.md` e `TAREFAS_REGRESSAO_F01_F12.md`.
 
-1. `MEM-000002/2026` "Aquisição de material de escritório" (João, ADM→CPL, 2 prazos,
-   anexo termo.txt, timeline CREATED>FORWARDED>RECEIVED por Maria).
-2. `OFI-000002/2026` "Encaminhamento de minuta de contrato" (João, ADM→JUR).
-3. `CIR-000002/2026` "Horário de atendimento no feriado" (Informativa, 5 setores):
-   lida por João e Maria, não lida pelos demais (demonstra o painel).
-4. Protocolo `2026-000002` (Ricardo): requerimento + e-mail de saída PENDENTE +
-   resposta inbound (EXTERNAL_REPLY) — ciclo cidadão completo.
-5. `audit_log` recebe linha em cada inserção relevante.
+## Reexecução e preservação
 
-## Por tabela (o que cada script insere)
+1. Executar a partir da raiz interna do projeto, com Node 24 e ferramentas PostgreSQL em `%LOCALAPPDATA%/Temp/opencode/postgresql18/pgsql/bin`.
+2. Rodar `npm run stage0:databases`. Não necessita `.env.local` nem credenciais de produção.
+3. Conferir três resultados com 50 tabelas, dez entradas de histórico (baseline + nove migrações), hashes corretos, zero FKs não validadas e rollback aprovado.
+4. Manter os artefatos privados fora do Git. Para nova massa, executar novamente: um diretório e cluster novos serão criados; nenhuma exclusão anterior é necessária.
+5. Para retomar o cluster, usar `pg_ctl` com o `-D` do diretório gerado e a mesma porta/host do executor. A senha está no arquivo privado, não neste documento. Não manter o cluster aberto após o uso.
 
-| Tabela | seed.ts (base) | bootstrap-users.ts | seed-cenario.ts |
-|---|---|---|---|
-| organization | 1 linha | — | — |
-| department | 5 setores | — | — |
-| role / permission / user_role | 2 roles, 8 perms, vínculos | vínculos dos novos | — |
-| app_user | 6+3 anteriores | 6 do elenco (+claim Firebase) | — |
-| citizen | — | — | Ricardo Almeida |
-| document | — | — | MEM+OFI+CIR+REQ |
-| document_deadline | — | — | 2 no memorando |
-| document_recipient | — | — | expansão da circular + CPL |
-| document_read_receipt | — | — | João e Maria na circular |
-| document_movement | — | — | timelines completas |
-| attachment | — | — | 1 via Blob (se token ok) |
-| external_request | — | — | protocolo 2026-000002 |
-| email_message | — | — | OUTBOUND pendente + INBOUND |
-| audit_log | SEED_FASE_1 | USER_BOOTSTRAPPED | entradas do cenário |
+O `.env.local` atual referencia serviços usados pela publicação. **Servidor web em localhost não significa banco de desenvolvimento isolado.** Os ensaios integrados anteriores nessa base tiveram autorização específica e limpeza por manifesto; não devem ser tratados como implantação de ambientes independentes. Novos ensaios de escrita precisam conferir o destino e o manifesto antes de usar `--allow-write`.
 
-## Como rodar / resetar
-
-```
-npm run db:seed            # base (idempotente)
-TEST_PASSWORD='Senha123!' npm run admin:bootstrap   # logins
-npm run db:seed:cenario    # cenário (pula o que já existe)
-```
-
-Reset total do ensaio: apagar linhas de `external_request`, `document*`, `email_message`,
-`attachment`, `citizen` criadas pelo cenário (mantém base) — ou recriar o banco Neon
-(branch nova) e rodar os três comandos.
+Não executar `db:seed`, `db:seed:cenario`, `db:push`, apagar tabelas ou usar listas de nomes como critério de limpeza sobre a base preservada. A preparação local aqui descrita não altera José Antunes, Maria Goulart, vínculos, documentos ou anexos existentes.

@@ -16,6 +16,8 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:migrate": "tsx --env-file=.env.local scripts/migrate.ts",
+    "stage0:register": "tsx scripts/stage0-register.ts",
+    "stage0:databases": "tsx scripts/validate-stage0-databases.ts",
     "worker:documents": "tsx --env-file=.env.local scripts/document-worker.ts",
     "operations:report": "tsx --env-file=.env.local scripts/contract-report.ts",
     "operations:monitor": "tsx --env-file=.env.local scripts/monitor.ts",

@@ -11,6 +11,12 @@
 
 ## Instalação
 
+### Banco novo e vazio
+
+Usar `config/environment.example` como modelo sem segredos. Depois de configurar um banco Neon vazio e `DIRECT_URL` direto, executar `npm run db:migrate -- --apply --initialize-empty`. A base estrutural versionada em `src/db/bootstrap/legacy-base.sql` é instalada em transação e recebe checksum no histórico; em seguida são executadas 0001–009. A opção recusa schema public com objetos/tipos existentes. Não usar esse caminho na base atual.
+
+### Banco existente
+
 1. Preservar banco e anexos originais. Registrar contagens, checksums e destino da cópia.
 2. Revisar `src/db/migrations/0001_core.sql` até `009_contacts_external.sql`, inclusive os incrementos 006 (contatos/anônimo), 007 (expediente/Diário), 008 (operação) e 009 (cadastro externo). Todos esses históricos já foram aplicados no ambiente atual.
 3. Listar com `npm run db:migrate`.
@@ -18,6 +24,8 @@
 5. Executar `npm run lint` e `npm run build` após integrar os módulos. Publicar somente o build conferido.
 6. Configurar a URL pública correta em `NEXT_PUBLIC_APP_URL` e nos provedores Firebase. Configurações locais não são comprovação de publicação SaaS.
 7. Executar os cenários aplicáveis de `ROTEIRO_VALIDACAO_ETAPAS_0_9.md`, registrar evidências e disponibilizar as telas ao proprietário.
+
+Após qualquer instalação, `npm run db:migrate -- --check` compara os checksums aplicados e lista pendências **sem gravar dados ou criar o histórico**. Banco novo guarda dez entradas (baseline + nove incrementos); a base anterior mantém suas nove entradas, sem aplicação retroativa da baseline. Para conferir a reconstrução em PostgreSQL local, executar `npm run stage0:databases`, conforme `PLANO_DADOS_ENSAIO.md`.
 
 As migrações são incrementais. Não executar `db:push`, seeds históricos ou exclusão de tabelas para resolver conflitos de instalação. Uma migração já aplicada não deve ser alterada; criar novo incremento. Rollback da aplicação deve preservar tabelas e dados aditivos.
 

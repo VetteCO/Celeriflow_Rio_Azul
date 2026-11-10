@@ -77,13 +77,15 @@ Cada etapa será desdobrada em incrementos pequenos com backend, interface, migr
 
 ### Etapa 0 — Organização e base de execução
 
-- [ ] Criar matriz rastreável: ID, fonte/página, texto do requisito, POC/implantação, entrega, dependências, status e evidência.
-- [ ] Desdobrar cada família do inventário da seção 5 nos itens detalhados das páginas de origem antes de implementar a família.
-- [ ] Manter estados distintos: planejado, implementado, testado internamente, validado em tela e homologado.
-- [ ] Separar dados de desenvolvimento, homologação e apresentação; preparar dados de ensaio reproduzíveis.
-- [ ] Adotar migrações versionadas e estratégia de recuperação para mudanças de schema.
-- [ ] Registrar URL SaaS, versões, configuração por ambiente e rotina de build/deploy.
-- [ ] Converter os defeitos F01–F12 da auditoria em tarefas reproduzíveis, com teste de regressão pertinente.
+- [x] Criar matriz rastreável: ID, fonte/página, texto do requisito, POC/implantação, entrega, dependências, status e evidência.
+- [x] Desdobrar cada família do inventário da seção 5 nos itens detalhados das páginas de origem antes de implementar a família.
+- [x] Manter estados distintos: planejado, implementado, testado internamente, validado em tela e homologado.
+- [x] Separar dados de desenvolvimento, homologação e apresentação; preparar dados de ensaio reproduzíveis.
+- [x] Adotar migrações versionadas e estratégia de recuperação para mudanças de schema.
+- [x] Registrar URL SaaS, versões, configuração por ambiente e rotina de build/deploy.
+- [x] Converter os defeitos F01–F12 da auditoria em tarefas reproduzíveis, com teste de regressão pertinente.
+
+**Fechamento técnico em 10/11/2026:** [FECHAMENTO_ETAPA_0.md](FECHAMENTO_ETAPA_0.md), sete itens de preparação atendidos. Separação de dados comprovada em três bancos locais independentes; não representa três SaaS/Firebase/Blob provisionados nem homologação funcional. Migrações históricas preservadas. Índice individual e evidências com hashes acompanham o dossiê.
 
 **Aceite:** ambiente reconstruível e todo requisito incluído no plano com origem e entrega responsável. Não executar limpeza de dados existentes como preparação padrão.
 
