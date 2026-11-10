@@ -4,7 +4,7 @@
 
 | Ambiente | Destino | Estado e uso |
 |---|---|---|
-| SaaS publicado | `https://rioazul.celeriflow.com.br` | Deployment `8vT9ccYuszhZmw8SdCrfnTJzjSBQ`, commit `381d54f`; Vercel `celeriflow-hub`, conta autorizada `celeriflow@gmail.com`. Diagnóstico e publicação em `DIAGNOSTICO_VERCEL_2026-11-10.md`; versões anteriores em `DEPLOY_2026-11-10.md`. |
+| SaaS publicado | `https://rioazul.celeriflow.com.br` | Deployment `Cdhh77Qjnj83sgZMgJnDx9LzHRb7`, commit `52302eb`; Vercel `celeriflow-hub`, conta autorizada `celeriflow@gmail.com`. Fechamento em `FECHAMENTO_ETAPAS_3_4.md`; correção do Neon em `DIAGNOSTICO_VERCEL_2026-11-10.md`. |
 | Execução web local anterior | `http://localhost:3100` | Build local; `.env.local` aponta a serviços reais compartilhados com a publicação. Não é isolamento de dados. Servidor encerrado após os ensaios. |
 | Preparação de desenvolvimento | `rio_desenvolvimento`, PostgreSQL local, porta 55439 | Banco novo, massa fictícia própria, arquivos privados em diretório exclusivo. |
 | Preparação de homologação | `rio_homologacao`, mesmo cluster local | Banco independente, UUIDs/e-mails próprios, sem cópia da produção. |
@@ -35,7 +35,7 @@ Os três bancos locais são reprodutíveis por `stage0:databases`, permanecem pr
 
 ## Release e reversão
 
-- Referência publicada atual: commit funcional `381d54f`, deployment acima. Referência anterior: implementação `7645173`, fechamento `98d9a5a`, registro `a528d58`. Consultar `git status` e os dossiês para os registros documentais posteriores.
+- Referência publicada atual: commit funcional `52302eb`, deployment acima, etapas 3/4 com 156/156 verificações HTTPS. Versão anterior: `381d54f`, deployment `8vT9ccYuszhZmw8SdCrfnTJzjSBQ`, etapas 1/2. Consultar `git status` e os dossiês para os registros documentais posteriores.
 - Roteiro: conferir diff → testes afetados → build/lint/tipos → registrar commit e artefatos → push → conferir remoto → publicar com CLI Vercel autenticada → smoke HTTPS e conferência visual → registrar URL/ID e resultado.
 - Publicação direta pela CLI foi usada anteriormente; não presumir que um deployment sincroniza o GitHub. Remoto desejado: `https://github.com/Celeriflow-Hub/Celeriflow_Rio_Azul`.
 - Se o push falhar, preservar código/commit local e registrar bloqueio; não pedir tokens em conversa nem gravá-los em arquivos versionados.

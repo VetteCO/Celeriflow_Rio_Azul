@@ -1,7 +1,7 @@
 # Plano de desenvolvimento — POC 100% e implantação integral
 
 **Versão:** 10/11/2026.  
-**Situação:** execução; etapas 0, 1 e 2 tecnicamente encerradas, com evidências e homologação formal pendente.
+**Situação:** execução; etapas 0, 1, 2, 3 e 4 tecnicamente encerradas, com evidências e homologação formal pendente.
 **Base técnica:** `VALIDACAO_INTERNA_POC_2026-11-10.md`.
 
 ## 1. Diretrizes acordadas
@@ -125,27 +125,31 @@ Cada etapa será desdobrada em incrementos pequenos com backend, interface, migr
 
 ### Etapa 3 — Circulares
 
-- [ ] Unificar a contagem de destinatários individuais em lista, detalhe e filtros.
-- [ ] Restringir a leitura ao contexto autorizado e registrar recibos apenas para destinatários pertinentes.
-- [ ] Preservar primeira leitura por usuário com proteção contra duplicidade e concorrência.
-- [ ] Selecionar vários setores/subsetores no organograma e tratar alterações posteriores de destinatários.
-- [ ] Demonstrar “Urgente” e “Meramente Informativa”.
-- [ ] Antecipar respostas abertas/restritas, anexos, atividades, arquivamento e regra de circular informativa sem resposta/encaminhamento.
+- [x] Unificar a contagem de destinatários individuais em lista, detalhe e filtros.
+- [x] Restringir a leitura ao contexto autorizado e registrar recibos apenas para destinatários pertinentes.
+- [x] Preservar primeira leitura por usuário com proteção contra duplicidade e concorrência.
+- [x] Selecionar vários setores/subsetores no organograma e tratar alterações posteriores de destinatários.
+- [x] Demonstrar “Urgente” e “Meramente Informativa”.
+- [x] Antecipar respostas abertas/restritas, anexos, atividades, arquivamento e regra de circular informativa sem resposta/encaminhamento.
+
+**Fechamento técnico em 10/11/2026:** [FECHAMENTO_ETAPAS_3_4.md](FECHAMENTO_ETAPAS_3_4.md), 6/6 itens; 156/156 verificações da suíte comum local e 156/156 no SaaS HTTPS. Respostas restritas protegidas nos dois detalhes; edição de destinatários e primeira leitura concorrente comprovadas. Homologação municipal e critérios posteriores de automação/notificações mantêm aceites próprios.
 
 **Aceite POC:** circular enviada a dois subsetores, acessada por servidores diferentes; data/hora individual automática e invariável; contagens idênticas em todas as telas.  
 **Origem:** 16.3.3.3; página 45; F07.
 
 ### Etapa 4 — Cidadão, atendimento interno e sigilo
 
-- [ ] Validar CPF/CNPJ, evitar cadastros duplicados e atualizar dados sob regras claras de titularidade.
-- [ ] Manter ViaCEP com indicação de erro/indisponibilidade e confirmação dos dados preenchidos.
-- [ ] Conectar o protocolo externo à caixa interna do setor responsável, com acesso navegável por número.
-- [ ] Associar assunto, responsável e histórico; distinguir resposta ao cidadão de nota interna.
-- [ ] Aplicar uma política comum de sigilo a `/publico` e `/cidadao`; respeitar classificação e autorização de cada campo/anexo.
-- [ ] Corrigir máscara de CNPJ e impedir exposição de identificadores em textos públicos derivados de conteúdo interno.
-- [ ] Entregar consulta por chave e QR com URL pública correta, inclusive pelo celular.
-- [ ] Antecipar conta externa, caixa pessoal, anexos autorizados, acompanhamento e complementação de requerimento.
-- [ ] Preparar eventos internos de notificação e estados verdadeiros de envio; configurar Resend apenas na etapa 11.
+- [x] Validar CPF/CNPJ, evitar cadastros duplicados e atualizar dados sob regras claras de titularidade.
+- [x] Manter ViaCEP com indicação de erro/indisponibilidade e confirmação dos dados preenchidos.
+- [x] Conectar o protocolo externo à caixa interna do setor responsável, com acesso navegável por número.
+- [x] Associar assunto, responsável e histórico; distinguir resposta ao cidadão de nota interna.
+- [x] Aplicar uma política comum de sigilo a `/publico` e `/cidadao`; respeitar classificação e autorização de cada campo/anexo.
+- [x] Corrigir máscara de CNPJ e impedir exposição de identificadores em textos públicos derivados de conteúdo interno.
+- [x] Entregar consulta por chave e QR com URL pública correta, inclusive pelo celular.
+- [x] Antecipar conta externa, caixa pessoal, anexos autorizados, acompanhamento e complementação de requerimento.
+- [x] Preparar eventos internos de notificação e estados verdadeiros de envio; configurar Resend apenas na etapa 11.
+
+**Fechamento técnico em 10/11/2026:** [FECHAMENTO_ETAPAS_3_4.md](FECHAMENTO_ETAPAS_3_4.md), 9/9 itens; suíte comum de 156/156 local e 156/156 HTTPS, mais 119/119 de regressão das etapas 1/2. Protocolo navegável pelo número, responsável, política de sigilo comum, conta/anexos/complementação e QR mobile publicados. Eventos preparados com envio `PENDING`; entrega real de e-mail permanece na etapa 11. Dados originais preservados; homologação humana pendente.
 
 **Aceite POC:** cidadão cadastra, busca CEP e abre requerimento; servidor o encontra sem conhecer UUID; chave/QR exibem somente dados liberados.  
 **Origem:** 16.3.2.3, 16.3.4.1/3; páginas 34–35, 60–63, 78–80; F04/F05/F08/F12.

@@ -78,6 +78,19 @@ Publicação deste complemento bloqueada: dois deployments CLI e um GitHub falha
 
 **Atualização posterior — publicação concluída:** [DIAGNOSTICO_VERCEL_2026-11-10.md](DIAGNOSTICO_VERCEL_2026-11-10.md) identifica o timeout na ação Neon de criar branch em cada deploy de produção. Após ajuste da conexão para utilizar o banco existente, commit `381d54f` publicado no deployment `8vT9ccYuszhZmw8SdCrfnTJzjSBQ`, alias `rioazul.celeriflow.com.br`. **119/119 verificações API/Chrome HTTPS aprovadas**, com os mesmos cenários de usuários/perfis/documentos/calendário/tramitação/anexos e preservação após limpeza. Este resultado substitui o bloqueio do parágrafo anterior; homologação humana dos requisitos permanece pendente. Inventário das rodadas local/publicada em `EVIDENCIAS_ETAPAS_1_2.json`.
 
+### Fechamento incremental das etapas 3 e 4 — 10/11/2026
+
+**6/6 e 9/9 itens do plano tecnicamente encerrados**, respectivamente. Dossiê: [FECHAMENTO_ETAPAS_3_4.md](FECHAMENTO_ETAPAS_3_4.md). Evidências: `EVIDENCIAS_ETAPAS_3_4.json`.
+
+| Recorte | Implementação e evidência | Estado |
+|---|---|---|
+| CIR-P45-01; POC-P25-06; F07 | Organograma/todos/setores/subsetores, população individual comum à lista/detalhe/filtro, primeira leitura automática e imutável com oito confirmações concorrentes, edição posterior com revogação e preservação do recibo, respostas abertas/restritas protegidas nas duas APIs. | Implementado, testado API/Chrome e publicado; homologação humana pendente. |
+| CIR-P45-02 — antecipação da etapa 3 | Upload privado, atividades/prazos, resolução e arquivo por setor; Informativa não admite resposta/encaminhamento. Arquivamento automático por data e execução/interrupção de avisos permanecem nos critérios específicos posteriores de implantação, infraestrutura e canais. | Recorte de antecipação testado; não atribuir aceite integral a todas as alíneas da implantação. |
+| 16.3.2.3 / 16.3.4.1/3; páginas 34–35, 60–63, 78–80; F04/F05/F08/F12 | Titularidade fiscal/conta, CPF/CNPJ e duplicidade, ViaCEP real com correção/erro visível, protocolo na caixa interna por número, responsável/histórico, nota interna distinta de resposta, conta/caixa/anexos/complementação. DTO público comum, classificação e visibilidade por campo/anexo, máscara CNPJ e QR HTTPS móvel. | Implementado, testado API/Chrome e publicado; e-mail real e autenticação avançada continuam nos marcos finais. |
+| Eventos de atendimento | Protocolo e resposta geram fila `PENDING`, sem confirmação fictícia de envio. Atribuição e complementação geram eventos internos em auditoria. | Contratos/eventos preparados; Resend real na etapa 11. |
+
+Rodadas finais: **156/156 local + 156/156 HTTPS**, mais **119/119 de regressão das etapas 1/2** no incremento local. SaaS `rioazul.celeriflow.com.br`, deployment `Cdhh77Qjnj83sgZMgJnDx9LzHRb7`, commit `52302eb`. Migração 011 aditiva; reconstrução de três bancos com 52 tabelas/12 históricos e checksums/FKs/rollback aprovados. Preservados 15 servidores, cinco documentos, seis setores e o anexo original por fingerprints e SHA-256. Este fechamento não equivale à homologação municipal nem à POC integral 9/9.
+
 ## 3. Acesso, contas e identidade
 
 | ID / fonte | Subrequisitos preservados | Escopo / E | Verificação e critério de aceitação |

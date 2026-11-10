@@ -1,0 +1,2473 @@
+{
+  "version": 1,
+  "purpose": "Fechamento técnico das etapas 3 e 4; homologação municipal tem aceite próprio.",
+  "runs": [
+    {
+      "directory": "stages12-1794350180674",
+      "at": "2026-11-10T22:38:22.245Z",
+      "base": "http://localhost:3100",
+      "passed": 156,
+      "failed": 0,
+      "originalTables": {
+        "app_user": 15,
+        "application_migration": 11,
+        "attachment": 1,
+        "audit_log": 1312,
+        "business_counter": 4,
+        "calendar_holiday": 0,
+        "citizen": 2,
+        "citizen_identity": 2,
+        "department": 6,
+        "document": 5,
+        "document_access": 0,
+        "document_deadline": 2,
+        "document_job": 2,
+        "document_job_blob": 2,
+        "document_job_text": 0,
+        "document_movement": 9,
+        "document_participation": 9,
+        "document_read_receipt": 2,
+        "document_recipient": 21,
+        "email_message": 3,
+        "external_request": 2,
+        "module_anonymous_access": 0,
+        "module_anonymous_operation": 0,
+        "module_business_hours": 0,
+        "module_citizen_alias": 0,
+        "module_contact_account": 0,
+        "module_contact_legacy": 0,
+        "module_contact_merge": 0,
+        "module_contact_profile": 0,
+        "module_contact_segment": 0,
+        "module_diary_catalog": 0,
+        "module_edit_lease": 0,
+        "module_file": 0,
+        "module_mandate": 0,
+        "module_passcode": 0,
+        "module_record": 0,
+        "module_sector_tag": 0,
+        "module_version": 0,
+        "operation_course": 0,
+        "operation_page_metric": 3,
+        "operation_participation_history": 9,
+        "operation_progress": 0,
+        "operation_report": 0,
+        "operation_report_job": 0,
+        "operation_ticket": 0,
+        "organization": 1,
+        "permission": 8,
+        "role": 6,
+        "user_admin_department": 0,
+        "user_department": 0,
+        "user_profile": 9,
+        "user_role": 15
+      },
+      "originalAttachmentHashes": [
+        {
+          "sha256": "1de6ca1a0a34c0c206f8e1d0a83b8189551e4b46d0fb2be61740bee94b5acfc0",
+          "actualBytes": 78
+        }
+      ],
+      "artifacts": [
+        {
+          "file": "circular-recipients.png",
+          "sha256": "fa19ee80cf43766d400b20fb42249da87fbce04540ff0d4e6b49364f55603e9e"
+        },
+        {
+          "file": "public-mobile.png",
+          "sha256": "22bde78c0c52d4efb4e8bc42469b7a5dcb9ea5769f7ced2596ca61b6d9f60fd9"
+        },
+        {
+          "file": "results.json",
+          "sha256": "d04e52d8e729326ebc8889c04a1741f69ee3a3945d674e0c8b4a5d98a0188cbc"
+        }
+      ],
+      "assertions": [
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "concurrent receipts preserve identical first timestamp",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "one receipt per user under concurrency",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "database rejects first-read timestamp mutation",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars?q=2026111000195 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "list and detail count the same two individual recipients",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sender access does not produce recipient receipt",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars?q=2026111000195&unread=1 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id>?unread=1 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "unread list filter agrees with complete receipts",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "restricted reply available to sender and own author",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "restricted reply absent from both detail APIs for other recipients",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "open replies are visible to another involved recipient",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/circulars/<id>/recipients => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "removed recipients are excluded from counts with receipts retained",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/circulars/<id>/recipients => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "re-added recipient retains first receipt",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/circulars/<id>/recipients => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "recipient edit refreshes transferred membership without resetting receipt",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/circulars/<id>/recipients => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/forward => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "organogram descendant selection resolves individual users once",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private upload => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/deadlines => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=conclude => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=archive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "circular sector archives while other recipients remain active",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/modules/contatos/perfis => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/conta/cadastro => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/conta/cadastro => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "two registrations without duplicate fiscal identities",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cep?cep=1 => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cep?cep=00000000 => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cep?cep=30130010 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "real ViaCEP returns confirmed Belo Horizonte address",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents?q=2026111000200 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "protocol discoverable by business number in responsible internal inbox",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/documents/<id>/assignment => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/documents/<id>/assignment => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "request subject, assignee and assignment history persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private upload => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private upload => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key>/attachments/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/attachments/<id> => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/attachments/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "explicit released attachment has original bytes",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/attachments/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key>/attachments/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos/<key> => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "owner sees authorized reply and complement, without internal note/file/history",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key>/attachments/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/publico/<key> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos?key=<key> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "both public channels share the same safe DTO",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "public projection excludes identifiers, notes, body, files, responsible and UUID",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/publico/<key> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "CNPJ public mask preserves correct length and conceals digits",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "receipt and citizen reply notifications queued without fake delivery",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "complement and assignment generate internal notification events",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/publico/<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos?key=<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/publico/<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos?key=<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key>/attachments/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos/<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/conta => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "confidential request also excluded from personal inbox",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=conclude => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos/<key> => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reopen => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "circular created through organogram and rich text in Chrome",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "recipient changes are navigable and persisted from screen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "recipient table renders fixed desktop page without overflow",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "internal request screen exposes subject, responsible and differentiated reply",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "CEP upstream failure is visible and permits manual correction",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "real CEP address is visible for citizen confirmation",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "citizen opens protocol through authenticated form",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "citizen browser opens own authorized process",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "citizen attachment downloads on authenticated browser click",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "public QR page opens at correct mobile URL with no internal content",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "QR page encodes configured origin and uses canonical HTTPS in production",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "owned SQL and Firebase cleanup",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: app_user",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: attachment",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: citizen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_role",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original attachment bytes preserved after cleanup",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "directory": "stages12-1794350593052",
+      "at": "2026-11-10T22:45:58.495Z",
+      "base": "https://rioazul.celeriflow.com.br",
+      "passed": 156,
+      "failed": 0,
+      "originalTables": {
+        "app_user": 15,
+        "application_migration": 11,
+        "attachment": 1,
+        "audit_log": 1435,
+        "business_counter": 4,
+        "calendar_holiday": 0,
+        "citizen": 2,
+        "citizen_identity": 2,
+        "department": 6,
+        "document": 5,
+        "document_access": 0,
+        "document_deadline": 2,
+        "document_job": 2,
+        "document_job_blob": 2,
+        "document_job_text": 0,
+        "document_movement": 9,
+        "document_participation": 9,
+        "document_read_receipt": 2,
+        "document_recipient": 21,
+        "email_message": 3,
+        "external_request": 2,
+        "module_anonymous_access": 0,
+        "module_anonymous_operation": 0,
+        "module_business_hours": 0,
+        "module_citizen_alias": 0,
+        "module_contact_account": 0,
+        "module_contact_legacy": 0,
+        "module_contact_merge": 0,
+        "module_contact_profile": 0,
+        "module_contact_segment": 0,
+        "module_diary_catalog": 0,
+        "module_edit_lease": 0,
+        "module_file": 0,
+        "module_mandate": 0,
+        "module_passcode": 0,
+        "module_record": 0,
+        "module_sector_tag": 0,
+        "module_version": 0,
+        "operation_course": 0,
+        "operation_page_metric": 3,
+        "operation_participation_history": 9,
+        "operation_progress": 0,
+        "operation_report": 0,
+        "operation_report_job": 0,
+        "operation_ticket": 0,
+        "organization": 1,
+        "permission": 8,
+        "role": 6,
+        "user_admin_department": 0,
+        "user_department": 0,
+        "user_profile": 9,
+        "user_role": 15
+      },
+      "originalAttachmentHashes": [
+        {
+          "sha256": "1de6ca1a0a34c0c206f8e1d0a83b8189551e4b46d0fb2be61740bee94b5acfc0",
+          "actualBytes": 78
+        }
+      ],
+      "artifacts": [
+        {
+          "file": "circular-recipients.png",
+          "sha256": "c72663687fdccd620875bc5b27f5ea3b0da73021bd4dd148797e2410fd6a7286"
+        },
+        {
+          "file": "public-mobile.png",
+          "sha256": "da9437a6e519f4007f527119b852a53bcc92d282f75956a88072b6b120bf66cf"
+        },
+        {
+          "file": "results.json",
+          "sha256": "d4eb27b0456389b4f18e28535c8f294678059ef2512e32f7c64475fafc27d74f"
+        }
+      ],
+      "assertions": [
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "concurrent receipts preserve identical first timestamp",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "one receipt per user under concurrency",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "database rejects first-read timestamp mutation",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars?q=2026111000213 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "list and detail count the same two individual recipients",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sender access does not produce recipient receipt",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars?q=2026111000213&unread=1 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id>?unread=1 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "unread list filter agrees with complete receipts",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars/<id>/read => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "restricted reply available to sender and own author",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "restricted reply absent from both detail APIs for other recipients",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "open replies are visible to another involved recipient",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/circulars/<id>/recipients => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "removed recipients are excluded from counts with receipts retained",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/circulars/<id>/recipients => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "re-added recipient retains first receipt",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/circulars/<id>/recipients => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "recipient edit refreshes transferred membership without resetting receipt",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/circulars/<id>/recipients => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/circulars => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/forward => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "organogram descendant selection resolves individual users once",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private upload => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/deadlines => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=conclude => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=archive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "circular sector archives while other recipients remain active",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/modules/contatos/perfis => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/conta/cadastro => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/conta/cadastro => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/conta/cadastro => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "two registrations without duplicate fiscal identities",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cep?cep=1 => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cep?cep=00000000 => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cep?cep=30130010 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "real ViaCEP returns confirmed Belo Horizonte address",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents?q=2026111000218 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "protocol discoverable by business number in responsible internal inbox",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/documents/<id>/assignment => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/documents/<id>/assignment => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "request subject, assignee and assignment history persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private upload => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private upload => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key>/attachments/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/attachments/<id> => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/attachments/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "explicit released attachment has original bytes",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/attachments/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key>/attachments/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos/<key> => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "owner sees authorized reply and complement, without internal note/file/history",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key>/attachments/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/publico/<key> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos?key=<key> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "both public channels share the same safe DTO",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "public projection excludes identifiers, notes, body, files, responsible and UUID",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/publico/<key> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "CNPJ public mask preserves correct length and conceals digits",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "receipt and citizen reply notifications queued without fake delivery",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "complement and assignment generate internal notification events",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/publico/<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos?key=<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/publico/<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos?key=<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/requerimentos/<key>/attachments/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos/<key> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/cidadao/conta => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "confidential request also excluded from personal inbox",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=conclude => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/cidadao/requerimentos/<key> => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reopen => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "circular created through organogram and rich text in Chrome",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/circulars/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "recipient changes are navigable and persisted from screen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "recipient table renders fixed desktop page without overflow",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "internal request screen exposes subject, responsible and differentiated reply",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "CEP upstream failure is visible and permits manual correction",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "real CEP address is visible for citizen confirmation",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "citizen opens protocol through authenticated form",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "citizen browser opens own authorized process",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "citizen attachment downloads on authenticated browser click",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "public QR page opens at correct mobile URL with no internal content",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "QR page encodes configured origin and uses canonical HTTPS in production",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "owned SQL and Firebase cleanup",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: app_user",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: attachment",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: citizen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_role",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original attachment bytes preserved after cleanup",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "directory": "stages12-1794350310708",
+      "at": "2026-11-10T22:40:11.298Z",
+      "base": "http://localhost:3100",
+      "passed": 119,
+      "failed": 0,
+      "originalTables": {
+        "app_user": 15,
+        "application_migration": 11,
+        "attachment": 1,
+        "audit_log": 1379,
+        "business_counter": 4,
+        "calendar_holiday": 0,
+        "citizen": 2,
+        "citizen_identity": 2,
+        "department": 6,
+        "document": 5,
+        "document_access": 0,
+        "document_deadline": 2,
+        "document_job": 2,
+        "document_job_blob": 2,
+        "document_job_text": 0,
+        "document_movement": 9,
+        "document_participation": 9,
+        "document_read_receipt": 2,
+        "document_recipient": 21,
+        "email_message": 3,
+        "external_request": 2,
+        "module_anonymous_access": 0,
+        "module_anonymous_operation": 0,
+        "module_business_hours": 0,
+        "module_citizen_alias": 0,
+        "module_contact_account": 0,
+        "module_contact_legacy": 0,
+        "module_contact_merge": 0,
+        "module_contact_profile": 0,
+        "module_contact_segment": 0,
+        "module_diary_catalog": 0,
+        "module_edit_lease": 0,
+        "module_file": 0,
+        "module_mandate": 0,
+        "module_passcode": 0,
+        "module_record": 0,
+        "module_sector_tag": 0,
+        "module_version": 0,
+        "operation_course": 0,
+        "operation_page_metric": 3,
+        "operation_participation_history": 9,
+        "operation_progress": 0,
+        "operation_report": 0,
+        "operation_report_job": 0,
+        "operation_ticket": 0,
+        "organization": 1,
+        "permission": 8,
+        "role": 6,
+        "user_admin_department": 0,
+        "user_department": 0,
+        "user_profile": 9,
+        "user_role": 15
+      },
+      "originalAttachmentHashes": [
+        {
+          "sha256": "1de6ca1a0a34c0c206f8e1d0a83b8189551e4b46d0fb2be61740bee94b5acfc0",
+          "actualBytes": 78
+        }
+      ],
+      "artifacts": [
+        {
+          "file": "results.json",
+          "sha256": "5309b06a8710feaca0fe478f8d66792f5ea797818aab495bdc14d5554b711138"
+        }
+      ],
+      "assertions": [
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "password omitted generates private definition link without claiming delivery",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private recovery link defines real Firebase password",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "recovered account authenticates using defined password",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/users => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "failed creation rolls back both counters",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "external draft notification includes actual business code without SQL interpolation artifact",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "concurrent sequential numbers without gaps",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "business identifiers retain aaaammddxxxxx",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sanitized format survives reopen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "two deadlines and three independent sectors",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/deadlines?month=2030-01 => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "both deadlines visible in calendar",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "concurrent forward has exactly one winner",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/forward => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "A to B to C preserves actual origin and destination",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/forward => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/deadlines/<id> => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/deadlines/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "deadline edits recorded in document timeline",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private attachment uploaded",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private attachment roundtrip hash",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "private attachment without session denied",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=conclude => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "one sector conclusion does not close other pending sectors",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=archive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reopen => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/receive => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/forward => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "local administrator manages designated subtree while based elsewhere",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents/<id>/actions?action=reply => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id>/role => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 403",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 401",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "inactivity suspends without erasing account",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/me => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/me => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/me => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/departments => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "telephone directory honors individual visibility",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users/<id>/history => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "transfer history preserves before and after sector",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users/<id>/history => 404",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/documents?q=55/2026&type=MEMORANDUM => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "number-year search and default twenty-page size",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "functional profile persists birth sex position preferences",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "GET /api/admin/users => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "leave period survives reopen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/admin/departments => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "POST /api/documents => 201",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/users/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 200",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "department retirement reallocates staff and retains historical sector movement",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 400",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "PATCH /api/admin/departments/<id> => 409",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "new account signs in through browser email and password",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "basic editor preference has real toolbar effect",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "document created through browser with two deadlines",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "formatted document rendered by browser",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "two persisted deadlines available from document screen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "authenticated click downloads original bytes in browser",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "month grid opens persisted deadline and linked document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "calendar screen opens for same account",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "N3 browser view hides write actions",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "owned SQL and Firebase cleanup",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: app_user",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: attachment",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: citizen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_role",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original attachment bytes preserved after cleanup",
+          "outcome": "PASS"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "file": "scripts/validate-stages-1-2.ts",
+      "sha256": "386851cbceece75c66a1746a65c062f8715d923f18f63ea50614ed9c68b4171f"
+    },
+    {
+      "file": "scripts/validate-stages-3-4.ts",
+      "sha256": "4a67feac2cc93a4757284a1063f73dedccdd3532b75d215ce2501875b059ccb0"
+    },
+    {
+      "file": "src/app/api/cidadao/conta/cadastro/route.ts",
+      "sha256": "493b114c5623eef6107bededdb78acf0d5b207bed593cca8ddbbefd7dea440b8"
+    },
+    {
+      "file": "src/app/api/cidadao/conta/route.ts",
+      "sha256": "83942576636e45f78d344ff0eb12861441c64125f9f286e8fb5d7f9e014d0620"
+    },
+    {
+      "file": "src/app/api/cidadao/requerimentos/[key]/attachments/[id]/route.ts",
+      "sha256": "d5aabd789300f8bf00a34f9be87fecacb7450056c104131e0641d3ea6d2a9f23"
+    },
+    {
+      "file": "src/app/api/cidadao/requerimentos/[key]/attachments/route.ts",
+      "sha256": "d32d2b0f80270e56bb109458fd42669fbdfc2546945558faac0be4cf7039b78e"
+    },
+    {
+      "file": "src/app/api/cidadao/requerimentos/[key]/route.ts",
+      "sha256": "4428610528eb940982c97013ad2467f51c6807324e43df7b73eacaec4d23d150"
+    },
+    {
+      "file": "src/app/api/cidadao/requerimentos/route.ts",
+      "sha256": "555079ecd5a8099359842f8c289b8e3ce334d7a6c6d53385c94cfa46704c9527"
+    },
+    {
+      "file": "src/app/api/circulars/[id]/read/route.ts",
+      "sha256": "38b26f4bbe49b97f7d4eb390ab08fa7c7cd822506f475d561cf32175e22f647c"
+    },
+    {
+      "file": "src/app/api/circulars/[id]/recipients/route.ts",
+      "sha256": "cebce7f097fcfca13e408c7db5a11d7afc39bacd9cc5a4b2e77f3271e834a127"
+    },
+    {
+      "file": "src/app/api/circulars/[id]/route.ts",
+      "sha256": "ea636cf606ff5fa98077bcdd22a87c521d63ec2541256b4bcd0bf2f0a2690efe"
+    },
+    {
+      "file": "src/app/api/circulars/route.ts",
+      "sha256": "c49476c6c68cf787f42b6af1931beda436983513538a1d7560b3885da5942ab8"
+    },
+    {
+      "file": "src/app/api/documents/[id]/actions/route.ts",
+      "sha256": "2a84838f07f9e6c714d52a6e95da961dd7de30ff9734c1d6640e92ecc59bd0be"
+    },
+    {
+      "file": "src/app/api/documents/[id]/assignment/route.ts",
+      "sha256": "b9e185840d4874a113db70ca20aec21538edef2d9dc65957097aa26072800293"
+    },
+    {
+      "file": "src/app/api/documents/[id]/attachments/route.ts",
+      "sha256": "05cdcb240ec573fd7a796e32c7615e9c00ea9c5cf08f83302c0c7af263d48b46"
+    },
+    {
+      "file": "src/app/api/documents/[id]/deadlines/route.ts",
+      "sha256": "bfe498ddf2994f585a5985bb8e65f96114a6206c091230df635a1892f166ace9"
+    },
+    {
+      "file": "src/app/api/documents/[id]/forward/route.ts",
+      "sha256": "ef2b4a61798192d5738e45ba14eaeca897391e36153365769564e2326e9d3ada"
+    },
+    {
+      "file": "src/app/api/documents/[id]/receive/route.ts",
+      "sha256": "4961baa8b25138c6a24192299a1057949a658fb2138eb7605bf01abe3ab605bc"
+    },
+    {
+      "file": "src/app/api/documents/[id]/route.ts",
+      "sha256": "ddf9e5d254eb075e84569f6f5507254a5f13925f963af7d0740ff31c743f7ca2"
+    },
+    {
+      "file": "src/app/api/documents/route.ts",
+      "sha256": "88011405e91415c3272e55c8cf491822ed8580a51b7ab76469f8cb1fc8b23f9a"
+    },
+    {
+      "file": "src/app/api/publico/[key]/route.ts",
+      "sha256": "bc2faf14ea64027bcd74e29204a58326bdbb54cebc272f4b151c242bba89e442"
+    },
+    {
+      "file": "src/app/cidadao/conta/ContactProfileFields.tsx",
+      "sha256": "121aa552a2d9647dfedc8570cbfec6fd3f0e712c8af158fd843a67afcd08aa4b"
+    },
+    {
+      "file": "src/app/cidadao/conta/ExternalAccount.tsx",
+      "sha256": "ab5d597dc6da72dc8c47d563fc6c46e705717171198d5d385861bab38445f281"
+    },
+    {
+      "file": "src/app/cidadao/conta/cadastro/page.tsx",
+      "sha256": "eb3964cf527e95200b364da815e4746602cb68dc8ff7fdc483bdf3b4db819263"
+    },
+    {
+      "file": "src/app/cidadao/conta/page.tsx",
+      "sha256": "245ca1152025f0f28a4b35e340d574968b48b7ff91c68a8740777f754e6e036e"
+    },
+    {
+      "file": "src/app/cidadao/page.tsx",
+      "sha256": "e2ed7d4efbdd8c1ec36e07bf537fcf379f4508da8474bba9239ab4a2f7a73d73"
+    },
+    {
+      "file": "src/app/cidadao/processos/[key]/page.tsx",
+      "sha256": "a206f27f99bb92bf713a877695ef1389381ce92eacdb45d337fc43fed5f3be43"
+    },
+    {
+      "file": "src/app/circulares/[id]/page.tsx",
+      "sha256": "3f0e6c773a63483ca3ae81e03b3614871c57346859cbb73782d3f3b74bd609a7"
+    },
+    {
+      "file": "src/app/circulares/nova/page.tsx",
+      "sha256": "2d18f878f0d7c2678a65279f0b6345c08cfa57680811a18040407769223475c4"
+    },
+    {
+      "file": "src/app/circulares/page.tsx",
+      "sha256": "d997424304b67fbde16ddbd3dea0e7eba0da3e80ea92342cbf72fca97020aea4"
+    },
+    {
+      "file": "src/app/documentos/[id]/page.tsx",
+      "sha256": "4d819a17c37bef31320034a9791b3282b6f8edf8c02f1e45042137b7d8699e04"
+    },
+    {
+      "file": "src/app/documentos/novo/page.tsx",
+      "sha256": "af52a3dcc3e6551b11202f18a3d5f6fe8faa5c98778d532414792ac448735c41"
+    },
+    {
+      "file": "src/app/documentos/page.tsx",
+      "sha256": "10419b3e52cf5fa7097d51e21a8c3692b8d8344570df5075e507f1a1586745a1"
+    },
+    {
+      "file": "src/app/publico/[key]/KeySearch.tsx",
+      "sha256": "4c1af0dc9a3b5cb122082a2e8ecd7c80d1e32fd103df171bddde771d28ff5803"
+    },
+    {
+      "file": "src/app/publico/[key]/page.tsx",
+      "sha256": "6237c279757fa956be98a0b56792049caeaad939a002409a1f02b6a6b0dad09b"
+    },
+    {
+      "file": "src/app/publico/page.tsx",
+      "sha256": "ad9498c3648a921b67636e90f23365c77b42bae60e6800ac707a137486b97cb4"
+    },
+    {
+      "file": "src/components/AppShell.tsx",
+      "sha256": "9eac4dc60ebfb3ab0a46148a5852e858c7ed52f71f48aee415d94d01331acb41"
+    },
+    {
+      "file": "src/components/DataTable.tsx",
+      "sha256": "df48bb4d3479ba53ebfc5f0928bfe5c900fd3b8458b9e267513202fa6d9ad13c"
+    },
+    {
+      "file": "src/components/DepartmentPicker.tsx",
+      "sha256": "5f2ceb6abfa14b049f7f419db97252d2d9f3c54128ba1d349d59210c65604b61"
+    },
+    {
+      "file": "src/components/MaskedInput.tsx",
+      "sha256": "3d52a5abe4342562a700cd52b48b1a2adc7c1ed6abd87e1ce2319fdbbf3c5d3f"
+    },
+    {
+      "file": "src/components/ProfileFields.tsx",
+      "sha256": "08fdb8b3b0c9bad8b9867d542ac9459a0267e92c7d9ec586455302ae13cdcd32"
+    },
+    {
+      "file": "src/components/RichText.tsx",
+      "sha256": "ffbcedb54787f8941c13fabb3715b044b43286b7ccd42f283dfe5e0d8c2c89fc"
+    },
+    {
+      "file": "src/components/WorkflowField.tsx",
+      "sha256": "6977526759399aee39247d51b855e9e135eb7728912fddd9d1edecd60a07f477"
+    },
+    {
+      "file": "src/components/session.tsx",
+      "sha256": "3846257ded12aa8e1b46ef4747fbd8fda1fb1dd09efee468f09676ab356436ad"
+    },
+    {
+      "file": "src/db/migrations/0001_core.sql",
+      "sha256": "bb9ab9049a49f51896c546dc865c0af27747afe1ca9df434a64e434f9639fdae"
+    },
+    {
+      "file": "src/db/migrations/002_modules.sql",
+      "sha256": "692a59e9ac43ca46a9693d20886b321b1ea4cd7770ae80ec70bc863396b74fb7"
+    },
+    {
+      "file": "src/db/migrations/003_operations.sql",
+      "sha256": "326bcdc7d0850fe5ec7aef6e331091864c1fb2f23d6a44509fb5a18c9a816053"
+    },
+    {
+      "file": "src/db/migrations/004_jobs.sql",
+      "sha256": "69eb926ef0389205567d9e7de2415419c919142ce4b2a8cd10a316d7a0de8e73"
+    },
+    {
+      "file": "src/db/migrations/005_modules_completion.sql",
+      "sha256": "4ed12a74721097e65c700bfc570c149cf86b4416856893f6baf1252acb279a52"
+    },
+    {
+      "file": "src/db/migrations/006_contacts_anonymous.sql",
+      "sha256": "81887c9e1489f7486001215be90f7084411ed4982bed27b4f094bfd0c2b3fc61"
+    },
+    {
+      "file": "src/db/migrations/007_workflow_diary.sql",
+      "sha256": "6795c782a14bc748d434706cd6a547feb7862eebbdfb13b4eb7551eb30ab9fc7"
+    },
+    {
+      "file": "src/db/migrations/008_operations_completion.sql",
+      "sha256": "c15d4768b0a0ec142af3525e6a2a373856bf898e23fe4649f5a976703a3b035a"
+    },
+    {
+      "file": "src/db/migrations/009_contacts_external.sql",
+      "sha256": "deb768cb2e0fe956101a1697437cdba5726f1ce2091ec93fcb59ebbd5a2d4431"
+    },
+    {
+      "file": "src/db/migrations/010_administration_core_completion.sql",
+      "sha256": "48afb9c661938431de0c6f740290f19e95beb379570511915d2d7e374114e491"
+    },
+    {
+      "file": "src/db/migrations/011_circulars_citizen_completion.sql",
+      "sha256": "c011f2d91bd20b669217d534f55461efd2247244c74474233e43f2c9832d0208"
+    },
+    {
+      "file": "src/db/schema.ts",
+      "sha256": "962703b72d915cde5179e5055c841349ce79b8af30927ab5279e11c15e23a8ae"
+    },
+    {
+      "file": "src/lib/auth.ts",
+      "sha256": "044034fab2f1f75c40ac6c52d7d1ad970c6e78bfcd0e1eb2c5b280af8b4fdf0c"
+    },
+    {
+      "file": "src/lib/blob.ts",
+      "sha256": "799df42bb9095019ae7db7cbe17583f5a8167802cd517b642ecdf8d17d6d532e"
+    },
+    {
+      "file": "src/lib/brazilian-values.ts",
+      "sha256": "f2907339b720c22ca328ee69aff6250baad9df4a5f0a5b4a273b4c5c326ed4c2"
+    },
+    {
+      "file": "src/lib/circulars.ts",
+      "sha256": "702aa67135f1a7b1e091ae4063d54ba2c75f6dd1d6c3cbfb8673ac1afb905348"
+    },
+    {
+      "file": "src/lib/citizen-auth.ts",
+      "sha256": "b2e696c022b99a01cd9cba5ac94f023e41011d794248be66bb7e2012e79b522e"
+    },
+    {
+      "file": "src/lib/citizen-contact.ts",
+      "sha256": "4fa4229b446279290e92b9e3e87a60bdfbb8749a453310d28444a04c1de2d986"
+    },
+    {
+      "file": "src/lib/core-write-guard.ts",
+      "sha256": "28fd1d131920373ce6faaada7d0404499ae187248c626a081eba683f8923c6fd"
+    },
+    {
+      "file": "src/lib/cpf.ts",
+      "sha256": "98c04895421baba6b7c2f5abc545ccd1e9b3722596fb6062c23e210dd92a5bc4"
+    },
+    {
+      "file": "src/lib/document-actions.ts",
+      "sha256": "c032862c5eb800b4ca8bf6646e3954490c5cf424d969177b9f950b78fb224588"
+    },
+    {
+      "file": "src/lib/document-visibility.ts",
+      "sha256": "95e16355e323462f496c55f7ed8f5d52b565cc78d4147f9a918515464596ec5a"
+    },
+    {
+      "file": "src/lib/email.ts",
+      "sha256": "88d129fa85890a5ebd5c1efedb722ea4819236ba60e868aa7b3895fa70657b92"
+    },
+    {
+      "file": "src/lib/firebase-admin.ts",
+      "sha256": "956b9f3f5f0558ae065af8ac656174ee7965799245011e3bdeac0e0919de1a28"
+    },
+    {
+      "file": "src/lib/firebase-client.ts",
+      "sha256": "19c0b8c00746a00f0a24e81560485f2572a1a5a993f9e3ad21f39e7a6e15d510"
+    },
+    {
+      "file": "src/lib/govbr.ts",
+      "sha256": "6caf7a89283b2fd986dbb5a22f29893579e95cad46f077f10e88019903dbed65"
+    },
+    {
+      "file": "src/lib/inbound.ts",
+      "sha256": "3452eb397c9bf7b78ff8760f02d2c82bade6a092906bc6ca277705ed743b8561"
+    },
+    {
+      "file": "src/lib/input-masks.ts",
+      "sha256": "50554804f644a1f0eccd3262fa379ab385da47160413fc8ced2a28d06009a5d6"
+    },
+    {
+      "file": "src/lib/jobs/commands.ts",
+      "sha256": "154b5a9e574cecd5ad60a690ecac4ca7aa34d8ca81e0e00e2b6f4be5ad73c059"
+    },
+    {
+      "file": "src/lib/jobs/queue.ts",
+      "sha256": "98663b61c04277398cce08b59dbbe4bea1853de25060cc6a050f1cb4c20a4dd7"
+    },
+    {
+      "file": "src/lib/jobs/render.test.ts",
+      "sha256": "1209052d2fcc19b2f8ccdbb1cd49635f4a60a2a482f018984b5c696be5d0c9d8"
+    },
+    {
+      "file": "src/lib/jobs/render.ts",
+      "sha256": "f84e7de91cdeaca59db51169cb4d5c5cab06c1f35dd1f9853e78b2049132afcb"
+    },
+    {
+      "file": "src/lib/jobs/server.ts",
+      "sha256": "8a38f431d6301914a9b2f2e6813cb26fe4cd659e279ab87305a9c4afd159d6ca"
+    },
+    {
+      "file": "src/lib/jobs/types.ts",
+      "sha256": "4e47043824215f4896123d1c5be731106aadbe6993b18eb660a722cb9d2aeb7d"
+    },
+    {
+      "file": "src/lib/jobs/worker.ts",
+      "sha256": "3d3868bb4923bd337ae30a382d5e742f6a66390b347dbd7837912b5fff5a25c8"
+    },
+    {
+      "file": "src/lib/jobs/zip.ts",
+      "sha256": "09833e2bd8dae71422c7b88bc5c4803afb6290655985d8afb5303817c1b44649"
+    },
+    {
+      "file": "src/lib/mask.ts",
+      "sha256": "a2bb2a4ba80407ed5506e01eafccb18eeb43c02758d78258afeb1adbae841374"
+    },
+    {
+      "file": "src/lib/modules/anonymous.ts",
+      "sha256": "af3d1e64baf6b69a9c34f64d4c2e0979289a2fd3a6b768c1f9f54251f8467ece"
+    },
+    {
+      "file": "src/lib/modules/business-hours.test.ts",
+      "sha256": "4e1a8d417d832a331ea0d7e525bf44aa617fbaaa6f1044bedecbc261219f6f0d"
+    },
+    {
+      "file": "src/lib/modules/business-hours.ts",
+      "sha256": "a128222a3f9d0ad6db0edb1625c3780370adadfc27b6f22a42ba6a379d96d0bb"
+    },
+    {
+      "file": "src/lib/modules/calendar.ts",
+      "sha256": "e958787985e7b2376f198aace4102fc5a90d96c89e01999cf49a166a9ad09a9f"
+    },
+    {
+      "file": "src/lib/modules/contact-profile.test.ts",
+      "sha256": "b59f59d62c7177c5bbab5b07e6a1c4193db2e09257a0c98ae81da3b7bb2db1c8"
+    },
+    {
+      "file": "src/lib/modules/contact-profile.ts",
+      "sha256": "6c072c1e7c09fbb439ad7110660a8c1e434a3f1660dc17914aa3f7f771606966"
+    },
+    {
+      "file": "src/lib/modules/contacts.ts",
+      "sha256": "0f0ca4a9626bd8d1e50470a0f173bb9a2683fad852d040afdf3b8cf8508e3bfc"
+    },
+    {
+      "file": "src/lib/modules/diary-catalog.test.ts",
+      "sha256": "7752454e3e97c18e703bba2f372241b471f4dfefe1bfa99d21603bb565869e4b"
+    },
+    {
+      "file": "src/lib/modules/diary-catalog.ts",
+      "sha256": "6c29f6bba08ba66c87854a7bbacb5bc59316899003ad566878273175b2618320"
+    },
+    {
+      "file": "src/lib/modules/domain.ts",
+      "sha256": "5a44c992432131f54aa40df9b12cdd072bfe378eeb5e441d0a898476261f6e7b"
+    },
+    {
+      "file": "src/lib/modules/external.ts",
+      "sha256": "ee3678024d61892a11bd2eb07f596ef279c9bd01c860dc5564aab7bcd472560f"
+    },
+    {
+      "file": "src/lib/modules/formats.ts",
+      "sha256": "ea24afca5a282593d001f8070f132cf04b95c35ad74b108b6d8f7b0b92f5cc07"
+    },
+    {
+      "file": "src/lib/modules/geospatial.ts",
+      "sha256": "83f45395cbf1d89b4229bc7301df00f5bc3a81cf1554fec8639d119225ce4946"
+    },
+    {
+      "file": "src/lib/modules/modules.test.ts",
+      "sha256": "ec6d5e21a8d9328a60909ef8b6d3fbd84b1cf1fcaf787b4dc79d9de40a9c02be"
+    },
+    {
+      "file": "src/lib/modules/policy.ts",
+      "sha256": "ea9841dd52f6991c0ddde9b2e0cc3c54a4091942ffd670ecd0027f7cd9c2d125"
+    },
+    {
+      "file": "src/lib/modules/server.ts",
+      "sha256": "68dbde4358881603ee7a38e2c566faa9e802c599cdfd87944b6283946b330e6c"
+    },
+    {
+      "file": "src/lib/modules/workflow-validation.test.ts",
+      "sha256": "4fe7d9cc2b78f6d9cd8748e8dd6406a00faf2f3463b21d37475337d83404448e"
+    },
+    {
+      "file": "src/lib/numbering.test.ts",
+      "sha256": "b44b3115b220f197679b007b5eb6f26e5548fd90ab094a9d0d8aaf89456e13ea"
+    },
+    {
+      "file": "src/lib/numbering.ts",
+      "sha256": "bd331228a8b602a86198acc055bdac45f667bee260716b9a8d2f71f2068547d9"
+    },
+    {
+      "file": "src/lib/operations/backup-worker.ts",
+      "sha256": "c6213a3f395a4d22714a1b315a922625897c682067259268a4d33f78da29cc35"
+    },
+    {
+      "file": "src/lib/operations/billing.test.ts",
+      "sha256": "9c076435ea95e07a9f6ae00edcad2ab165c53d0fc9d0c8ca3cbcae5b005d1f13"
+    },
+    {
+      "file": "src/lib/operations/billing.ts",
+      "sha256": "0d5c2c54ec2a0ca3fbc1b376d8440f3a6c052e4c0c169e67f933a0f16e3e1765"
+    },
+    {
+      "file": "src/lib/operations/completion-reports.ts",
+      "sha256": "5295a72b442f8f4d46c8afe3eb8c23e875af33ec20739b5b6a38c98c30899b7f"
+    },
+    {
+      "file": "src/lib/operations/consistent-report.ts",
+      "sha256": "4d7c2bc1e8b3ef3e4eebc8a0004ce2ff2e3e7d0b915389b41eca8e0c700f946b"
+    },
+    {
+      "file": "src/lib/operations/formats.test.ts",
+      "sha256": "2629d1bef0c0be2896d82554d0f15040c4e266356e2a5f61f3e4357e39f870b2"
+    },
+    {
+      "file": "src/lib/operations/formats.ts",
+      "sha256": "72186b248fd8c9864c87596386e7e7f48a529355a004bdf1a8396f63be5952c0"
+    },
+    {
+      "file": "src/lib/operations/geo.ts",
+      "sha256": "3142bf3f3c5e5bb27436a6cfc1e7405db049fc130b7006ff55abd447af121354"
+    },
+    {
+      "file": "src/lib/operations/historical-reports.ts",
+      "sha256": "e3bf9ffb21b64995239552fd9cddbe632eef0c015a4215c13e522c85d068b03d"
+    },
+    {
+      "file": "src/lib/operations/page-worker.ts",
+      "sha256": "0c84033bd7c85737e6bd391d33b500b2f78f95534a7dcef95939250b220982ae"
+    },
+    {
+      "file": "src/lib/operations/query.ts",
+      "sha256": "ba918c0591641690ded5950a1398baf8584887603b7a174677254bb11ec11261"
+    },
+    {
+      "file": "src/lib/operations/report-worker.ts",
+      "sha256": "e19e9a387ad5a1d3a85a6b5daf7eaf3cefefcbe884b41a1245ad74607bc82ab4"
+    },
+    {
+      "file": "src/lib/operations/reports.ts",
+      "sha256": "60592a6818cc3e2b050d773316bff6f0b66e262488d1c3bcdb3510e9ef482ae1"
+    },
+    {
+      "file": "src/lib/operations/scheduled.ts",
+      "sha256": "05325dd52285df647ffb7c877defa93099c6c0f3be252b9cf1ace62f5f0b31a8"
+    },
+    {
+      "file": "src/lib/operations/server.ts",
+      "sha256": "102da21dd33c9baf8ca32bb9981371ccad574d9d9d93ec5d498fc467f867e3f5"
+    },
+    {
+      "file": "src/lib/operations/snapshot-helpers.test.ts",
+      "sha256": "1846a2eeb82a2d39953e603c36c98eaee5f8296fd5b846f7d99ec6119a51e540"
+    },
+    {
+      "file": "src/lib/operations/snapshot-helpers.ts",
+      "sha256": "5f54b23630d3ae20cd9502be606dfa157e202b578ea205eb00319a30265df4c3"
+    },
+    {
+      "file": "src/lib/operations/stream-export.ts",
+      "sha256": "153a147cee440fb9c4cd00e76ed37a1b09bde18c5a6cb41e00e1db30fc1a5df9"
+    },
+    {
+      "file": "src/lib/process-tree.ts",
+      "sha256": "3240e53b6c460cbec1d40372b6271b963cb1bbac73e1ab58673260f82cc5b684"
+    },
+    {
+      "file": "src/lib/profile-validation.test.ts",
+      "sha256": "eb84ad2e33a324e4eae8659f411f94d9abef46eddc601d588b6734b0bdf29701"
+    },
+    {
+      "file": "src/lib/profile-validation.ts",
+      "sha256": "8d655015861d3424c370944f25ada2586bfa51f181711c3cb8f38ccda9bc4493"
+    },
+    {
+      "file": "src/lib/public-document.ts",
+      "sha256": "44d167fc741626902ce4bcea5b17e4fd166126df491c5645ab49c1276f3d84c3"
+    },
+    {
+      "file": "src/lib/rbac.ts",
+      "sha256": "e8bd394eb212f095a2c2c53653010b4b59d0409459e51d99c86b4cc364435e66"
+    },
+    {
+      "file": "src/lib/tax-id.ts",
+      "sha256": "b1f5f2ad0707aac49a1cd5fb9f5f2faaca243345199595a40680a89d8ac6d56a"
+    },
+    {
+      "file": "src/lib/user-administration.ts",
+      "sha256": "cbf4d859040fda1c849199e6562d390aebafa9c1810ec77b84e0e3f2dd09a248"
+    }
+  ]
+}
