@@ -1,4 +1,5 @@
 import { get, put } from "@vercel/blob";
+import { ownDownloadStream } from "./blob-stream";
 
 // Anexo -> Vercel Blob em LOJA PRIVADA (SDK v2). Metadados em `attachment`.
 // storageKey guarda o PATHNAME; o download passa por /api/attachments/[id]
@@ -21,7 +22,7 @@ export async function downloadAttachment(pathname: string) {
   const res = await get(pathname, { access: "private", token: token() });
   if (!res || res.statusCode !== 200 || !res.stream) return null;
   return {
-    stream: res.stream,
+    stream: ownDownloadStream(res.stream),
     contentType: res.blob.contentType || "application/octet-stream",
     size: res.blob.size,
   };

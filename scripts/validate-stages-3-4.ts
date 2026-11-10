@@ -264,9 +264,11 @@ async function execute() {
     await external.goto(`${base}/cidadao/processos/${protocol.publicKey}`); await external.getByRole("heading", { name: new RegExp(protocol.protocolNumber) }).waitFor();
     check("citizen browser opens own authorized process", await external.getByText("Sua solicitação foi recebida e está em análise.", { exact: true }).count() === 1);
     await external.getByRole("button", { name: "Anexos", exact: true }).click();
-    const downloaded = external.waitForEvent("download"); await external.getByRole("button", { name: "Baixar", exact: true }).click();
-    const file = await downloaded; const target = join(directory, "citizen-download.private.txt"); await file.saveAs(target);
-    check("citizen attachment downloads on authenticated browser click", readFileSync(target, "utf8") === "Complemento do cidadão.");
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const downloaded = external.waitForEvent("download"); await external.getByRole("button", { name: "Baixar", exact: true }).click();
+      const file = await downloaded; const target = join(directory, `citizen-download-${attempt}.private.txt`); await file.saveAs(target);
+      check(`citizen attachment downloads on authenticated browser click ${attempt + 1}`, readFileSync(target, "utf8") === "Complemento do cidadão.");
+    }
     const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
     await mobile.goto(`${base}/publico/${protocol.publicKey}`); await mobile.getByRole("heading", { name: "Consulta pública", exact: true }).waitFor();
     const qr = mobile.getByRole("img", { name: /QR/ }); await qr.waitFor();
