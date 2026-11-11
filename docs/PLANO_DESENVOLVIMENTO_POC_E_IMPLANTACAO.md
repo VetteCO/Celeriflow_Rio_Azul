@@ -1,8 +1,11 @@
 # Plano de desenvolvimento — POC 100% e implantação integral
 
-**Versão:** 10/11/2026.  
+**Versão:** 11/11/2026.
+
 **Situação:** etapas 0–7 tecnicamente encerradas nos recortes documentados. Incremento funcional das etapas 8 e 9 concluído e validado internamente no recorte abaixo; aceite integral permanece aberto para Sisobra, bases municipais, infraestrutura permanente, dimensionamento do uso real e homologação formal.
 **Base técnica:** `VALIDACAO_INTERNA_POC_2026-11-10.md`.
+
+**Revalidação em 11/11/2026:** [build, lint, tipos, testes e migrations](VALIDACAO_COMPLETA_2026-11-11.md); [dados persistentes e roteiro de apresentação](DADOS_DEMONSTRACAO_2026-11-11.md), com 27/27 famílias populadas e cobertura/lacunas por tabela. A revalidação não altera os limites de aceite integral descritos neste plano.
 
 ## 1. Diretrizes acordadas
 

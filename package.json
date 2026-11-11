@@ -38,6 +38,9 @@
     "validate:learning-support": "tsx --env-file=.env.local scripts/validate-learning-support.ts",
     "validate:operations": "tsx --env-file=.env.local scripts/validate-operations.ts",
     "validate:capacity": "tsx --env-file=.env.local scripts/validate-capacity.ts",
+    "audit:demo": "tsx --env-file=.env.local scripts/audit-demo-coverage.ts",
+    "demo:prepare": "tsx --env-file=.env.local scripts/prepare-demonstration.ts",
+    "demo:verify-preservation": "tsx --env-file=.env.local scripts/verify-demo-preservation.ts",
     "db:seed": "tsx src/db/seed.ts",
     "db:seed:cenario": "tsx --env-file=.env.local src/db/seed-cenario.ts",
     "admin:bootstrap": "tsx src/db/bootstrap-users.ts"

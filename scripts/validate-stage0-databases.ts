@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, writeFileSync, openSync, closeSync } from "node:fs";
 import { join, resolve } from "node:path";
 import assert from "node:assert/strict";
 
@@ -16,6 +16,16 @@ const data = join(run, "postgres");
 const port = "55439";
 const env = { ...Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith("PG"))), NODE_ENV: process.env.NODE_ENV, PGHOST: "127.0.0.1", PGPORT: port, PGUSER: "postgres", PGPASSWORD: password, PGDATABASE: "postgres", PGSSLMODE: "disable" };
 function command(exe: string, args: string[], input?: string) {
+  // PostgreSQL child processes on Windows may inherit pg_ctl's pipes and keep
+  // spawnSync waiting after startup. Its persistent output goes straight to disk.
+  if (exe === "pg_ctl") {
+    const log = join(run, `pg-ctl-${args.at(-1)}.log`), fd = openSync(log, "wx", 0o600);
+    try {
+      const result = spawnSync(join(bin, `${exe}.exe`), args, { env, stdio: ["ignore", fd, fd], timeout: 120000, windowsHide: true });
+      if (result.status !== 0) throw new Error(`${exe}: ${result.error?.message || readFileSync(log, "utf8") || result.status}`);
+      return readFileSync(log, "utf8").trim();
+    } finally { closeSync(fd); }
+  }
   const result = spawnSync(join(bin, `${exe}.exe`), args, { env, input, encoding: "utf8", timeout: 120000, windowsHide: true });
   if (result.status !== 0) throw new Error(`${exe}: ${result.stderr || result.error?.message || result.status}`);
   return result.stdout.trim();

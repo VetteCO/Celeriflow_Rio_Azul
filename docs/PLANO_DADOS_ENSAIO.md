@@ -1,6 +1,6 @@
 # Dados de desenvolvimento, homologação e apresentação
 
-Plano vigente em 10/11/2026. Substitui as antigas instruções de seed e reset manual deste arquivo.
+Plano atualizado em 11/11/2026. Substitui as antigas instruções de seed e reset manual deste arquivo. Para a massa persistente de apresentação preparada na base da aplicação, consultar [DADOS_DEMONSTRACAO_2026-11-11.md](DADOS_DEMONSTRACAO_2026-11-11.md).
 
 ## Separação efetivamente preparada
 
@@ -31,7 +31,7 @@ Essas são **bases locais de preparação de dados**, não três implantações 
 
 1. Executar a partir da raiz interna do projeto, com Node 24 e ferramentas PostgreSQL em `%LOCALAPPDATA%/Temp/opencode/postgresql18/pgsql/bin`.
 2. Rodar `npm run stage0:databases`. Não necessita `.env.local` nem credenciais de produção.
-3. Conferir três resultados com 50 tabelas, dez entradas de histórico (baseline + nove migrações), hashes corretos, zero FKs não validadas e rollback aprovado.
+3. Conferir três resultados com 52 tabelas, 13 entradas de histórico (baseline + 12 migrations), hashes corretos, zero FKs não validadas e rollback aprovado. Esse histórico inclui o bootstrap local; na base preservada, `db:migrate -- --check` confere as 12 migrations existentes.
 4. Manter os artefatos privados fora do Git. Para nova massa, executar novamente: um diretório e cluster novos serão criados; nenhuma exclusão anterior é necessária.
 5. Para retomar o cluster, usar `pg_ctl` com o `-D` do diretório gerado e a mesma porta/host do executor. A senha está no arquivo privado, não neste documento. Não manter o cluster aberto após o uso.
 

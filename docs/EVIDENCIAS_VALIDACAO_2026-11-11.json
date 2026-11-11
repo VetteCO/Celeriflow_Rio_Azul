@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-11",
+  "applicationBase": "http://localhost:3100",
+  "evidenceRoot": "%LOCALAPPDATA%/Temp/opencode",
+  "scope": "Final successful local suites, migration history checks, isolated reconstruction/restore, persistent fictional presentation data and dependency audit. Not full contractual or security acceptance.",
+  "staticChecks": { "lint": "PASS", "build": "PASS", "typecheck": "PASS", "unitTests": { "passed": 57, "failed": 0 } },
+  "migrationHistory": { "existingApplied": 12, "validChecksums": 12, "pending": 0, "newlyAppliedToPreservedDatabase": 0, "isolatedRebuiltDatabases": 3, "tablesPerDatabase": 52, "historyEntriesPerNewDatabaseIncludingBootstrap": 13 },
+  "integrationAssertions": { "passed": 1484, "failedInFinalRuns": 0 },
+  "suites": [
+    { "name": "stages12", "passed": 119, "file": "stages12-1794367629251/results.json", "sha256": "c8f63c7430f62f820bcffacb8a4da96d4e3e10ac010f3ea9e41e009fb588530b" },
+    { "name": "stages34", "passed": 158, "file": "stages34-1794367737129/results.json", "sha256": "ba2309407de3f5a42d22314b69aeba096837b0ca25faaeea041118fcef152327" },
+    { "name": "stages57", "passed": 533, "file": "stages57-1794367866663/acceptance.json", "sha256": "81e363d29b01fc24dff8856aadd3fce44fc1b18eebddef6db6d2cee954433b75" },
+    { "name": "stage6-final", "passed": 196, "file": "stage6-1794368963321/acceptance.json", "sha256": "20d465d5951483d57ad6781c980c3a1b448264a21ded005b4ad807ba0746655b" },
+    { "name": "stages89", "passed": 187, "file": "stages89-1794368301208/acceptance.json", "sha256": "4d4b66a78d68b7605a9074d7661650f3d3b59fb7c4a5babccb38b5d23e34e5b5" },
+    { "name": "contacts", "passed": 86, "file": "contacts-d2c3b6d2-b1a1-4375-9ff1-42cf9be35534/results.redacted.json", "sha256": "ed3dbf07374dc79ece2e348176cea164ed6230c3474c5b65c23718efc1f63e0c" },
+    { "name": "operations", "passed": 92, "file": "operations-validation-d363eb9e-56a5-4a2a-aba8-4ebcfa3ae663/results.redacted.json", "sha256": "273088d4922b71edf1ef908204987e4dd182392969b4cde98da88de8abe4c67b" },
+    { "name": "learning-support", "passed": 101, "file": "learning-support-4fece433-51d6-4469-8c6a-644ec66b8215/results.redacted.json", "sha256": "c720b916bde858174c4e28505e955e43d899a27f2368ecfe666f93476f7f28fb" },
+    { "name": "restore-app", "passed": 12, "file": "restore-app-1794369258864/results.json", "sha256": "09afd9c18e6130e2dab9c30fba2362a348febfa4a21495d68f03044fbfd6d5c7" }
+  ],
+  "additionalEvidence": [
+    { "name": "published-demo-availability", "base": "https://rioazul.celeriflow.com.br", "passed": 33, "authenticatedByPassword": true, "populatedModuleFamilies": 27, "file": "demo-aurora-20261111/https-availability.json", "sha256": "94c12065ca6b308701edfe7caec4f2c0044f10676393c0a2c39e54b0be28bceb" },
+    { "name": "capacity", "requests": 3420, "passed": 3420, "distinctIdentities": 60, "rounds": 57, "elapsedMs": 60917, "p95Ms": 985, "file": "stages89-1794368301208/capacity.json", "sha256": "2a332c4743b40c3ab7d26a7648db702b50936b962e22515a5cefee835fd2c17c" },
+    { "name": "isolated-databases", "file": "stage0-1794369838686/results.json", "sha256": "b96332edebd7516b40c3cc7219cb6b88fa960fb85f6d78df69c63d107e164a58" },
+    { "name": "demo-coverage", "populatedTables": 45, "tables": 52, "populatedModuleFamilies": 27, "moduleFamilies": 27, "file": "demo-aurora-20261111/coverage-after.json", "sha256": "448832fdeaf4588cfd7623aff677389796956ee53bfe9aedbc35f84a8e7fa4cb" },
+    { "name": "demo-preservation", "preserved": true, "originalRows": 5507, "missing": 0, "unexpectedModifications": 0, "expectedOperationalChanges": 4, "originalAttachmentBytes": 78, "file": "demo-aurora-20261111/preservation.json", "sha256": "0c71adb890ee0e56edf514bb85708dd0645cd279ab9ea62fdf17439218e1d46b" },
+    { "name": "demo-summary", "file": "demo-aurora-20261111/summary.json", "sha256": "424cd6cd7eb8bced4a33df20893a4fd8c818a11f2a9098c4ddd70c65470317e8" },
+    { "name": "npm-audit", "status": "OPEN_FINDINGS", "low": 4, "moderate": 31, "high": 9, "critical": 0, "total": 44, "file": "demo-aurora-20261111/npm-audit.json", "sha256": "e96a5c8ad9bb4c4c4e8d867d1a034842857ea83479e1364e10e3fe2cb94bd1f1" }
+  ],
+  "resolvedIncidents": [
+    { "suite": "stage6", "initialRun": "stage6-1794368126215", "passed": 182, "failed": 2, "cause": "Missing local converter executables", "resolution": "Verified saved installer hashes, recovered local tools and reran full suite: 196/196." },
+    { "suite": "stage0", "cause": "Windows pg_ctl descendants could retain inherited pipes", "resolution": "Use direct file descriptors for persistent output; three local databases rebuilt and cluster stopped." }
+  ]
+}
