@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { sourceHtml } from "./render";
+import { sourceHtml, pdfACompliant } from "./render";
 test("PDF preserva imagens DOCX incorporadas e bloqueia conteúdo executável", () => {
   const pixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j1ZkAAAAASUVORK5CYII=";
   const html = sourceHtml({ id: "document", type: "module", code: "2026111000001", title: "Ofício", body: '<script>alert(1)</script><img src="data:image/svg+xml;base64,PHN2Zz4=" onerror="alert(1)"><a href="javascript:alert(1)">Link</a>', blocks: [{ type:"image",url:pixel,caption:"Imagem do original" }] });
@@ -9,4 +9,12 @@ test("PDF preserva imagens DOCX incorporadas e bloqueia conteúdo executável", 
   assert.ok(!html.includes("onerror"));
   assert.ok(!html.includes("javascript:"));
   assert.ok(!html.includes("data:image/svg"));
+});
+test("veraPDF aceita resultado singular ou em lista e rejeita relatório vazio, perfil diverso e falha parcial", () => {
+  assert.ok(pdfACompliant({ report: { jobs: [{ validationResult: [{ compliant: true, profileName: "PDF/A-2b validation profile" }] }] } }));
+  assert.ok(pdfACompliant({ validationResult: { isCompliant: true } }));
+  assert.ok(!pdfACompliant({ validationResult: [] }));
+  assert.ok(!pdfACompliant({ validationResult: [{ compliant: true }, { compliant: false }] }));
+  assert.ok(!pdfACompliant({ validationResult: [{ compliant: true, profileName: "PDF/A-1b validation profile" }] }));
+  assert.ok(!pdfACompliant({ compliant: true }));
 });

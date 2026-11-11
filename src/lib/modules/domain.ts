@@ -70,6 +70,7 @@ export type ModuleData = {
   acknowledgements?: { recipient: string; evidence: string; at: string; actorId: string }[];
   publication?: { title: string; code: string; body: string; blocks?: ContentBlock[]; section: string; subsection?: string; withdrawn?: boolean; revision: number; id: string }[];
   sealedHash?: string;
+  signatureEnvelope?: { id: string; requestedAt: string; requestedBy: string; revision: number; hash: string; snapshot: { title: string; body: string; data: Record<string, unknown>; files: { id: string; filename: string; mimeType: string; size: number; sha256: string }[] } };
   geometry?: GeoCollection;
   measurements?: { fileId: string; page: number; scale: number; points: number[][]; type: "distancia" | "area"; result: number; shape?: "polyline" | "polygon" | "rectangle" | "ellipse"; coordinateSystem?: "PDF_VIEWPORT_POINTS"; color?: string; width?: number; opacity?: number; precision?: number; fileHash?: string }[];
   jobs?: { id: string; kind: string; status: "AGUARDANDO_CONFIGURACAO"; at: string }[];
@@ -196,6 +197,12 @@ export function conditionMatches(field: Field, values: Record<string,string>) {
 }
 export function renderTemplate(template: string, values: Record<string, string>) {
   return template.replace(/\{\{\s*([\w]+)\s*\}\}/g, (_, key: string) => values[key] ?? `{{${key}}}`);
+}
+export function renderTemplateBlocks(blocks: ContentBlock[], values: Record<string, string>): ContentBlock[] {
+  return blocks.map(block => block.type === "paragraph" ? { ...block, text: renderTemplate(block.text, values) }
+    : block.type === "table" ? { ...block, rows: block.rows.map(row => row.map(cell => renderTemplate(cell, values))) }
+    : block.type === "link" ? { ...block, label: renderTemplate(block.label, values), url: renderTemplate(block.url, values) }
+    : { ...block, caption: renderTemplate(block.caption, values) });
 }
 export function distanceMeters(a: number[], b: number[]) {
   const rad = Math.PI / 180;

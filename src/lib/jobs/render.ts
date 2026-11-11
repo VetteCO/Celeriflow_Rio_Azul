@@ -90,20 +90,28 @@ export async function renderPdf(job: DocumentJob, files: { file: JobFile; path: 
 export async function convertPdfA(input: string, directory: string, signal: AbortSignal) {
   const gs = await binary("JOBS_GHOSTSCRIPT_BIN"), vera = await binary("JOBS_VERAPDF_BIN"), definition = await binary("JOBS_PDFA_DEFINITION");
   const output = join(directory, "document-pdfa.pdf");
-  await run(gs, ["-dSAFER", "-dBATCH", "-dNOPAUSE", "-dPDFA=2", "-sDEVICE=pdfwrite", "-sColorConversionStrategy=RGB", "-dPDFACompatibilityPolicy=1", `-sOutputFile=${output}`, definition, input], signal);
-  const report = await run(vera, ["--format", "json", "--flavour", "2b", output], signal);
+  const icc = process.env.JOBS_PDFA_ICC ? await binary("JOBS_PDFA_ICC") : undefined;
+  await run(gs, ["-dSAFER", ...(icc ? [`--permit-file-read=${icc}`] : []), "-dBATCH", "-dNOPAUSE", "-dPDFA=2", "-sDEVICE=pdfwrite", "-sColorConversionStrategy=RGB", "-dPDFACompatibilityPolicy=1", `-sOutputFile=${output}`, definition, input], signal);
+  const javaArgs = process.env.JOBS_VERAPDF_JAR ? ["-jar", await binary("JOBS_VERAPDF_JAR")] : [];
+  const report = await run(vera, [...javaArgs, "--format", "json", "--flavour", "2b", output], signal);
   let parsed: unknown; try { parsed = JSON.parse(report); } catch { throw new PermanentError("veraPDF não retornou um relatório JSON válido; PDF/A não certificado."); }
+  await writeFile(join(directory, "verapdf.json"), report);
+  if (!pdfACompliant(parsed)) throw new PermanentError("Validação veraPDF rejeitou a conformidade PDF/A-2b. Nenhum PDF/A foi disponibilizado.");
+  return output;
+}
+export function pdfACompliant(parsed: unknown) {
   const results: boolean[] = [];
   function visit(value: unknown) {
     if (!value || typeof value !== "object") return;
     for (const [key, item] of Object.entries(value)) {
       if (key === "validationResult" && item && typeof item === "object") {
-        const result = item as Record<string, unknown>;
-        results.push(result.compliant === true || result.isCompliant === true);
+        for (const result of Array.isArray(item) ? item : [item]) {
+          const r = result as Record<string, unknown> | null;
+          results.push(!!r && (r.compliant === true || r.isCompliant === true) && (r.profileName === undefined || typeof r.profileName === "string" && /PDF\/A-2b/i.test(r.profileName)));
+        }
       } else visit(item);
     }
   }
   visit(parsed);
-  if (!results.length || !results.every(Boolean)) throw new PermanentError("Validação veraPDF rejeitou a conformidade PDF/A-2b. Nenhum PDF/A foi disponibilizado.");
-  await writeFile(join(directory, "verapdf.json"), report); return output;
+  return results.length > 0 && results.every(Boolean);
 }

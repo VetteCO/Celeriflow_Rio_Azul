@@ -31,6 +31,7 @@
     "validate:stages12": "tsx --env-file=.env.local scripts/validate-stages-1-2.ts",
     "validate:stages34": "tsx --env-file=.env.local scripts/validate-stages-3-4.ts",
     "validate:stages57": "tsx --env-file=.env.local scripts/validate-stages-5-7.ts",
+    "validate:stage6": "tsx --env-file=.env.local scripts/validate-stage6.ts",
     "validate:contacts": "tsx --env-file=.env.local scripts/validate-contacts.ts",
     "validate:learning-support": "tsx --env-file=.env.local scripts/validate-learning-support.ts",
     "validate:operations": "tsx --env-file=.env.local scripts/validate-operations.ts",

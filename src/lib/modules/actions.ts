@@ -1,4 +1,5 @@
 import { configFamilies, type Family, type ModuleData } from "./domain";
+import { canRequestSignature } from "./signatures";
 
 type RecordState = { family: string; status: string; ownerId: string | null; departmentId: string | null; data: ModuleData };
 type Actor = { userId: string; departmentIds: string[]; admin: boolean; writable: boolean };
@@ -35,9 +36,9 @@ export function availableActions(row: RecordState, actor: Actor): string[] {
   if (row.ownerId === actor.userId && !["CANCELADO", "ARQUIVADO"].includes(status)) actions.push("CANCELAR");
   if (family === "diario" && status === "RASCUNHO") actions.push("PREPARAR_EDICAO");
   if (family === "diario" && actor.admin && status === "AGUARDANDO_ASSINATURA") actions.push("PUBLICAR");
-  if (status !== "RASCUNHO") actions.push("SOLICITAR_ASSINATURA");
+  if (canRequestSignature(row)) actions.push("SOLICITAR_ASSINATURA");
   if (row.data.signatures?.some(s => s.status === "PENDENTE")) {
-    if (row.ownerId === actor.userId) actions.push("CANCELAR_ASSINATURAS");
+    if ((row.data.signatureEnvelope?.requestedBy ?? row.ownerId) === actor.userId) actions.push("CANCELAR_ASSINATURAS");
     if (row.data.signatures.some(s => s.userId === actor.userId && s.status === "PENDENTE")) actions.push("RECUSAR_ASSINATURA");
   }
   return actions;

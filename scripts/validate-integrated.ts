@@ -104,6 +104,9 @@ async function api(label: string, path: string, bearer?: string, method = "GET",
     if (path.startsWith("/api/modules/") && data.record?.id && !path.includes("/records/")) own("module_record", data.record.id);
     if (path === "/api/modules/external/mandates" && data.mandate?.id) own("module_mandate", data.mandate.id);
     if (path === "/api/jobs" && data.job?.id) own("document_job", data.job.id);
+    if (path === "/api/modules/classification" && data.records) for (const record of data.records) own("module_record", record.id);
+    if (path === "/api/modules/contatos/perfis" && data.id) own("module_contact_profile", data.id);
+    if (path === "/api/modules/contatos" && data.id) own("module_record", data.id);
     if (/^\/api\/documents\/[^/]+\/attachments$/.test(path) && data.id) own("attachment", data.id);
   }
   journal.pending = journal.pending.filter(p => p !== operation); save();
@@ -174,6 +177,11 @@ async function main() {
     users.push({ ...u, name, email, password, token: await token(u.firebaseUid) });
   }
   const [ua, ub, uc, n3] = users;
+  if (args.includes("--stage6")) {
+    const { stage6 } = await import("./stage6-scenarios");
+    await stage6({ base: base.origin, dir, users, sectors, api, check, scenario, own, ownModuleFile, values });
+    return;
+  }
   const body = { type: "MEMORANDUM", subject: "Organização dos serviços municipais", body: "Encaminhamos o planejamento das atividades de Aurora das Veredas.", originDepartmentId: a };
   let docs: Row[] = [];
   await scenario("core-documents-and-concurrency", async () => {
@@ -509,7 +517,7 @@ async function cleanup() {
     ["user_role", "user_id", "app_user"], ["user_profile", "user_id", "app_user"], ["user_department", "user_id", "app_user"],
     ["user_admin_department", "user_id", "app_user"],
   ];
-  const allowed = new Set(["department:id", "app_user:id", "document:id", "citizen:id", "attachment:id", "module_file:id", "module_record:id", "module_mandate:id", "document_job:id", "module_diary_catalog:id", ...relations.map(([t, k]) => `${t}:${k}`)]);
+  const allowed = new Set(["department:id", "app_user:id", "document:id", "citizen:id", "attachment:id", "module_file:id", "module_record:id", "module_contact_profile:id", "module_mandate:id", "document_job:id", "module_diary_catalog:id", ...relations.map(([t, k]) => `${t}:${k}`)]);
   if (journal.entries.some(e => !allowed.has(`${e.table}:${e.key}`) || !/^[0-9a-f-]{36}$/i.test(e.value))) throw new Error("MANIFESTO_NAO_RECONHECIDO");
   const tables = new Set((await sql(`SELECT table_name FROM information_schema.tables WHERE table_schema='public'`)).map(r => r.table_name));
   // Recover only jobs owned by endpoint-created users from this manifest. No assignee/global scan.
@@ -562,7 +570,7 @@ async function cleanup() {
   if (history.length) writeFileSync(join(dir, "history.redacted.json"), JSON.stringify(history, null, 2), { mode: 0o600 });
   // audit_log is retained in the database; no global counters, roles or calendars are changed.
   // Delete dependents first in ONE transaction. Unknown/new FKs fail closed and rollback.
-  const order = [...relations.map(([t]) => t), "document_job", "module_mandate", "module_record", "module_diary_catalog", "document", "citizen", "app_user", "department"];
+  const order = [...relations.map(([t]) => t), "document_job", "module_mandate", "module_record", "module_contact_profile", "module_diary_catalog", "document", "citizen", "app_user", "department"];
   const ordered = [...journal.entries].sort((a, b) => order.indexOf(a.table) - order.indexOf(b.table));
   // Immutable history is archived above. DDL and scoped deletes share a transaction:
   // exclusive locks prevent concurrent writes while these known guards are suspended.

@@ -1,7 +1,7 @@
 "use client";
 import { getToken } from "@/components/session";
 import type { ModuleData, Family } from "@/lib/modules/domain";
-export type RecordRow = { id: string; code: string; family: Family; title: string; body: string; status: string; revision: number; data: ModuleData; createdAt: string; updatedAt: string; dueAt?: string };
+export type RecordRow = { id: string; code: string; family: Family; title: string; body: string; status: string; revision: number; data: ModuleData; createdAt: string; updatedAt: string; dueAt?: string; classification?: string; tags?: string[] };
 export type Options = { departments: { id: string; name: string }[]; users: { id: string; name: string }[]; records: { id: string; code: string; title: string; family: Family }[]; configurations: RecordRow[]; coreDocuments: { id: string; subject: string; number: number; year: number }[]; canCreate: boolean; admin: boolean; userId: string; departmentId: string | null; departmentIds: string[] };
 export type Detail = { record: RecordRow; files: { id: string; filename: string; category: string; size: number; mimeType: string; sha256: string }[]; versions: { id: string; revision: number; action: string; note: string; actorId: string | null; createdAt: string }[]; permissions: { edit: boolean; actions: string[] } };
 export async function download(path: string, filename: string) {

@@ -1,5 +1,7 @@
 # Incrementos das etapas 6–8
 
+**Atualização da etapa 6 (10/11/2026):** a entrega atual e seus limites são registrados em `docs/FECHAMENTO_ETAPA_6.md` e `docs/PROCESSAMENTO_GED.md`. PDF nativo formatado/prévia, contato destinatário de ofício, fila de assinaturas individual/em lote, envelope protegido pela migração 012 e execução real de PDF/A/OCR complementam o histórico abaixo. As lacunas históricas desta frente não devem ser usadas como estado atual sem confrontar o dossiê incremental. Execução criptográfica/canais reais e operação permanente conservam as etapas responsáveis.
+
 **Integração consolidada pela frente principal:** consultar `docs/ENTREGA_DESENVOLVIMENTO_0_9_2026-11-10.md`. Migrações 002/005 aplicadas, Next 15 compatibilizado e build aprovado. Os estados históricos de execução desta frente abaixo não substituem o registro final. A aba Processamento agora envia PDF/ZIP/OCR/PDF-A à fila executável `/api/jobs`; Sisobra permanece separado.
 
 Data: 10/11/2026. Atualização: terceira rodada de implementação, sem executar testes, TypeScript, build, lint, seed ou migração nesta rodada. A frente principal informou build integrado e migrações 0001–004 aplicadas antes destes incrementos. Esses resultados anteriores não validam a terceira rodada.

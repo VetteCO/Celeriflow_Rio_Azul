@@ -10,6 +10,7 @@ import { canManage, canRead, redacted } from "./policy";
 import { workflowDeadline } from "./business-hours";
 import { validatePublication } from "./diary-catalog";
 import { availableActions } from "./actions";
+import { canRequestSignature, signatureContent, signersSchema } from "./signatures";
 export { canRead, redacted } from "./policy";
 
 export class ModuleError extends Error { constructor(message: string, public status = 400) { super(message); } }
@@ -51,7 +52,9 @@ export async function listRecords(family: string, ctx: Context) {
   const parsed = familySchema.parse(family);
   const rows = await db.select().from(moduleRecord).where(and(eq(moduleRecord.family, parsed), scope(ctx))).orderBy(desc(moduleRecord.updatedAt), desc(moduleRecord.id));
   // Keep sensitive form data out of operational lists entirely.
-  return rows.map(row => ({ id: row.id, code: row.code, family: row.family, title: row.title, status: row.status, revision: row.revision, updatedAt: row.updatedAt, dueAt: row.data.dueAt ?? "" }));
+  const tags = ctx.session.departmentIds.length && rows.length ? await db.execute(sql`SELECT record_id,label FROM module_sector_tag WHERE record_id IN (SELECT jsonb_array_elements_text(${JSON.stringify(rows.map(r => r.id))}::jsonb)::uuid) AND department_id IN (SELECT jsonb_array_elements_text(${JSON.stringify(ctx.session.departmentIds)}::jsonb)::uuid) ORDER BY label`) : { rows: [] };
+  const classes = await db.select({ id: moduleRecord.id, title: moduleRecord.title }).from(moduleRecord).where(eq(moduleRecord.family, "classificacao"));
+  return rows.map(row => ({ id: row.id, code: row.code, family: row.family, title: row.title, status: row.status, revision: row.revision, updatedAt: row.updatedAt, dueAt: row.data.dueAt ?? "", classification: classes.find(c => c.id === row.data.classificationId)?.title ?? "", tags: [...new Set([...(row.data.tags ?? []), ...tags.rows.filter(t => t.record_id === row.id).map(t => String(t.label))])] }));
 }
 const valuesSchema = z.record(z.string().max(20000)).refine(v => Object.keys(v).length <= 100, "Máximo de 100 campos.");
 const identitySchema = z.object({ name: z.string().trim().min(2).max(200), email: z.string().email(), cpfCnpj: z.string().max(20).default("").refine(v => !v || validTaxId(v), "CPF/CNPJ inválido."), phone: z.string().max(30).default("") });
@@ -70,6 +73,14 @@ const inputSchema = z.object({
 async function checkLinks(ids: string[], ctx: Context) { for (const id of ids) await getRecord(id, ctx); }
 async function checkCoreLinks(ids: string[], ctx: Context) {
   for (const id of ids) if (!await canAccessDocument(ctx.session, id)) throw new ModuleError("Documento vinculado não encontrado.", 404);
+}
+async function resolveRecipient(family: Family, values: Record<string, string>, ctx: Context) {
+  if (family !== "oficio" || !values.recipientContactId) return;
+  const contact = await getRecord(z.string().uuid().parse(values.recipientContactId), ctx);
+  if (contact.family !== "contatos" || ["UNIFICADO", "CANCELADO", "SUSPENSO", "ARQUIVADO"].includes(contact.status)) throw new ModuleError("Selecione um contato principal disponível.");
+  values.destinatario = contact.title;
+  values.email = contact.data.values?.email ?? "";
+  values.recipientContactRevision = String(contact.revision);
 }
 function safeValues(values: Record<string, string>, family: Family, previous: Record<string, string> = {}) {
   const result = { ...values };
@@ -105,6 +116,7 @@ export async function createRecord(familyInput: string, input: unknown, ctx: Con
   if (configFamilies.includes(family)) admin(ctx);
   const parsed = inputSchema.parse(input);
   parsed.values = safeValues(parsed.values, family);
+  await resolveRecipient(family, parsed.values, ctx);
   const syncHash = createHash("sha256").update(JSON.stringify(canonical(parsed))).digest("hex");
   if (parsed.idempotencyKey) {
     const [existing] = await db.select().from(moduleRecord).where(and(eq(moduleRecord.ownerId, ctx.user.id), eq(moduleRecord.idempotencyKey, parsed.idempotencyKey)));
@@ -183,6 +195,8 @@ export async function command(id: string, input: unknown, ctx: Context) {
       const parsed = inputSchema.parse(payload); await checkLinks(parsed.linkedIds, ctx);
       await checkCoreLinks(parsed.coreDocumentIds, ctx);
       parsed.values = safeValues(parsed.values, family, data.values);
+      await resolveRecipient(family, parsed.values, ctx);
+      if (parsed.classificationId) { const c = await getRecord(parsed.classificationId, ctx); if (c.family !== "classificacao" || c.status !== "ATIVO") throw new ModuleError("Selecione uma classificação ativa."); }
       title = parsed.title; body = parsed.body;
       Object.assign(data, { values: parsed.values, linkedIds: parsed.linkedIds, coreDocumentIds: parsed.coreDocumentIds, tags: parsed.tags, classificationId: parsed.classificationId, agenda: parsed.agenda, attendees: parsed.attendees, blocks: parsed.blocks });
       if (family === "delegacoes") throw new ModuleError("Cancele a delegação e crie nova autorização para alterar limites.");
@@ -250,21 +264,28 @@ export async function command(id: string, input: unknown, ctx: Context) {
     case "CIENCIA": {
       active(); if (family !== "intimacao") throw new ModuleError("Ação exclusiva de intimações.");
       const evidence = z.object({ recipient: z.string().min(2).max(200), evidence: z.string().min(5).max(5000) }).parse(payload);
+      if (evidence.recipient.trim() !== data.values?.destinatario?.trim()) throw new ModuleError("A ciência deve identificar o destinatário da intimação.");
       data.acknowledgements = [...(data.acknowledgements ?? []), { ...evidence, at: now, actorId: ctx.user.id }]; status = "CIENTE"; break;
     }
     case "ENCERRAR_REUNIAO": {
       active(); if (family !== "pauta") throw new ModuleError("Ação exclusiva de reuniões.");
       const agenda = inputSchema.shape.agenda.parse(payload.agenda);
       if (!agenda.length || agenda.some(i => !i.decision.trim())) throw new ModuleError("Registre deliberação para cada item.");
+      if (agenda.length !== data.agenda?.length || agenda.some((item, i) => item.title !== data.agenda![i].title || item.responsible !== data.agenda![i].responsible)) throw new ModuleError("Preserve os itens e responsáveis da pauta formalizada; registre apenas as deliberações.");
       data.agenda = agenda; status = "CONCLUIDO"; break;
     }
     case "SOLICITAR_ASSINATURA": {
-      if (status === "RASCUNHO") throw new ModuleError("Formalize o documento antes de solicitar assinatura.");
-      const signers = z.array(z.object({ userId: z.string().uuid(), order: z.number().int().min(1).max(100) })).min(1).max(100).parse(payload.signers);
+      if (!canRequestSignature(row)) throw new ModuleError("Selecione um documento formalizado disponível e conclua ou cancele as solicitações pendentes antes de criar outra fila.", 409);
+      const signers = signersSchema.parse(payload.signers);
       const users = await db.select().from(appUser).where(and(inArray(appUser.id, signers.map(s => s.userId)), eq(appUser.active, true)));
       if (users.length !== new Set(signers.map(s => s.userId)).size) throw new ModuleError("Assinante inativo ou inexistente.");
+      const files = await db.select({ id: moduleFile.id, filename: moduleFile.filename, mimeType: moduleFile.mimeType, size: moduleFile.size, sha256: moduleFile.sha256 }).from(moduleFile).where(eq(moduleFile.recordId, id)).orderBy(asc(moduleFile.id));
+      const { signatures: _signatures, signatureEnvelope: _envelope, sealedHash: _sealedHash, ...sourceData } = data;
+      const snapshot = { title, body, data: sourceData, files };
+      const hash = createHash("sha256").update(signatureContent(snapshot)).digest("hex");
       data.signatures = signers.map(s => ({ ...s, status: "PENDENTE", revision: row.revision }));
-      data.sealedHash = createHash("sha256").update(JSON.stringify({ title, body, blocks: data.blocks, revision: row.revision })).digest("hex"); break;
+      data.signatureEnvelope = { id: randomUUID(), requestedAt: now, requestedBy: ctx.user.id, revision: row.revision, hash, snapshot };
+      data.sealedHash = hash; break;
     }
     case "RECUSAR_ASSINATURA": {
       if (!cmd.note) throw new ModuleError("Informe o motivo da recusa.");
@@ -272,7 +293,8 @@ export async function command(id: string, input: unknown, ctx: Context) {
       data.signatures = data.signatures.map(s => s.userId === ctx.user.id && s.status === "PENDENTE" ? { ...s, status: "RECUSADA", reason: cmd.note } : s); break;
     }
     case "CANCELAR_ASSINATURAS":
-      if (row.ownerId !== ctx.user.id || !cmd.note) throw new ModuleError("Somente o solicitante pode cancelar, com justificativa.", 403);
+      if ((data.signatureEnvelope?.requestedBy ?? row.ownerId) !== ctx.user.id || !cmd.note) throw new ModuleError("Somente o solicitante pode cancelar, com justificativa.", 403);
+      if (!data.signatures?.some(s => s.status === "PENDENTE")) throw new ModuleError("Não há solicitações pendentes.", 409);
       data.signatures = data.signatures?.map(s => s.status === "PENDENTE" ? { ...s, status: "CANCELADA", reason: cmd.note } : s); break;
     case "REVISAR_ANEXO": {
       active(); const review = z.object({ fileId: z.string().uuid(), status: z.enum(["ACEITO", "RECUSADO"]), note: z.string().max(5000) }).parse(payload);
@@ -308,7 +330,7 @@ export async function command(id: string, input: unknown, ctx: Context) {
       const kind = z.enum(["OCR", "ARVORE_PDF", "ANEXOS_ZIP", "PDF_A", "SISOBRA_ENVIO", "SISOBRA_RETIFICACAO", "SISOBRA_CANCELAMENTO", "SISOBRA_REATIVACAO"]).parse(payload.kind);
       data.jobs = [...(data.jobs ?? []), { id: randomUUID(), kind, status: "AGUARDANDO_CONFIGURACAO", at: now }]; break;
     }
-    case "CANCELAR": if (!cmd.note || row.ownerId !== ctx.user.id) throw new ModuleError("Cancelamento exige o autor e justificativa.", 403); status = "CANCELADO"; break;
+    case "CANCELAR": if (!cmd.note || row.ownerId !== ctx.user.id) throw new ModuleError("Cancelamento exige o autor e justificativa.", 403); status = "CANCELADO"; data.signatures = data.signatures?.map(s => s.status === "PENDENTE" ? { ...s, status: "CANCELADA", reason: cmd.note } : s); break;
     case "UNIFICAR_CONTATO": {
       if (family !== "contatos") throw new ModuleError("Selecione um contato.");
       const { mergeContacts } = await import("./contacts");

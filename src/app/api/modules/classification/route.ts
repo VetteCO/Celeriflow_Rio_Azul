@@ -10,11 +10,11 @@ export async function POST(req:Request) {
   if(input.action==="IMPORT") {
    const nodes=z.array(z.object({key:z.string().min(1).max(80),parent:z.string().max(80).optional(),title:z.string().min(3).max(250),description:z.string().max(10000).default("")})).min(1).max(1000).parse(input.nodes);
    const map=new Map(nodes.map(n=>[n.key,{...n,id:randomUUID()}]));if(map.size!==nodes.length)throw new ModuleError("Chaves duplicadas.");
-   for(const n of nodes){const seen=new Set([n.key]);let parent=n.parent;while(parent){if(seen.has(parent))throw new ModuleError("Hierarquia circular.");seen.add(parent);const ancestor=map.get(parent);if(!ancestor)throw new ModuleError(`Pai inexistente: ${parent}`);parent=ancestor.parent;}}
-   const records=[...map.values()].map(n=>({id:n.id,title:n.title,body:n.description,data:{values:{hierarchyKey:n.key,parentId:n.parent?map.get(n.parent)!.id:""}}}));
+   for(const n of nodes){const seen=new Set([n.key]);let parent=n.parent;while(parent){if(seen.has(parent))throw new ModuleError("Hierarquia circular.");seen.add(parent);if(seen.size>4)throw new ModuleError("O plano admite no máximo quatro níveis: função, subfunção, atividade e série.");const ancestor=map.get(parent);if(!ancestor)throw new ModuleError(`Pai inexistente: ${parent}`);parent=ancestor.parent;}}
+   const records=[...map.values()].map(n=>{const path=[n.title];let parent=n.parent;while(parent){const ancestor=map.get(parent)!;path.unshift(ancestor.title);parent=ancestor.parent;}return {id:n.id,title:n.title,body:n.description,data:{values:{hierarchyKey:n.key,parentId:n.parent?map.get(n.parent)!.id:"",...Object.fromEntries(path.map((title,i)=>[`nivel${i+1}`,title]))}}};});
    await db.execute(sql`INSERT INTO module_record(id,family,title,body,status,owner_id,actor_id,data)
     SELECT (v->>'id')::uuid,'classificacao',v->>'title',v->>'body','ATIVO',${ctx.user.id}::uuid,${ctx.user.id}::uuid,v->'data' FROM jsonb_array_elements(${JSON.stringify(records)}::jsonb) v`);
-   return Response.json({imported:records.length});
+   return Response.json({imported:records.length,records:records.map(r=>({id:r.id,title:r.title}))});
   }
   const p=z.object({classificationId:z.string().uuid(),records:z.array(z.object({id:z.string().uuid(),revision:z.number().int().positive()})).min(1).max(100),note:z.string().trim().min(3).max(1000)}).parse(input);
   const results=[];
