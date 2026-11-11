@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { api, getToken, useSession } from "@/components/session";
 import { DataTable } from "@/components/DataTable";
+import { WorkflowFieldsEditor } from "@/components/WorkflowFieldsEditor";
 import { families, familyFields, configFamilies } from "@/lib/modules/domain";
 import { ModuleForm } from "../../Form";
 import { DocumentContent } from "../../Content";
@@ -29,9 +30,9 @@ export default function RecordDetail() {
   const writing = useRef(false);
   const load = useCallback(async () => { const [d, o] = await Promise.all([api(`/api/modules/records/${params.id}`), api("/api/modules/options")]); setDetail(d); setOptions(o); }, [params.id]);
   useEffect(() => { if (user) load().catch(e => setError(e.message)); }, [user, load]);
-  async function perform(action: string, payload: Record<string, unknown> = {}) {
+  async function perform(action: string, payload: Record<string, unknown> = {}, noteOverride?: string) {
     if (!detail) return; if (writing.current) throw new Error("Aguarde a operação em andamento antes de continuar."); writing.current = true; setBusy(true); setError(""); setMessage("");
-    try { await api(`/api/modules/records/${params.id}`, { method: "PATCH", body: JSON.stringify({ revision: detail.record.revision, action, payload, note }) }); await load(); setMessage("Operação registrada."); }
+    try { await api(`/api/modules/records/${params.id}`, { method: "PATCH", body: JSON.stringify({ revision: detail.record.revision, action, payload, note: noteOverride ?? note }) }); await load(); setMessage("Operação registrada."); }
     catch (e) { setError((e as Error).message); throw e; } finally { writing.current = false; setBusy(false); }
   }
   const run = (action: string, payload: Record<string, unknown> = {}) => void perform(action, payload).catch(() => {});
@@ -59,6 +60,7 @@ export default function RecordDetail() {
     {tab === "conteudo" && <article className="card"><h1>{r.title}</h1><div style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{r.body}</div><dl>{Object.entries(r.data.values ?? {}).map(([key, value]) => <div key={key}><dt><strong>{familyFields[r.family]?.find(f => f.key === key)?.label ?? r.data.workflow?.fields.find(f => f.key === key)?.label ?? key}</strong></dt><dd>{value || "—"}</dd></div>)}</dl>{r.data.identity && <section><h2>Identificação do manifestante</h2><p>{r.data.identity.name} · {r.data.identity.email} · {r.data.identity.phone}</p></section>}{r.data.linkedIds?.length ? <section><h2>Documentos relacionados</h2><ul>{r.data.linkedIds.map(id => <li key={id}><Link href={`/gestao/registros/${id}`}>{options.records.find(o => o.id === id)?.title ?? "Abrir documento"}</Link></li>)}</ul></section> : null}{r.data.agenda?.length ? <section><h2>Itens da reunião</h2><ol>{r.data.agenda.map((a, i) => <li key={i}><strong>{a.title}</strong> — {a.responsible}<p>{a.decision}</p></li>)}</ol><p>Participantes: {r.data.attendees?.join(", ")}</p></section> : null}{r.family === "projetos" && Number(r.data.values?.areaTerreno) > 0 && <section><h2>Parâmetros calculados</h2><p>Coeficiente de aproveitamento: {(Number(r.data.values?.areaConstruida ?? 0) / Number(r.data.values?.areaTerreno)).toFixed(4)}</p><p>Ocupação: {(100 * Number(r.data.values?.areaProjecao ?? 0) / Number(r.data.values?.areaTerreno)).toFixed(2)}%</p><p>Permeabilidade: {(100 * Number(r.data.values?.areaPermeavel ?? 0) / Number(r.data.values?.areaTerreno)).toFixed(2)}%</p><small>Compare com os limites da legislação municipal vigente.</small></section>}</article>}
     {tab === "editar" && writable && (r.family === "contatos" ? <Link className="btn" href={`/gestao/contatos/cadastro/${r.id}`}>Editar cadastro e campos do perfil</Link> : <div className="card"><ModuleForm family={r.family} initial={r} options={options} busy={busy} onAutoSave={r.status === "RASCUNHO" ? async input => { await perform("EDITAR", input); } : undefined} onSave={async input => { await perform("EDITAR", input); setTab("conteudo"); }} /></div>)}
     {tab === "conteudo" && r.family === "projetos" && <UrbanAnalysis id={r.id} options={options} />}
+    {tab === "fluxo" && detail.permissions.actions.includes("EDITAR_CAMPOS") && r.data.workflow && <WorkflowFieldsEditor key={r.revision} fields={r.data.workflow.fields} initialValues={r.data.values ?? {}} channel="INTERNO" afterProtocol busy={busy} onSave={(values, note) => perform("EDITAR_CAMPOS", { values }, note)} />}
     {tab === "fluxo" && r.family === "fiscalizacao" && <Inspection detail={detail} reload={load} />}
     {tab === "conteudo" && r.data.blocks?.length ? <DocumentContent blocks={r.data.blocks} /> : null}
     {tab === "conteudo" && r.data.coreDocumentIds?.length ? <section className="card"><h2>Protocolos e documentos de origem</h2><ul>{r.data.coreDocumentIds.map(id => <li key={id}><Link href={`/documentos/${id}`}>{options.coreDocuments.find(d => d.id === id)?.subject ?? "Abrir documento"}</Link></li>)}</ul></section> : null}

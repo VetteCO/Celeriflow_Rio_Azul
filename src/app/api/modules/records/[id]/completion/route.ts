@@ -16,7 +16,7 @@ export async function POST(req:Request,{params:paramsPromise}:{params:Promise<{i
  const params = await paramsPromise;
  try {
   const ctx=await context(req,"doc:edit");const row=await getRecord(params.id,ctx);if(!canManage(row,ctx))throw new ModuleError("Sem permissão para alterar.",403);
-  const input=z.object({revision:z.number().int().positive(),action:z.enum(["ROUTE","EDITION","TAGS","PASSCODE","CANCEL_PASSCODE","USE_PASSCODE"]),payload:z.record(z.unknown()),note:z.string().trim().min(3).max(1000)}).parse(await req.json());
+  const input=z.object({revision:z.number().int().positive(),action:z.enum(["ROUTE","EDITION","TAGS","PASSCODE","CANCEL_PASSCODE","USE_PASSCODE"]),payload:z.record(z.string(),z.unknown()),note:z.string().trim().min(3).max(1000)}).parse(await req.json());
   if(row.status==="PUBLICADO"||row.revision!==input.revision)throw new ModuleError("Registro publicado ou atualizado. Recarregue.",409);
   const data=structuredClone(row.data);let departmentId=row.departmentId;let participants=row.participants;
   if(input.action==="ROUTE") {

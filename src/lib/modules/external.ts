@@ -7,7 +7,8 @@ import { moduleRecord, moduleFile, moduleMandate, type ModuleRecord } from "@/db
 import { getCitizenSession } from "@/lib/citizen-auth";
 import { ModuleError, validateBusiness } from "./server";
 import { workflowDeadline } from "./business-hours";
-import { familyFields, familySchema, validateFields, validateWorkflowFields, type ModuleData, type Family } from "./domain";
+import { channelAllows, fieldState, familyFields, familySchema, validateFields, type ModuleData, type Family } from "./domain";
+import { workflowValues } from "./workflow-values";
 
 export const externalFamilies: Family[] = ["processos", "chamados", "ouvidoria", "esic", "seletivo", "projetos", "ambiental", "fiscalizacao"];
 export type ExternalSession = NonNullable<Awaited<ReturnType<typeof getCitizenSession>>>;
@@ -44,17 +45,19 @@ export async function externalAudit(session: ExternalSession, action: string, id
   await db.insert(auditLog).values({ actorType: "CITIZEN", actorId: session.uid, action, entityType: "module_record", entityId: id, metadata });
 }
 export function externalDto(row: ModuleRecord) {
-  const allowedFields = new Set([...(familyFields[row.family as Family] ?? []).map(f => f.key), ...(row.data.workflow?.fields ?? []).map(f => f.key)]);
+  const fields = row.data.workflow?.fields.filter(f => channelAllows(f, "EXTERNO")) ?? [];
+  const allowedFields = new Set([...(familyFields[row.family as Family] ?? []).map(f => f.key), ...fields.filter(f => fieldState(f, row.data.values ?? {}, "EXTERNO").visible).map(f => f.key)]);
   return { id: row.id, code: row.code, family: row.family, title: row.title, body: row.body, status: row.status, revision: row.revision, createdAt: row.createdAt,
     values: Object.fromEntries(Object.entries(row.data.values ?? {}).filter(([key]) => allowedFields.has(key))), dueAt: row.data.dueAt, step: row.data.workflow?.steps[row.data.step ?? 0]?.name,
     messages: (row.data.messages ?? []).filter(m => m.visibility === "EXTERNA").map(m => ({ text: m.text, at: m.at, source: m.actorId === "INTERESSADO" ? "Interessado" : "Atendimento" })),
     requiredFiles: row.data.workflow?.requiredFiles ?? [], evaluation: row.data.evaluation,
+    fields, editableFields: ["RASCUNHO", "EM_ANDAMENTO"].includes(row.status) && !row.data.signatures?.some(s => s.status === "PENDENTE") ? fields.filter(f => fieldState(f, row.data.values ?? {}, "EXTERNO", row.status !== "RASCUNHO").editable).map(f => f.key) : [],
     // Internal notes, signatures, linked documents, identity, actor IDs and versions are deliberately absent.
   };
 }
 export async function externalOptions() {
   const flows = await db.select().from(moduleRecord).where(and(eq(moduleRecord.family, "fluxos"), eq(moduleRecord.status, "ATIVO"), sql`${moduleRecord.data}->'values'->>'externalEnabled'='Sim'`));
-  return flows.filter(f => externalFamilies.includes(f.data.workflow?.family as Family)).map(f => ({ id: f.id, title: f.title, description: f.body, family: f.data.workflow!.family, fields: f.data.workflow!.fields, requiredFiles: f.data.workflow!.requiredFiles }));
+  return flows.filter(f => externalFamilies.includes(f.data.workflow?.family as Family)).map(f => ({ id: f.id, title: f.title, description: f.body, family: f.data.workflow!.family, fields: f.data.workflow!.fields.filter(field => channelAllows(field, "EXTERNO")), requiredFiles: f.data.workflow!.requiredFiles }));
 }
 export async function listExternal(session: ExternalSession) {
   const rows = await db.select().from(moduleRecord).where(externalScope(session)).orderBy(desc(moduleRecord.updatedAt), desc(moduleRecord.id));
@@ -71,7 +74,7 @@ export function externalFileVisibility(row: ModuleRecord) {
   const released = !["projetos", "ambiental", "fiscalizacao"].includes(row.family) || row.status === "DEFERIDO";
   return sql`(${moduleFile.externalActorUid} IS NOT NULL OR ${released})`;
 }
-const submission = z.object({ workflowId: z.string().uuid(), title: z.string().trim().min(3).max(250), body: z.string().trim().min(3).max(50000), values: z.record(z.string().max(20000)),
+const submission = z.object({ workflowId: z.string().uuid(), title: z.string().trim().min(3).max(250), body: z.string().trim().min(3).max(50000), values: z.record(z.string(), z.string().max(20000)),
   name: z.string().trim().min(2).max(200), mandateId: z.string().uuid().optional(), idempotencyKey: z.string().uuid() });
 export async function createExternal(input: unknown, session: ExternalSession) {
   const parsed = submission.parse(input);
@@ -87,11 +90,12 @@ export async function createExternal(input: unknown, session: ExternalSession) {
     ownerUid = grant.principalUid; ownerEmail = grant.principalEmail;
   }
   const allowedFields = new Set([...(familyFields[workflow.family] ?? []).map(f => f.key), ...workflow.fields.map(f => f.key)]);
-  const values = Object.fromEntries(Object.entries(parsed.values).filter(([key]) => allowedFields.has(key)));
-  try { validateFields(familyFields[workflow.family] ?? [], values); validateWorkflowFields(workflow, values); } catch (e) { throw new ModuleError((e as Error).message); }
-  const hash = createHash("sha256").update(JSON.stringify({ ...parsed, values: Object.entries(values).sort(), actor: session.uid })).digest("hex");
+  const submitted = Object.fromEntries(Object.entries(parsed.values).filter(([key]) => allowedFields.has(key)));
+  const hash = createHash("sha256").update(JSON.stringify({ ...parsed, values: Object.entries(submitted).sort(), actor: session.uid })).digest("hex");
   const [previous] = await db.select().from(moduleRecord).where(and(eq(moduleRecord.externalOwnerUid, ownerUid), eq(moduleRecord.idempotencyKey, parsed.idempotencyKey)));
   if (previous) { if (previous.data.syncHash !== hash) throw new ModuleError("Identificador já utilizado com outro conteúdo.", 409); return externalDto(await ownedRecord(previous.id, session)); }
+  let values: Record<string, string>;
+  try { values = workflowValues(workflow, submitted, { channel: "EXTERNO" }); validateFields(familyFields[workflow.family] ?? [], values); } catch (e) { throw new ModuleError((e as Error).message); }
   if (workflow.family === "ouvidoria" && !workflow.identityDepartmentId) throw new ModuleError("A Ouvidoria precisa configurar o setor responsável pela proteção de identidade.", 409);
   const data: ModuleData = { values, workflow, workflowId: flow.id, workflowRevision: flow.revision, step: 0, syncHash: hash, externalSubmission: true, identityDepartmentId: workflow.family === "ouvidoria" ? workflow.identityDepartmentId : sector.id };
   if (workflow.family !== "ouvidoria" || values.modalidade !== "Anônima") data.identity = { name: parsed.name, email: ownerEmail, cpfCnpj: "", phone: "" };
@@ -111,12 +115,18 @@ export async function createExternal(input: unknown, session: ExternalSession) {
   return externalDto(await ownedRecord(id, session));
 }
 export async function externalCommand(id: string, input: unknown, session: ExternalSession) {
-  const parsed = z.object({ revision: z.number().int().positive(), action: z.enum(["PROTOCOLAR", "RESPONDER", "AVALIAR"]), text: z.string().max(50000).default(""), score: z.number().int().min(1).max(5).optional() }).parse(input);
+  const parsed = z.object({ revision: z.number().int().positive(), action: z.enum(["PROTOCOLAR", "RESPONDER", "AVALIAR", "EDITAR_CAMPOS"]), text: z.string().max(50000).default(""), values: z.record(z.string(), z.string().max(5000)).optional(), score: z.number().int().min(1).max(5).optional() }).parse(input);
   const permission = parsed.action === "AVALIAR" ? "evaluate" : "reply";
   const row = await ownedRecord(id, session, permission);
   if (row.revision !== parsed.revision) throw new ModuleError("Atendimento atualizado. Recarregue antes de enviar.", 409);
   const data = structuredClone(row.data); let status = row.status;
-  if (parsed.action === "PROTOCOLAR") {
+  if (parsed.action === "EDITAR_CAMPOS") {
+    if (data.signatures?.some(s => s.status === "PENDENTE")) throw new ModuleError("A alteração está bloqueada enquanto houver assinatura pendente.", 409);
+    if (!["RASCUNHO", "EM_ANDAMENTO"].includes(status) || !data.workflow || !parsed.values) throw new ModuleError("Este atendimento não admite alteração dos campos.", 409);
+    if (Object.keys(parsed.values).some(key => !data.workflow!.fields.some(field => field.key === key))) throw new ModuleError("A alteração aceita somente os campos configurados no formulário.");
+    try { data.values = workflowValues(data.workflow, parsed.values, { channel: "EXTERNO", previous: data.values, afterProtocol: status !== "RASCUNHO" }); } catch (e) { throw new ModuleError((e as Error).message); }
+    validateBusiness(row.family as Family, data);
+  } else if (parsed.action === "PROTOCOLAR") {
     if (status !== "RASCUNHO" || !data.workflow) throw new ModuleError("Este atendimento já foi protocolado.", 409);
     const files = await db.select().from(moduleFile).where(eq(moduleFile.recordId, id));
     const missing = data.workflow.requiredFiles.filter(c => !files.some(f => f.category === c));

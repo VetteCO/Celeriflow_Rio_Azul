@@ -16,6 +16,6 @@ export async function sendProcessEmail(opts: {
     to: opts.to,
     subject: opts.subject,
     html: opts.html,
-    reply_to: replyTo
+    replyTo
   });
 }

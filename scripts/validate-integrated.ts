@@ -177,6 +177,11 @@ async function main() {
     users.push({ ...u, name, email, password, token: await token(u.firebaseUid) });
   }
   const [ua, ub, uc, n3] = users;
+  if (args.includes("--workflow-fields")) {
+    const { workflowFieldScenarios } = await import("./workflow-field-scenarios");
+    await workflowFieldScenarios({ base: base.origin, dir, users, sectors, api, check, scenario, own, token });
+    return;
+  }
   if (args.includes("--stages89")) {
     const { stages89 } = await import("./stages89-scenarios");
     await stages89({ base:base.origin,dir,users,sectors,api,check,scenario,own,ownModuleFile,values,provision:async(index:number)=>{const name=`Servidor municipal ${index+1}`,email=`servidor.${randomUUID()}@example.invalid`,password=randomBytes(30).toString("base64url");const u=await api("89-provision-distinct-capacity-user","/api/admin/users",admin,"POST",{name,email,password,departmentId:a,role:"NIVEL_2"},[201]);return {...u,name,email,password,token:await token(u.firebaseUid)};} });
@@ -289,6 +294,13 @@ async function main() {
     check("synthetic-cpf-not-existing", collision.length === 0);
     const payload = { name: "Lívia Monteiro", cpfCnpj: taxId, email, cep: "39999000", number: "120", city: "Aurora das Veredas", state: "MG", requestType: "Manutenção de espaço comunitário", description: "Solicitamos a manutenção do espaço comunitário municipal." };
     await api("invalid-cpf-rejected", "/api/cidadao/requerimentos", undefined, "POST", { ...payload, cpfCnpj: "11111111111" }, [400]);
+    const [profileMode] = await sql("SELECT EXISTS(SELECT 1 FROM module_contact_profile WHERE active) AS enabled");
+    if (profileMode.enabled) {
+      await api("anonymous-core-requires-verified-profile-when-configured", "/api/cidadao/requerimentos", undefined, "POST", payload, [401]);
+      const created = await sql("SELECT id FROM citizen WHERE cpf_cnpj=$1", [taxId]);
+      check("anonymous-core-denial-does-not-create-citizen", created.length === 0);
+      return;
+    }
     const result = await api("anonymous-protocol-created", "/api/cidadao/requerimentos", undefined, "POST", payload, [201]);
     // Resolve IDs by the exact secret returned to this request; never by broad email/name filters.
     const rows = await sql(`SELECT d.id,d.origin_department_id,e.citizen_id FROM document d JOIN external_request e ON e.document_id=d.id WHERE d.public_key=$1`, [result.publicKey]);

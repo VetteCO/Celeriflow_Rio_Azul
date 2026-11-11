@@ -81,13 +81,23 @@ END $$;
 UPDATE module_record SET revision=3,action='CANCELAR_ASSINATURAS',data=jsonb_set(data,'{signatures,0,status}','"CANCELADA"') WHERE id='${ged}';`);
     assert.equal(sql(database, `SELECT revision=3 AND data->'signatureEnvelope'->'snapshot'->>'body'='Original preservado' FROM module_record WHERE id='${ged}';`), "t");
     assert.equal(sql(database, `SELECT modules_contact_refs('{"values":{"recipientContactId":"old"},"signatureEnvelope":{"snapshot":{"values":{"contactId":"old"}}}}','old','new') = '{"values":{"recipientContactId":"new"},"signatureEnvelope":{"snapshot":{"values":{"contactId":"old"}}}}'::jsonb;`), "t");
+    const anonymous = `${namespace}000000000007`;
+    sql(database, `INSERT INTO module_record(id,family,title,status,data) VALUES('${anonymous}','ouvidoria','Conservação do espaço público','EM_ANDAMENTO','{"values":{"modalidade":"Anônima","complemento":"Original","origem":"Atendimento"},"workflow":{"fields":[{"key":"complemento","type":"text","editAfterProtocol":"EXTERNO"},{"key":"origem","type":"text","locked":true}]}}');
+INSERT INTO module_anonymous_access(record_id,token_hash) VALUES('${anonymous}',repeat('b',64));
+SELECT modules_anonymous_fields(repeat('b',64),'${namespace}000000000008','same-request',1,'{"modalidade":"Anônima","complemento":"Atualizado","origem":"Atendimento"}');
+SELECT modules_anonymous_fields(repeat('b',64),'${namespace}000000000008','same-request',1,'{"modalidade":"Anônima","complemento":"Atualizado","origem":"Atendimento"}');
+DO $$ BEGIN
+ BEGIN PERFORM modules_anonymous_fields(repeat('b',64),'${namespace}000000000009','changed',2,'{"modalidade":"Anônima","complemento":"Atualizado","origem":"Alterada"}'); RAISE EXCEPTION 'LOCK_NOT_ENFORCED' USING ERRCODE='XX000'; EXCEPTION WHEN SQLSTATE 'P0001' THEN NULL; END;
+ BEGIN PERFORM modules_anonymous_fields(repeat('b',64),'${namespace}000000000008','different',1,'{"modalidade":"Anônima","complemento":"Outro","origem":"Atendimento"}'); RAISE EXCEPTION 'REPLAY_NOT_REJECTED' USING ERRCODE='XX000'; EXCEPTION WHEN SQLSTATE 'P0001' THEN NULL; END;
+END $$;`);
+    assert.equal(sql(database, `SELECT revision=2 AND data->'values'->>'origem'='Atendimento' AND data->'values'->>'complemento'='Atualizado' FROM module_record WHERE id='${anonymous}';`), "t");
     // Explicit failure inside a transaction proves rollback without disturbing the fixture.
     const rejected = spawnSync(join(bin, "psql.exe"), ["-X", "-q", "-v", "ON_ERROR_STOP=1", "-d", database], { env, encoding: "utf8", input: "BEGIN; INSERT INTO organization(name) VALUES('rollback-stage0'); SELECT 1/0; COMMIT;", windowsHide: true });
     assert.notEqual(rejected.status, 0);
     assert.equal(sql(database, "SELECT count(*) FROM organization WHERE name='rollback-stage0';"), "0");
     const folder = join(run, name); mkdirSync(folder); mkdirSync(join(folder, "files"));
     writeFileSync(join(folder, "fixture.json"), JSON.stringify({ environment: name, database, municipality: "Aurora das Veredas/MG", organization, department, child, adminId: user, readerId: reader, cpf: "529.982.247-25", cnpj: "11.222.333/0001-81", authProvisioned: false, mailEnabled: false, cases: ["Admin x leitura", "Memorando com dois prazos", "Circular para subsetores", "Requerimento no Protocolo", "Consulta por chave com sigilo"] }, null, 2));
-    results.push({ environment: name, database, tables, applied: migrations.length + 1, fixtureFingerprint: snapshot, users: 2, departments: 2, rollback: "PASS", foreignKeys: "PASS", checksums: "PASS", signatureEnvelopeGuard: "PASS", authProvisioned: false });
+    results.push({ environment: name, database, tables, applied: migrations.length + 1, fixtureFingerprint: snapshot, users: 2, departments: 2, rollback: "PASS", foreignKeys: "PASS", checksums: "PASS", signatureEnvelopeGuard: "PASS", anonymousFieldGuard: "PASS", authProvisioned: false });
   }
   writeFileSync(join(run, "results.json"), JSON.stringify({ executedAt: new Date().toISOString(), scope: "isolated local preparation databases; no production connection", baselineSha256: hash(baseline), migrations: migrations.map(m => ({ name: m.name, sha256: hash(m.source) })), results }, null, 2));
   console.log(JSON.stringify({ evidence: join(run, "results.json"), results }, null, 2));

@@ -316,6 +316,15 @@ input[type="checkbox"], input[type="radio"] { width: 16px; min-height: 16px; hei
 .rt-area td, .rt-area th, .doc-body td, .doc-body th { border: 1px solid var(--line); padding: 6px; min-width: 30px; }
 .rt-area img, .doc-body img { max-width: 100%; height: auto; }
 .help-content { max-width: 1000px; margin: 0 auto; }
+.workflow-fields { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; }
+.workflow-field { min-width: 0; overflow-wrap: anywhere; }
+.workflow-width-25 { grid-column: span 3; }
+.workflow-width-33 { grid-column: span 4; }
+.workflow-width-50 { grid-column: span 6; }
+.workflow-width-100 { grid-column: span 12; }
+.workflow-field > label { display: grid; gap: 4px; }
+.workflow-field input:not([type="radio"]):not([type="checkbox"]), .workflow-field select, .workflow-field textarea { max-width: 100%; width: 100%; min-width: 0; }
+@media(max-width: 767px) { .workflow-field { grid-column: span 12; } }
 .help-content > nav { margin-bottom: 16px; gap: 16px; }
 .grid-detail-text { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; }
 .grid-dialog-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }

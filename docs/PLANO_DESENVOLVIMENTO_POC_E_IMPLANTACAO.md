@@ -7,6 +7,8 @@
 
 **Revalidação em 11/11/2026:** [build, lint, tipos, testes e migrations](VALIDACAO_COMPLETA_2026-11-11.md); [dados persistentes e roteiro de apresentação](DADOS_DEMONSTRACAO_2026-11-11.md), com 27/27 famílias populadas e cobertura/lacunas por tabela. A revalidação não altera os limites de aceite integral descritos neste plano.
 
+**Incremento posterior de formulários e segurança:** [implementação e evidências](FORMULARIOS_SEGURANCA_2026-11-11.md). Controles por canal, edição pós-protocolo, apresentação, regras independentes, data inicial e CEP implementados; 81/81 verificações dos formulários locais, 63 unitários e auditoria npm sem vulnerabilidades. Migration 013 aditiva aplicada. Validação publicada, homologação humana, consulta fiscal externa e reexecução completa PDF/A/OCR permanecem com acompanhamento próprio.
+
 ## 1. Diretrizes acordadas
 
 1. Entregar **9/9 requisitos da POC**, com integrações reais e evidências. A margem de 70% do retificador não será usada como meta de desenvolvimento.

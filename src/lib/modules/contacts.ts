@@ -25,7 +25,7 @@ export async function listContacts(ctx:Context,filter:{segment?:string;profile?:
  return rows.filter(r=>(!members||members.includes(r.id))&&(!filter.profile||r.data.values?.contactProfileId===filter.profile)&&(!filter.type||r.data.values?.tipo===filter.type)).map(r=>({id:r.id,title:r.title,code:r.code,status:r.status,revision:r.revision,values:r.data.values??{}}));
 }
 export async function saveContact(input:unknown,ctx:Context,id?:string) {
- const p=z.object({title:z.string().trim().min(3).max(250),profileId:z.string().uuid(),profileRevision:z.number().int().positive(),revision:z.number().int().positive().optional(),idempotencyKey:z.string().uuid().optional(),values:z.record(z.string().max(5000))}).parse(input);
+  const p=z.object({title:z.string().trim().min(3).max(250),profileId:z.string().uuid(),profileRevision:z.number().int().positive(),revision:z.number().int().positive().optional(),idempotencyKey:z.string().uuid().optional(),values:z.record(z.string(),z.string().max(5000))}).parse(input);
  const row=id?await getRecord(id,ctx):undefined;
  if(row&&(row.family!=="contatos"||!canManage(row,ctx)))throw new ModuleError("Contato não autorizado.",403);
  if(row?.status==="UNIFICADO")throw new ModuleError("Edite o cadastro principal.",409);

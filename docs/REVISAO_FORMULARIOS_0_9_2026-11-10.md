@@ -29,6 +29,8 @@ Esses resultados são de um complemento posterior à publicação `4rCT9aejbqj2e
 
 ## Pendências programáveis desta família
 
+**Atualização em 11/11:** os apontamentos abaixo são o estado histórico deste complemento. Visibilidade/bloqueio/edição pós-protocolo, largura/ordenação, apresentação formatada, imagem de ajuda, regras independentes, data inicial e vínculo de CEP foram implementados e validados localmente no [incremento de formulários e segurança](FORMULARIOS_SEGURANCA_2026-11-11.md). Consulta fiscal externa e aceite dos novos fluxos publicados permanecem pendentes.
+
 - FOR-P86-01: ajuda por imagem, bloqueio e permissão de edição pós-protocolo, visibilidade interna/externa e tamanho configurável precisam de implementação/conferência individual.
 - FOR-P86-02.a/b: títulos e parágrafos de apresentação formatados no formulário não estão cobertos por este complemento.
 - FOR-P87-01.c: ações condicionais independentes de exibir, obrigar e ocultar ainda não comprovadas; implementada a condição de aplicabilidade do campo.

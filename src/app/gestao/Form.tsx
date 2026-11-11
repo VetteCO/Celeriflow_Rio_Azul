@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MaskedInput } from "@/components/MaskedInput";
-import { WorkflowField } from "@/components/WorkflowField";
-import type { FamilyField } from "@/lib/modules/domain";
-import { familyFields, families, processFamilies, renderTemplate, renderTemplateBlocks, conditionMatches, type Family, type Field, type Workflow } from "@/lib/modules/domain";
+import { WorkflowFormFields } from "@/components/WorkflowFormFields";
+import { WorkflowFieldSettings } from "./WorkflowFieldSettings";
+import { familyFields, families, processFamilies, renderTemplate, renderTemplateBlocks, type Family, type Field, type Workflow } from "@/lib/modules/domain";
 import { DocxImport } from "./DocxImport";
 import { WorkflowRules } from "./WorkflowRules";
 import type { Options, RecordRow } from "./client";
@@ -54,7 +54,6 @@ export function ModuleForm({ family, options, initial, onSave, onAutoSave, busy 
   }, [autoPayload, family, leased,leaseToken,busy]);
   const selectedWorkflow = initial?.data.workflow ?? options.configurations.find(c => c.id === workflowId)?.data.workflow;
   const setValue = (key: string, value: string) => setValues(current => ({ ...current, [key]: value }));
-  const field = (definition: FamilyField) => <WorkflowField key={definition.key} field={definition} value={values[definition.key] ?? ""} onChange={value => setValue(definition.key, value)} />;
   return <form onSubmit={async event => {
     event.preventDefault(); if (submitting.current || busy) return; if (!leased) { setError("Aguarde a reserva exclusiva de edição."); return; } setError(""); submitting.current = true;
     try { await onSave({ ...autoPayload, leaseToken, geometry: family === "camadas" ? JSON.parse(geometry) : undefined }); }
@@ -66,7 +65,7 @@ export function ModuleForm({ family, options, initial, onSave, onAutoSave, busy 
     <label>Título / assunto *<input required minLength={3} maxLength={250} value={title} onChange={e => setTitle(e.target.value)} /></label>
     {processFamilies.includes(family) && <label>Assunto e fluxo *<select required disabled={!!initial} value={workflowId} onChange={e => setWorkflowId(e.target.value)}><option value="">Selecione o fluxo</option>{options.configurations.filter(c => c.family === "fluxos" && c.data.workflow?.family === family).map(c => <option key={c.id} value={c.id}>{c.title}</option>)}</select></label>}
     {family === "oficio" && <label>Contato destinatário<select value={values.recipientContactId ?? ""} onChange={e => { const contact = contacts.find(c => c.id === e.target.value); setValues(current => ({ ...current, recipientContactId: e.target.value, destinatario: contact?.title ?? current.destinatario ?? "", email: contact?.values.email ?? current.email ?? "" })); }}><option value="">Informar destinatário diretamente</option>{contacts.filter(c => !["UNIFICADO", "SUSPENSO", "CANCELADO", "ARQUIVADO"].includes(c.status)).map(c => <option key={c.id} value={c.id}>{c.title} — {c.values.email || "sem e-mail"}</option>)}</select></label>}
-    <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>{(familyFields[family] ?? []).map(field)}{selectedWorkflow?.fields.filter(f => conditionMatches(f, values) && !f.calculation).map(field)}</div>
+    <WorkflowFormFields fields={[...(familyFields[family] ?? []), ...(selectedWorkflow?.fields ?? [])]} values={values} onChange={setValues} />
     {family === "ouvidoria" && values.modalidade !== "Anônima" && <fieldset><legend>Identificação do manifestante</legend><label>Nome<input value={identity.name} onChange={e => setIdentity({ ...identity, name: e.target.value })} required /></label><label>E-mail<input type="email" value={identity.email} onChange={e => setIdentity({ ...identity, email: e.target.value })} required /></label><label>CPF/CNPJ<MaskedInput kind="cpfCnpj" value={identity.cpfCnpj} onValueChange={value => setIdentity({ ...identity, cpfCnpj: value })} /></label><label>Telefone<MaskedInput kind="phone" value={identity.phone} onValueChange={value => setIdentity({ ...identity, phone: value })} /></label></fieldset>}
     <fieldset style={fullscreen ? { position: "fixed", inset: 12, zIndex: 50, background: "white", padding: 20, overflowY: "auto" } : {}}><legend>Conteúdo</legend><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><label>Modelo<select defaultValue="" onChange={e => { const model = options.configurations.find(m => m.id === e.target.value); if (model) { const variables = { ...values, assunto: title, data: new Date().toLocaleDateString("pt-BR") }; setBody(renderTemplate(model.body, variables)); setBlocks(renderTemplateBlocks(model.data.blocks ?? [], variables)); } }}><option value="">Selecionar modelo</option>{options.configurations.filter(c => c.family === "modelos").map(c => <option key={c.id} value={c.id}>{c.title}</option>)}</select></label><button type="button" className="btn" onClick={() => setFullscreen(!fullscreen)}>{fullscreen ? "Sair da tela cheia" : "Tela cheia"}</button></div><textarea aria-label="Conteúdo do documento" spellCheck lang="pt-BR" rows={12} value={body} onChange={e => setBody(e.target.value)} style={{ width: "100%" }} /><small>Modelos aceitam variáveis como {"{{assunto}}"}, {"{{data}}"} e chaves dos campos do formulário.</small>
     <BlockEditor value={blocks} onChange={setBlocks} /></fieldset>
@@ -96,7 +95,7 @@ function WorkflowEditor({ value, onChange, options }: { value: Workflow; onChang
       <legend>Campo {index + 1}</legend>
       <label>Chave<input required pattern="[a-z][a-zA-Z0-9_]{0,49}" value={field.key} onChange={e => updateField(index, { key: e.target.value })} /></label>
       <label>Rótulo<input required value={field.label} onChange={e => updateField(index, { label: e.target.value })} /></label>
-      <label>Tipo<select value={field.type} onChange={e => updateField(index, { type: e.target.value as Field["type"] })}>{Object.entries({ text: "Texto curto", textarea: "Texto longo", number: "Número decimal", integer: "Número inteiro", date: "Data", select: "Lista de seleção", radio: "Escolha única", checkbox: "Múltipla escolha", cpfCnpj: "CPF/CNPJ", cep: "CEP", phone: "Telefone", currency: "Moeda" }).map(([type, label]) => <option key={type} value={type}>{label}</option>)}</select></label>
+      <label>Tipo<select value={field.type} onChange={e => updateField(index, { type: e.target.value as Field["type"], defaultToday: undefined, calculation: undefined, addressMapping: undefined })}>{Object.entries({ text: "Texto curto", textarea: "Texto longo", number: "Número decimal", integer: "Número inteiro", date: "Data", select: "Lista de seleção", radio: "Escolha única", checkbox: "Múltipla escolha", cpfCnpj: "CPF/CNPJ", cep: "CEP", phone: "Telefone", currency: "Moeda", heading: "Título de apresentação", paragraph: "Parágrafo de apresentação" }).map(([type, label]) => <option key={type} value={type}>{label}</option>)}</select></label>
       <label><input type="checkbox" checked={field.required} onChange={e => updateField(index, { required: e.target.checked })} /> Obrigatório</label>
       <label>Ajuda<input value={field.help} onChange={e => updateField(index, { help: e.target.value })} /></label>
       <label>Texto de orientação no campo<input maxLength={500} value={field.placeholder ?? ""} onChange={e => updateField(index, { placeholder: e.target.value })} /></label>
@@ -110,14 +109,18 @@ function WorkflowEditor({ value, onChange, options }: { value: Workflow; onChang
         <label>Comparação<select value={field.condition.operator ?? "eq"} onChange={e => updateField(index, { condition: { ...field.condition!, operator: e.target.value as NonNullable<Field["condition"]>["operator"] } })}>{Object.entries({ eq: "Igual a", neq: "Diferente de", gt: "Maior que", gte: "Maior ou igual", lt: "Menor que", lte: "Menor ou igual", contains: "Contém opção ou texto", in: "Está entre os valores separados por |" }).map(([operator, label]) => <option key={operator} value={operator}>{label}</option>)}</select></label>
         <label>Valor de comparação<input value={field.condition.equals} onChange={e => updateField(index, { condition: { ...field.condition!, equals: e.target.value } })} /></label>
       </>}
+      <WorkflowFieldSettings field={field} fields={value.fields} update={patch => updateField(index, patch)} />
+      <button type="button" className="btn" disabled={index === 0} onClick={() => { const fields = [...value.fields]; [fields[index - 1], fields[index]] = [fields[index], fields[index - 1]]; onChange({ ...value, fields }); }}>Subir campo</button>
+      <button type="button" className="btn" disabled={index === value.fields.length - 1} onClick={() => { const fields = [...value.fields]; [fields[index + 1], fields[index]] = [fields[index], fields[index + 1]]; onChange({ ...value, fields }); }}>Descer campo</button>
       <button type="button" onClick={() => onChange({ ...value, fields: value.fields.filter((_, i) => i !== index) })}>Remover campo</button>
     </fieldset>)}
     {!!value.fields.length && <fieldset><legend>Prévia do formulário</legend><WorkflowPreview fields={value.fields} /></fieldset>}
-    <button type="button" className="btn" onClick={() => onChange({ ...value, fields: [...value.fields, { key: `campo${value.fields.length + 1}`, label: "", type: "text", required: false, options: [], help: "" }] })}>Adicionar campo</button><label>Tipos de anexo obrigatórios (um por linha)<textarea value={value.requiredFiles.join("\n")} onChange={e => onChange({ ...value, requiredFiles: e.target.value.split("\n").filter(Boolean) })} /></label>
+    <button type="button" className="btn" onClick={() => { let number = value.fields.length + 1; while (value.fields.some(f => f.key === `campo${number}`)) number++; onChange({ ...value, fields: [...value.fields, { key: `campo${number}`, label: "", type: "text", required: false, options: [], help: "" }] }); }}>Adicionar campo</button><label>Tipos de anexo obrigatórios (um por linha)<textarea value={value.requiredFiles.join("\n")} onChange={e => onChange({ ...value, requiredFiles: e.target.value.split("\n").filter(Boolean) })} /></label>
   </fieldset>;
 }
 
 function WorkflowPreview({ fields }: { fields: Field[] }) {
   const [values, setValues] = useState<Record<string, string>>({});
-  return <div>{fields.filter(field => !field.calculation && conditionMatches(field, values)).map(field => <WorkflowField key={field.key} field={field} preview value={values[field.key] ?? ""} onChange={value => setValues(current => ({ ...current, [field.key]: value }))} />)}</div>;
+  const [channel, setChannel] = useState<"INTERNO" | "EXTERNO">("INTERNO");
+  return <div><label>Canal da prévia<select value={channel} onChange={e => { setChannel(e.target.value as typeof channel); setValues({}); }}><option value="INTERNO">Interno</option><option value="EXTERNO">Externo identificado ou anônimo</option></select></label><WorkflowFormFields fields={fields} values={values} onChange={setValues} channel={channel} preview /></div>;
 }

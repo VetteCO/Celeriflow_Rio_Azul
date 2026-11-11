@@ -150,7 +150,7 @@ export async function stages57(h: Harness) {
     const browser = await chromium.launch({ executablePath: process.env.JOBS_CHROMIUM_BIN ?? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", headless: true });
     const login = async (page: Page, u: Row) => {
       await page.goto(h.base + "/admin"); await page.getByLabel("E-mail", { exact: true }).fill(u.email); await page.getByLabel("Senha", { exact: true }).fill(u.password); await page.getByRole("button", { name: "Entrar", exact: true }).click();
-      await page.getByText(u.email, { exact: false }).first().waitFor({ timeout: 60000 });
+      await page.getByRole("heading", { name: u === n3 ? "Minha conta" : "Servidores e permissões", exact: true }).waitFor({ timeout: 60000 });
     };
     try {
       const page = await browser.newPage({ viewport: { width: 1366, height: 768 } }); await login(page, ua);

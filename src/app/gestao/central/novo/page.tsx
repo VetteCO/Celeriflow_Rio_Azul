@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { WorkflowField } from "@/components/WorkflowField";
-import { families, familyFields, conditionMatches, type Family, type Field } from "@/lib/modules/domain";
+import { WorkflowFormFields } from "@/components/WorkflowFormFields";
+import { families, familyFields, type Family, type Field } from "@/lib/modules/domain";
 import { AccountRequired, externalJson, useExternalAccount } from "../client";
 type Flow = { id: string; title: string; description: string; family: Family; fields: Field[]; requiredFiles: string[] };
 type Mandate = { id: string; code: string; principalEmail: string; representativeUid: string | null; revokedAt: string | null; expiresAt: string; startsAt: string; permissions: string[]; families: string[]; recordIds: string[] };
@@ -12,13 +12,12 @@ export default function NewExternalRequest() {
   const [workflowId, setWorkflowId] = useState(""); const [title, setTitle] = useState(""); const [body, setBody] = useState(""); const [name, setName] = useState(""); const [values, setValues] = useState<Record<string, string>>({}); const [mandateId, setMandateId] = useState(""); const [error, setError] = useState(""); const [busy, setBusy] = useState(false); const [key] = useState(() => crypto.randomUUID());
   useEffect(() => { if (user?.emailVerified) Promise.all([externalJson("/api/modules/external"), externalJson("/api/modules/external/mandates")]).then(([a, b]) => { setFlows(a.options); setMandates(b.mandates); setName(user.displayName ?? ""); const requested = new URLSearchParams(window.location.search).get("assunto"); if (requested && a.options.some((f: Flow) => f.id === requested)) setWorkflowId(requested); }).catch(e => setError(e.message)); }, [user, revision]);
   if (!user?.emailVerified) return <AccountRequired />;
-  const flow = flows.find(f => f.id === workflowId); const fields = [...(flow ? familyFields[flow.family] ?? [] : []), ...(flow?.fields.filter(f => conditionMatches(f,values) && !f.calculation) ?? [])];
-  const change = (key: string, value: string) => setValues(v => ({ ...v, [key]: value }));
+  const flow = flows.find(f => f.id === workflowId); const fields = [...(flow ? familyFields[flow.family] ?? [] : []), ...(flow?.fields ?? [])];
   return <section className="card"><Link href="/gestao/central">Meus atendimentos</Link><h1>Solicitar serviço</h1>{error && <p role="alert">{error}</p>}<form style={{ display: "grid", gap: 12 }} onSubmit={async e => { e.preventDefault(); setBusy(true); setError(""); try { const d = await externalJson("/api/modules/external", { method: "POST", body: JSON.stringify({ workflowId, title, body, name: values.modalidade === "Anônima" ? "Manifestação anônima" : name, values, mandateId: mandateId || undefined, idempotencyKey: key }) }); router.push(`/gestao/central/${d.record.id}`); } catch (e) { setError((e as Error).message); } finally { setBusy(false); } }}>
     <label>Serviço<select required value={workflowId} onChange={e => { setWorkflowId(e.target.value); setValues({}); setMandateId(""); }}>{<option value="">Selecione</option>}{flows.map(f => <option key={f.id} value={f.id}>{families[f.family]} — {f.title}</option>)}</select></label>{flow && <p>{flow.description}</p>}
     <label>Atuação<select value={mandateId} onChange={e => setMandateId(e.target.value)}><option value="">Em meu nome</option>{mandates.filter(m => m.representativeUid === user.uid && !m.revokedAt && new Date(m.expiresAt) > new Date() && new Date(m.startsAt) <= new Date() && m.permissions.includes("create") && !m.recordIds.length && m.families.includes(flow?.family ?? "")).map(m => <option key={m.id} value={m.id}>Representando {m.principalEmail} — {m.code}</option>)}</select></label>
     {values.modalidade === "Anônima" ? <p>Nome e e-mail não serão apresentados aos setores. Sua conta é utilizada para o acompanhamento protegido desta manifestação.</p> : <label>Nome do interessado<input required value={name} onChange={e => setName(e.target.value)} /></label>}<label>Assunto<input required minLength={3} maxLength={250} value={title} onChange={e => setTitle(e.target.value)} /></label>
-    {fields.map(field => <WorkflowField key={field.key} field={field} value={values[field.key] ?? ""} onChange={value => change(field.key, value)} />)}
+    <WorkflowFormFields key={workflowId} fields={fields} values={values} onChange={setValues} channel="EXTERNO" />
     <label>Solicitação<textarea required minLength={3} rows={8} value={body} onChange={e => setBody(e.target.value)} /></label>{!!flow?.requiredFiles.length && <p>Na próxima tela, envie os documentos obrigatórios: {flow.requiredFiles.join(", ")}.</p>}<button className="btn btn-primary" disabled={busy || !flow}>{busy ? "Salvando…" : "Continuar para anexos e protocolização"}</button>
   </form></section>;
 }

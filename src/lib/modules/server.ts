@@ -12,13 +12,15 @@ import { validatePublication } from "./diary-catalog";
 import { availableActions } from "./actions";
 import { inspectionSchema, urbanParameters } from "./territorial";
 import { canRequestSignature, signatureContent, signersSchema } from "./signatures";
+import { workflowValues } from "./workflow-values";
 export { canRead, redacted } from "./policy";
 
 export class ModuleError extends Error { constructor(message: string, public status = 400) { super(message); } }
 export function failure(error: unknown) {
   if (error instanceof ModuleError) return Response.json({ error: error.message }, { status: error.status });
   if (error instanceof z.ZodError) return Response.json({ error: error.issues.map(i => `${i.path.join(".")}: ${i.message}`).join("; ") }, { status: 400 });
-  const databaseCode = error && typeof error === "object" && "code" in error ? String(error.code) : "";
+  const databaseError = error as { code?: string; cause?: { code?: string } } | null;
+  const databaseCode = databaseError?.code ?? databaseError?.cause?.code ?? "";
   if (["P0001", "23505", "23503", "40001"].includes(databaseCode)) return Response.json({ error: "Os dados foram alterados, possuem vínculo incompatível ou estão fora do seu acesso. Atualize o cadastro e confira os vínculos antes de continuar." }, { status: 409 });
   console.error("[modules]", error);
   return Response.json({ error: "Não foi possível concluir a operação. Verifique a configuração e a disponibilidade do serviço." }, { status: 500 });
@@ -57,7 +59,7 @@ export async function listRecords(family: string, ctx: Context) {
   const classes = await db.select({ id: moduleRecord.id, title: moduleRecord.title }).from(moduleRecord).where(eq(moduleRecord.family, "classificacao"));
   return rows.map(row => ({ id: row.id, code: row.code, family: row.family, title: row.title, status: row.status, revision: row.revision, updatedAt: row.updatedAt, dueAt: row.data.dueAt ?? "", classification: classes.find(c => c.id === row.data.classificationId)?.title ?? "", tags: [...new Set([...(row.data.tags ?? []), ...tags.rows.filter(t => t.record_id === row.id).map(t => String(t.label))])] }));
 }
-const valuesSchema = z.record(z.string().max(20000)).refine(v => Object.keys(v).length <= 100, "Máximo de 100 campos.");
+const valuesSchema = z.record(z.string(), z.string().max(20000)).refine(v => Object.keys(v).length <= 100, "Máximo de 100 campos.");
 const identitySchema = z.object({ name: z.string().trim().min(2).max(200), email: z.string().email(), cpfCnpj: z.string().max(20).default("").refine(v => !v || validTaxId(v), "CPF/CNPJ inválido."), phone: z.string().max(30).default("") });
 const inputSchema = z.object({
   title: z.string().trim().min(3).max(250), body: z.string().max(200000).default(""),
@@ -154,6 +156,9 @@ export async function createRecord(familyInput: string, input: unknown, ctx: Con
   }
   if (family === "camadas") { try { data.geometry = validateGeometry(parsed.geometry); } catch (e) { throw new ModuleError((e as Error).message); } }
   if (family === "delegacoes") data.values = { ...data.values, usos: "0", autorizador: ctx.user.id };
+  if (data.workflow && family !== "fluxos") {
+    try { data.values = workflowValues(data.workflow, data.values ?? {}, { channel: "INTERNO", validate: false }); } catch (e) { throw new ModuleError((e as Error).message); }
+  }
   validateBusiness(family, data);
   const participants = Array.from(new Set([...(data.workflow?.steps[0]?.departments ?? (departmentId ? [departmentId] : [])), ...(family === "ouvidoria" && data.identityDepartmentId ? [data.identityDepartmentId] : [])]));
   const [created] = await db.insert(moduleRecord).values({ family, title: parsed.title, body: parsed.body, ownerId: ctx.user.id, actorId: ctx.user.id, departmentId, participants, data, access: family === "delegacoes" ? "RESTRITO" : "SETOR", idempotencyKey: parsed.idempotencyKey }).onConflictDoNothing().returning();
@@ -167,7 +172,7 @@ export async function createRecord(familyInput: string, input: unknown, ctx: Con
   return redacted(created, ctx);
 }
 
-const commandSchema = z.object({ revision: z.number().int().positive(), action: z.enum(["EDITAR", "ATIVAR", "SUSPENDER", "PROTOCOLAR", "CONCLUIR_SETOR", "AVANCAR", "DEFERIR", "INDEFERIR", "RESPONDER", "CIENCIA", "ENCERRAR_REUNIAO", "SOLICITAR_ASSINATURA", "RECUSAR_ASSINATURA", "CANCELAR_ASSINATURAS", "REVISAR_ANEXO", "MEDIR", "REGISTRAR_VISTORIA", "PREPARAR_EDICAO", "PUBLICAR", "SOLICITAR_PROCESSAMENTO", "CANCELAR", "ARQUIVAR", "REABRIR", "UNIFICAR_CONTATO", "CONCLUIR", "CLASSIFICAR"]), payload: z.record(z.unknown()).default({}), note: z.string().trim().max(10000).default("") });
+const commandSchema = z.object({ revision: z.number().int().positive(), action: z.enum(["EDITAR", "EDITAR_CAMPOS", "ATIVAR", "SUSPENDER", "PROTOCOLAR", "CONCLUIR_SETOR", "AVANCAR", "DEFERIR", "INDEFERIR", "RESPONDER", "CIENCIA", "ENCERRAR_REUNIAO", "SOLICITAR_ASSINATURA", "RECUSAR_ASSINATURA", "CANCELAR_ASSINATURAS", "REVISAR_ANEXO", "MEDIR", "REGISTRAR_VISTORIA", "PREPARAR_EDICAO", "PUBLICAR", "SOLICITAR_PROCESSAMENTO", "CANCELAR", "ARQUIVAR", "REABRIR", "UNIFICAR_CONTATO", "CONCLUIR", "CLASSIFICAR"]), payload: z.record(z.string(), z.unknown()).default({}), note: z.string().trim().max(10000).default("") });
 export async function command(id: string, input: unknown, ctx: Context) {
   const cmd = commandSchema.parse(input); const row = await getRecord(id, ctx);
   const family = row.family as Family;
@@ -201,6 +206,9 @@ export async function command(id: string, input: unknown, ctx: Context) {
       const parsed = inputSchema.parse(payload); await checkLinks(parsed.linkedIds, ctx);
       await checkCoreLinks(parsed.coreDocumentIds, ctx);
       parsed.values = safeValues(parsed.values, family, data.values);
+      if (data.workflow && family !== "fluxos") {
+        try { parsed.values = workflowValues(data.workflow, parsed.values, { channel: "INTERNO", previous: data.values, validate: false }); } catch (e) { throw new ModuleError((e as Error).message); }
+      }
       await resolveRecipient(family, parsed.values, ctx);
       if (parsed.classificationId) { const c = await getRecord(parsed.classificationId, ctx); if (c.family !== "classificacao" || c.status !== "ATIVO") throw new ModuleError("Selecione uma classificação ativa."); }
       title = parsed.title; body = parsed.body;
@@ -212,6 +220,15 @@ export async function command(id: string, input: unknown, ctx: Context) {
         if (!ctx.session.departmentIds.includes(data.identityDepartmentId ?? "")) throw new ModuleError("Identificação restrita à Ouvidoria.", 403);
         data.identity = parsed.values.modalidade === "Anônima" ? undefined : parsed.identity;
       }
+      validateBusiness(family, data); break;
+    }
+    case "EDITAR_CAMPOS": {
+      active();
+      if (!data.workflow || !cmd.note.trim()) throw new ModuleError("Informe a justificativa para alterar campos do formulário.");
+      if (data.signatures?.some(s => s.status === "PENDENTE")) throw new ModuleError("Cancele as solicitações de assinatura antes de alterar os campos.", 409);
+      const submitted = valuesSchema.parse(payload.values);
+      if (Object.keys(submitted).some(key => !data.workflow!.fields.some(field => field.key === key))) throw new ModuleError("A alteração aceita somente os campos configurados no formulário.");
+      try { data.values = workflowValues(data.workflow, submitted, { channel: "INTERNO", previous: data.values, afterProtocol: true }); } catch (e) { throw new ModuleError((e as Error).message); }
       validateBusiness(family, data); break;
     }
     case "ATIVAR":

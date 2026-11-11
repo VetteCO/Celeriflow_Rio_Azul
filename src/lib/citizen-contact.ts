@@ -32,7 +32,7 @@ export async function externalContactDetail(session:Session){
   values:profile?externalContactValues(profile,row!.data.values??{}):{tipo:"Pessoa física",cpfCnpj:person?.cpf_cnpj??"",email:session.email,phone:person?.phone??"",cep:person?.cep??""},
   address:person?Object.fromEntries(["street","number","complement","district","city","state"].map(k=>[k,person[k]??""])):{}};
 }
-export const externalContactInput=z.object({name:z.string().trim().min(3).max(200),profileId:z.string().uuid(),profileRevision:z.number().int().positive(),revision:z.number().int().min(0),values:z.record(z.string().max(5000)),address:z.object({street:z.string().max(300).optional(),number:z.string().max(20).optional(),complement:z.string().max(100).optional(),district:z.string().max(200).optional(),city:z.string().max(200).optional(),state:z.string().max(2).optional()}).default({})});
+export const externalContactInput=z.object({name:z.string().trim().min(3).max(200),profileId:z.string().uuid(),profileRevision:z.number().int().positive(),revision:z.number().int().min(0),values:z.record(z.string(),z.string().max(5000)),address:z.object({street:z.string().max(300).optional(),number:z.string().max(20).optional(),complement:z.string().max(100).optional(),district:z.string().max(200).optional(),city:z.string().max(200).optional(),state:z.string().max(2).optional()}).default({})});
 export async function saveExternalContact(input:unknown,session:Session){
  const p=externalContactInput.parse(input);const profile=await contactProfile(p.profileId);
  if(profile.revision!==p.profileRevision)throw new CitizenContactError("Perfil atualizado. Recarregue os campos.",409);

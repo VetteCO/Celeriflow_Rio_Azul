@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   try {
     const ctx = await context(req, "doc:create");
-    const batch=z.object({profileId:z.string().uuid(),profileRevision:z.number().int().positive(),rows:z.array(z.object({ title: z.string().min(3).max(250), values: z.record(z.string().max(5000)), idempotencyKey: z.string().uuid() })).min(1).max(100)}).parse(await req.json());
+    const batch=z.object({profileId:z.string().uuid(),profileRevision:z.number().int().positive(),rows:z.array(z.object({ title: z.string().min(3).max(250), values: z.record(z.string(),z.string().max(5000)), idempotencyKey: z.string().uuid() })).min(1).max(100)}).parse(await req.json());
     const rows=batch.rows;
     const results = [];
     for (let index = 0; index < rows.length; index++) {

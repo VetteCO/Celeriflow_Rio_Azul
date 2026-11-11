@@ -18,6 +18,7 @@ export function availableActions(row: RecordState, actor: Actor): string[] {
   if (status === "ATIVO") actions.push("SUSPENDER");
   if (status === "SUSPENSO" && family !== "procuracoes") actions.push("ATIVAR");
   if (status === "EM_ANDAMENTO") {
+    if (!row.data.signatures?.some(s => s.status === "PENDENTE") && row.data.workflow?.fields.some(f => !f.locked && !f.calculation && f.visibility !== "EXTERNO" && ["INTERNO", "AMBOS"].includes(f.editAfterProtocol ?? "NENHUM"))) actions.push("EDITAR_CAMPOS");
     actions.push("RESPONDER", "REVISAR_ANEXO");
     const step = row.data.workflow?.steps[row.data.step ?? 0];
     if (family === "fiscalizacao" && step?.departments.some(id => actor.departmentIds.includes(id))) actions.push("REGISTRAR_VISTORIA");

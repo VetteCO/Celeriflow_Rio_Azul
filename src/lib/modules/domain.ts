@@ -17,14 +17,25 @@ export const processFamilies: Family[] = ["processos", "chamados", "ouvidoria", 
 export const familySchema = z.enum(Object.keys(families) as [Family, ...Family[]]);
 const text = z.string().trim().max(5000);
 const uuid = z.string().uuid();
+export const conditionSchema = z.object({ field: text.min(1), equals: text, operator: z.enum(["eq", "neq", "gt", "gte", "lt", "lte", "contains", "in"]).optional() });
 export const fieldSchema = z.object({
   key: z.string().regex(/^[a-z][a-zA-Z0-9_]{0,49}$/), label: text.min(1),
-  type: z.enum(["text", "textarea", "number", "integer", "date", "select", "radio", "checkbox", "cpfCnpj", "cep", "phone", "currency"]),
+  type: z.enum(["text", "textarea", "number", "integer", "date", "select", "radio", "checkbox", "cpfCnpj", "cep", "phone", "currency", "heading", "paragraph"]),
   placeholder: z.string().max(500).optional(),
   minLength: z.number().int().min(0).max(5000).optional(),
   maxLength: z.number().int().min(1).max(5000).optional(),
   required: z.boolean().default(false), options: z.array(text).max(100).default([]),
-  help: text.default(""), condition: z.object({ field: text, equals: text, operator: z.enum(["eq", "neq", "gt", "gte", "lt", "lte", "contains", "in"]).optional() }).optional(),
+  help: text.default(""), condition: conditionSchema.optional(),
+  visibility: z.enum(["AMBOS", "INTERNO", "EXTERNO"]).optional(),
+  locked: z.boolean().optional(),
+  editAfterProtocol: z.enum(["NENHUM", "INTERNO", "EXTERNO", "AMBOS"]).optional(),
+  width: z.enum(["25", "33", "50", "100"]).optional(),
+  initialValue: z.string().max(5000).optional(),
+  defaultToday: z.boolean().optional(),
+  helpImage: z.string().max(1000000).refine(value => !value || /^https:\/\/[^\s]+$/i.test(value) || /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(value), "Use imagem HTTPS ou PNG/JPEG/WebP incorporada.").optional(),
+  presentation: z.object({ bold: z.boolean(), italic: z.boolean(), underline: z.boolean(), align: z.enum(["left", "center", "right"]), size: z.number().int().min(12).max(36) }).optional(),
+  rules: z.array(z.object({ action: z.enum(["EXIBIR", "OCULTAR", "OBRIGAR"]), condition: conditionSchema })).max(20).optional(),
+  addressMapping: z.object({ street: text.optional(), district: text.optional(), city: text.optional(), state: text.optional() }).optional(),
   calculation: z.object({ operation: z.enum(["sum", "subtract", "multiply", "divide", "min", "max"]), fields: z.array(text.min(1)).min(2).max(20), decimals: z.number().int().min(0).max(6) }).optional(),
 });
 export const stepSchema = z.object({ name: text.min(1), departments: z.array(uuid).min(1).max(30), hours: z.number().int().min(1).max(87600), decision: z.boolean().default(false) });
@@ -35,6 +46,16 @@ export const workflowSchema = z.object({ fields: z.array(fieldSchema).max(80), s
     keys.add(field.key);
     if (field.minLength !== undefined && field.maxLength !== undefined && field.minLength > field.maxLength) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["fields", index, "maxLength"], message: "O máximo de caracteres deve ser maior ou igual ao mínimo." });
     if (["select", "radio", "checkbox"].includes(field.type) && (!field.options.length || field.options.some(option => !option) || new Set(field.options).size !== field.options.length)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["fields", index, "options"], message: "Informe opções não vazias e sem repetição." });
+    if (field.defaultToday && field.type !== "date") ctx.addIssue({ code: "custom", path: ["fields", index, "defaultToday"], message: "Data atual automática exige campo do tipo data." });
+    if (field.calculation && !["number", "integer", "currency"].includes(field.type)) ctx.addIssue({ code: "custom", path: ["fields", index, "calculation"], message: "Cálculo exige campo numérico." });
+    const references = [...(field.condition ? [field.condition.field] : []), ...(field.rules ?? []).map(rule => rule.condition.field), ...(field.calculation?.fields ?? []), ...Object.values(field.addressMapping ?? {}).filter(Boolean)];
+    for (const key of references) {
+      const target = workflow.fields.find(f => f.key === key);
+      const strictReference = (field.rules ?? []).some(rule => rule.condition.field === key) || Object.values(field.addressMapping ?? {}).includes(key);
+      if ((!target && strictReference) || key === field.key || target && ["heading", "paragraph"].includes(target.type)) ctx.addIssue({ code: "custom", path: ["fields", index], message: `Referência inválida no campo ${field.label}: ${key}.` });
+      else if ((field.visibility ?? "AMBOS") !== "INTERNO" && target?.visibility === "INTERNO") ctx.addIssue({ code: "custom", path: ["fields", index], message: "Campo externo não pode depender de um campo exclusivamente interno." });
+    }
+    if (field.addressMapping && field.type !== "cep") ctx.addIssue({ code: "custom", path: ["fields", index], message: "Vínculo de endereço exige campo CEP." });
   });
 });
 export type Workflow = z.infer<typeof workflowSchema>;
@@ -79,11 +100,11 @@ export type ModuleData = {
 export type GeoFeature = { type: "Feature"; properties: Record<string, string | number | boolean | null>; geometry: { type: "Point" | "MultiPoint" | "LineString" | "MultiLineString" | "Polygon" | "MultiPolygon"; coordinates: unknown } };
 export type GeoCollection = { type: "FeatureCollection"; features: GeoFeature[] };
 export const geoSchema = z.object({ type: z.literal("FeatureCollection"), features: z.array(z.object({
-  type: z.literal("Feature"), properties: z.record(z.union([z.string().max(5000), z.number().finite(), z.boolean(), z.null()])),
+  type: z.literal("Feature"), properties: z.record(z.string(), z.union([z.string().max(5000), z.number().finite(), z.boolean(), z.null()])),
   geometry: z.object({ type: z.enum(["Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon"]), coordinates: z.unknown() }),
 })).max(5000) });
 
-export type FamilyField = { key: string; label: string; required?: boolean; type?: Field["type"]; options?: string[]; help?: string; placeholder?: string; minLength?: number; maxLength?: number };
+export type FamilyField = { key: string; label: string; required?: boolean; type?: Field["type"]; options?: string[]; help?: string; placeholder?: string; minLength?: number; maxLength?: number } & Partial<Pick<Field, "visibility" | "locked" | "editAfterProtocol" | "width" | "initialValue" | "defaultToday" | "helpImage" | "presentation" | "rules" | "condition" | "calculation" | "addressMapping">>;
 export const familyFields: Partial<Record<Family, FamilyField[]>> = {
   camadas: [{ key: "tipo", label: "Tipo de camada", type: "select", options: ["Zoneamento", "Lotes", "Ambiental", "Equipamentos", "Outra"] }, { key: "legislacao", label: "Referência legal da base" }, { key: "vigencia", label: "Vigência da base", type: "date" }],
   parecer: [{ key: "natureza", label: "Natureza", type: "select", options: ["Técnico", "Jurídico"], required: true }, { key: "conclusao", label: "Conclusão" }],
@@ -111,6 +132,7 @@ export const familyFields: Partial<Record<Family, FamilyField[]>> = {
 
 export function validateFields(fields: FamilyField[], values: Record<string, string>) {
   for (const field of fields) {
+    if (["heading", "paragraph"].includes(field.type ?? "")) continue;
     const value = values[field.key]?.trim() ?? "";
     if (field.required && !value) throw new Error(`Preencha ${field.label}.`);
     if (field.type === "checkbox") {
@@ -127,6 +149,8 @@ export function validateFields(fields: FamilyField[], values: Record<string, str
     if (field.type === "date" && !validCalendarDate(value)) throw new Error(`${field.label}: data inválida.`);
     if (field.options?.length && !field.options.includes(value)) throw new Error(`${field.label}: opção inválida.`);
     if (field.type === "cpfCnpj" && !validTaxId(value)) throw new Error(`${field.label}: CPF/CNPJ inválido.`);
+    if (field.type === "cep" && !/^\d{8}$/.test(value.replace(/\D/g, ""))) throw new Error(`${field.label}: CEP inválido.`);
+    if (field.type === "phone" && !/^\d{10,15}$/.test(value.replace(/[\s()+.-]/g, ""))) throw new Error(`${field.label}: telefone inválido.`);
   }
 }
 export function checkboxValues(value: string): string[] {
@@ -155,22 +179,26 @@ export function validTaxId(value: string) {
     return (remainder < 2 ? 0 : 11 - remainder) === n[length];
   });
 }
-export function validateWorkflowFields(workflow: Workflow, values: Record<string, string>) {
+export function validateWorkflowFields(workflow: Workflow, values: Record<string, string>, channel: FieldChannel = "INTERNO") {
   // Calculate against a copy: a later failure must not leave partially computed data.
   const calculatedValues = { ...values };
-  calculateWorkflowFields(workflow, calculatedValues);
+   calculateWorkflowFields(workflow, calculatedValues, channel);
   Object.assign(values, calculatedValues);
 }
-function calculateWorkflowFields(workflow: Workflow, values: Record<string, string>) {
-  const keys = workflow.fields.map(field => field.key);
+function calculateWorkflowFields(workflow: Workflow, values: Record<string, string>, channel: FieldChannel) {
+  computeWorkflowValues(workflow.fields, values, channel);
+  validateFields(workflow.fields.filter(f => fieldState(f, values, channel).visible).map(f => ({ ...f, required: fieldState(f, values, channel).required })), values);
+}
+export function computeWorkflowValues(fields: FamilyField[], values: Record<string, string>, channel: FieldChannel) {
+  const keys = fields.map(field => field.key);
   if (new Set(keys).size !== keys.length) throw new Error("Há chaves de campos duplicadas no formulário.");
-  for (const field of workflow.fields) {
+  for (const field of fields) {
     if (field.minLength !== undefined && field.maxLength !== undefined && field.minLength > field.maxLength) throw new Error(`${field.label}: limites de tamanho incompatíveis.`);
   }
-  const pending = new Set(workflow.fields.filter(f => f.calculation).map(f => f.key));
+  const pending = new Set(fields.filter(f => f.calculation && fieldState(f, values, channel).visible).map(f => f.key));
   while (pending.size) {
     let progressed = false;
-    for (const field of workflow.fields) {
+    for (const field of fields) {
       const c = field.calculation; if (!c || !pending.has(field.key) || c.fields.some(k => pending.has(k))) continue;
       const numbers = c.fields.map(k => { if (!values[k]?.trim() || !Number.isFinite(Number(values[k]))) throw new Error(`Cálculo ${field.label}: preencha ${k} com número.`); return Number(values[k]); });
       let result = numbers[0];
@@ -180,7 +208,26 @@ function calculateWorkflowFields(workflow: Workflow, values: Record<string, stri
     }
     if(!progressed) throw new Error("Há referência circular nos campos calculados.");
   }
-  validateFields(workflow.fields.filter(f => conditionMatches(f, values)), values);
+}
+export type FieldChannel = "INTERNO" | "EXTERNO";
+export function isPresentation(field: FamilyField) { return field.type === "heading" || field.type === "paragraph"; }
+export function channelAllows(field: FamilyField, channel: FieldChannel) { return !field.visibility || field.visibility === "AMBOS" || field.visibility === channel; }
+export function fieldState(field: FamilyField, values: Record<string, string>, channel: FieldChannel, afterProtocol = false) {
+  const show = field.rules?.filter(rule => rule.action === "EXIBIR") ?? [];
+  const matches = (condition: z.infer<typeof conditionSchema>) => conditionMatches({ condition } as Field, values);
+  const visible = channelAllows(field, channel) && (!field.condition || matches(field.condition)) && (!show.length || show.some(rule => matches(rule.condition))) && !field.rules?.some(rule => rule.action === "OCULTAR" && matches(rule.condition));
+  const required = visible && !isPresentation(field) && (!!field.required || !!field.rules?.some(rule => rule.action === "OBRIGAR" && matches(rule.condition)));
+  const editable = visible && !isPresentation(field) && !field.locked && !field.calculation && (!afterProtocol || field.editAfterProtocol === "AMBOS" || field.editAfterProtocol === channel);
+  return { visible, required, editable };
+}
+export function businessDate(now = new Date()) { return new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" }).format(now); }
+export function workflowDefaults(fields: FamilyField[], values: Record<string, string>, channel: FieldChannel, now = new Date()) {
+  const result = { ...values };
+  for (const field of fields) if (channelAllows(field, channel) && !isPresentation(field) && result[field.key] === undefined) {
+    if (field.defaultToday) result[field.key] = businessDate(now);
+    else if (field.initialValue !== undefined) result[field.key] = field.initialValue;
+  }
+  return result;
 }
 export function conditionMatches(field: Field, values: Record<string,string>) {
  const c=field.condition; if(!c) return true; const actual=values[c.field] ?? "", expected=c.equals;

@@ -38,6 +38,7 @@
     "validate:learning-support": "tsx --env-file=.env.local scripts/validate-learning-support.ts",
     "validate:operations": "tsx --env-file=.env.local scripts/validate-operations.ts",
     "validate:capacity": "tsx --env-file=.env.local scripts/validate-capacity.ts",
+    "validate:workflow-fields": "tsx --env-file=.env.local scripts/validate-workflow-fields.ts",
     "audit:demo": "tsx --env-file=.env.local scripts/audit-demo-coverage.ts",
     "demo:prepare": "tsx --env-file=.env.local scripts/prepare-demonstration.ts",
     "demo:verify-preservation": "tsx --env-file=.env.local scripts/verify-demo-preservation.ts",
@@ -46,12 +47,12 @@
     "admin:bootstrap": "tsx src/db/bootstrap-users.ts"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.9.3",
+    "@neondatabase/serverless": "0.10.4",
     "@types/shapefile": "^0.6.4",
-    "@vercel/blob": "^2.8.0",
-    "drizzle-orm": "^0.33.0",
-    "firebase": "^10.12.5",
-    "firebase-admin": "^12.3.0",
+    "@vercel/blob": "2.9.0",
+    "drizzle-orm": "0.45.4",
+    "firebase": "13.2.0",
+    "firebase-admin": "14.5.0",
     "mammoth": "^1.11.0",
     "nanoid": "^5.0.7",
     "next": "15.5.29",
@@ -62,11 +63,11 @@
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "resend": "^3.5.0",
+    "resend": "6.38.0",
     "sanitize-html": "2.18.1",
     "shapefile": "^0.6.6",
     "undici": "^8.11.2",
-    "zod": "^3.23.8"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
@@ -77,11 +78,20 @@
     "@types/react-dom": "^18.3.0",
     "@types/sanitize-html": "^2.16.2",
     "dotenv": "^18.0.3",
-    "drizzle-kit": "^0.24.2",
+    "drizzle-kit": "0.31.11",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.5.29",
     "pg": "^8.23.1",
     "tsx": "^4.23.15",
     "typescript": "^5.5.4"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "1.14.7",
+    "@vercel/oidc": "4.0.8",
+    "esbuild@<=0.24.2": "0.25.12",
+    "postcss": "8.5.32",
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "11.0.8"
+    }
   }
 }
