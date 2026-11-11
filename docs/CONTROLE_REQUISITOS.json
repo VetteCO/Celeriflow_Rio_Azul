@@ -1,7 +1,7 @@
 {
   "version": 1,
   "source": "docs/MATRIZ_REQUISITOS_IMPLANTACAO.md",
-  "sourceSha256": "e65f773670be51890ae4bb1b04ca2d5c98346346dc82c87dc44ef36469301c3a",
+  "sourceSha256": "8a4d53e488a6ebafdcffa04f671f3a5dd196fa910e5214deac2434f92621653f",
   "purpose": "Índice gerado de tarefas e alíneas; não substitui evidências incrementais nem homologação.",
   "workflow": [
     "planejado",

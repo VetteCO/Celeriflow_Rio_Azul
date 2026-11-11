@@ -13,8 +13,16 @@ const runs = names.filter(name => name.startsWith("stage6-")).map(name => {
 assert.ok(runs.length);
 const structural = names.filter(name => name.startsWith("stage0-")).map(name => { const file = resolve(root, name, "results.json"); assert.ok(file.startsWith(root + "\\")); const evidence = JSON.parse(readFileSync(file, "utf8")); assert.ok(evidence.results.every((r: { signatureEnvelopeGuard: string }) => r.signatureEnvelopeGuard === "PASS")); return { directory: name, sha256: hash(file), ...evidence }; });
 const tools = JSON.parse(readFileSync(join(root, "stage6-tools/versions.json"), "utf8"));
+const supporting = names.filter(name => /^(stages57-|contacts-)/.test(name)).map(name => {
+  const path = resolve(root, name); assert.ok(path.startsWith(root + "\\"));
+  const file = join(path, name.startsWith("stages57-") ? "acceptance.json" : "results.redacted.json");
+  const evidence = JSON.parse(readFileSync(file, "utf8"));
+  const assertions = evidence.results ?? evidence.evidence;
+  assert.ok(assertions.length && assertions.every((r: { outcome: string }) => r.outcome === "PASS"));
+  return { directory: name, file: file.slice(path.length + 1), sha256: hash(file), passed: assertions.length, assertions };
+});
 const sources: string[] = [];
 function walk(path: string) { for (const name of readdirSync(path)) { const file = join(path, name); if (statSync(file).isDirectory()) walk(file); else if (/\.(tsx?|sql)$/.test(file)) sources.push(file.replaceAll("\\", "/")); } }
 walk("src"); for (const file of ["scripts/validate-stage6.ts", "scripts/stage6-scenarios.ts", "scripts/validate-integrated.ts", "scripts/validate-stage0-databases.ts", "scripts/document-worker.ts", "config/environment.example", "docs/PROCESSAMENTO_GED.md"]) sources.push(file);
-writeFileSync("docs/EVIDENCIAS_ETAPA_6.json", JSON.stringify({ version: 1, purpose: "Etapa 6: encerramento técnico do recorte documentado. Homologação municipal, criptografia e canais externos conservam seus marcos próprios; execução pontual dos workers não comprova operação contínua.", runs, structural, tools, sources: sources.sort().map(file => ({ file, sha256: hash(file) })) }, null, 2) + "\n");
+writeFileSync("docs/EVIDENCIAS_ETAPA_6.json", JSON.stringify({ version: 1, purpose: "Etapa 6: encerramento técnico do recorte documentado. Homologação municipal, criptografia e canais externos conservam seus marcos próprios; execução pontual dos workers não comprova operação contínua.", runs, supporting, structural, tools, sources: sources.sort().map(file => ({ file, sha256: hash(file) })) }, null, 2) + "\n");
 console.log(JSON.stringify({ output: "docs/EVIDENCIAS_ETAPA_6.json", passed: runs.map(r => r.passed) }));

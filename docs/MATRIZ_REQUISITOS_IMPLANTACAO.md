@@ -105,6 +105,20 @@ Rodadas finais: **156/156 local + 156/156 HTTPS**, mais **119/119 de regressão 
 
 **Versão final:** commit `9db8323`, deployment `65BvRYJyfBwKhaSKPiEkuUQhgBxS`, alias `rioazul.celeriflow.com.br`. **810/810 verificações HTTPS** (533 integração/workflow, 119 núcleo, 158 circulares/cidadão), 34 testes de domínio e build/lint/tipos aprovados. Erro real de streaming encontrado na regressão do cidadão foi corrigido antes do encerramento; três downloads sucessivos passaram no navegador. Preservados 15 servidores, cinco documentos, seis setores e o anexo original, com limpeza própria, sete fingerprints e SHA-256. Encerramento técnico não equivale à POC 9/9 nem à homologação integral.
 
+### Incremento da etapa 6 — 10/11/2026
+
+Dossiê e roteiro humano: [FECHAMENTO_ETAPA_6.md](FECHAMENTO_ETAPA_6.md). Evidências: `EVIDENCIAS_ETAPA_6.json`. Operação dos executores: `PROCESSAMENTO_GED.md`.
+
+| Recorte | Implementação e evidência | Estado e limite |
+|---|---|---|
+| EDT-P71/P72, GED-P76/P77, MEM-P52 — editor, modelos e acervo | Tabelas/parágrafos formatados, imagem incorporada, link, ordenação, tela cheia, modelo/variáveis, DOCX original, autosalvamento, reserva exclusiva/renovação/expiração e revisão otimista; prévia/PDF/folha de rosto pelo mesmo renderizador. | Validado por API/Chrome; layout próprio em blocos, sem promessa de equivalência tipográfica absoluta ao Word. Imagens HTTPS externas exigem origem permitida no worker. |
+| Objeto E24; ATO-P42; OFI-P52 — parecer/ofício/intimação/pauta/atos | Parecer técnico/jurídico com origem/anexos/código/conclusão; ofício com contato/revisão do destinatário, resposta e QR; intimação com prazo/ciência/evidência; pauta com itens/participantes/deliberações; ato com espécie/modelo/vínculo/permissão. | Fluxos próprios exercitados. Ciência manual não confirma recebimento eletrônico; desenho de intimação/reunião depende de validação municipal. Numerações especiais e alíneas avançadas mantêm aceite individual na matriz. |
+| ASS-P41, ASS-P74/P76 — preparação | Fila central, solicitação individual/lote, vários assinantes e etapas simultâneas/sequenciais, recusa/cancelamento, resultado por documento, acesso temporário e envelope de revisão/conteúdo/hashes protegido pela migração 012. | Preparação implementada/testada; execução criptográfica, PAdES, certificados/coassinatura/validação de autoria e canais continuam nas etapas 10/11. |
+| GED/classificação — E71–77/E85 | Importação hierárquica de até quatro níveis com caminho preservado, recusa de ciclos/quinto nível, reclassificação mista com negação por escopo, etiquetas setoriais e pesquisa pela lista. | Implementado e exercitado com versões e negação de outro setor. Plano arquivístico definitivo depende do Município. |
+| Processamento — E71–77/E85 | Execução direcionada real de PDF/ZIP/PDF-A/OCR; hashes/downloads privados, PDF/A-2b aceito pelo veraPDF (144 regras/zero falhas), OCR português sobre PDF sem texto incorporado. | Execução pontual comprovada; workers permanentes/scheduler/redundância seguem na etapa 9 e na infraestrutura adiada. |
+
+Fechamento técnico: **9/9 itens do plano no recorte documentado**. Aceitação **196/196 local + 196/196 HTTPS**, mais **533/533** da regressão local de workflow, **86/86** de contatos e **54/54** testes de domínio. Reconstrução de três bancos com baseline + 12 migrações, guardas/FKs/checksums/rollback aprovados. Código `1602f39` publicado em `dpl_EzWvo8RCfAYqe7ZR82Z1jjRSAC9L`, READY, confirmado com autenticação no SaaS. Preservados 15 servidores, cinco documentos, seis setores, anexo original e sete fingerprints. O encerramento técnico dos nove itens do plano não atribui homologação integral a todas as alíneas da implantação nem à POC 9/9.
+
 ## 3. Acesso, contas e identidade
 
 | ID / fonte | Subrequisitos preservados | Escopo / E | Verificação e critério de aceitação |

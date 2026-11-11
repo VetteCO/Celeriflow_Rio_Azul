@@ -1,7 +1,7 @@
 # Plano de desenvolvimento — POC 100% e implantação integral
 
 **Versão:** 10/11/2026.  
-**Situação:** execução; etapas 0, 1, 2, 3, 4, 5 e 7 tecnicamente encerradas nos recortes documentados, com evidências e homologação formal pendente. Etapas 6, 8 e 9 permanecem abertas.
+**Situação:** execução; etapas 0–7 tecnicamente encerradas nos recortes documentados, com evidências e homologação formal pendente. Etapas 8 e 9 permanecem abertas.
 **Base técnica:** `VALIDACAO_INTERNA_POC_2026-11-10.md`.
 
 ## 1. Diretrizes acordadas
@@ -169,15 +169,17 @@ Cada etapa será desdobrada em incrementos pequenos com backend, interface, migr
 
 ### Etapa 6 — GED avançado e módulos documentais antecipados
 
-- [ ] Ampliar editor: tabelas, imagens, links, tela cheia, modelos e variáveis; rascunho automático e controle de edição concorrente.
-- [ ] Gerar PDF/PDF-A, folha de rosto e pré-visualização; preservar versões/originais e preparar documento imutável para assinatura.
-- [ ] Implementar parecer técnico/jurídico vinculado a outro processo, com numeração e anexos.
-- [ ] Completar ofício eletrônico: contatos, destinatários externos, resposta, histórico e QR; entrega por e-mail fecha na etapa 11.
-- [ ] Implementar intimação e pauta de reunião, previstas no objeto. Detalhar seus fluxos com a Administração: destinatário/ciência/prazo e reunião/itens/participantes, respectivamente, como desenho funcional a validar.
-- [ ] Implementar atos oficiais e vínculo entre documentos, com tipos/modelos e permissões próprias.
-- [ ] Preparar fila de assinatura, assinantes, ordem, recusa/cancelamento e estados; execução criptográfica real fecha na etapa 10.
-- [ ] Implementar etiquetas, plano de classificação em quatro níveis, importação/reclassificação e busca.
-- [ ] Preparar processamento assíncrono para OCR, PDFs compilados, exportações e assinaturas em lote.
+- [x] Ampliar editor: tabelas, imagens, links, tela cheia, modelos e variáveis; rascunho automático e controle de edição concorrente.
+- [x] Gerar PDF/PDF-A, folha de rosto e pré-visualização; preservar versões/originais e preparar documento imutável para assinatura.
+- [x] Implementar parecer técnico/jurídico vinculado a outro processo, com numeração e anexos.
+- [x] Completar ofício eletrônico: contatos, destinatários externos, resposta, histórico e QR; entrega por e-mail fecha na etapa 11.
+- [x] Implementar intimação e pauta de reunião, previstas no objeto. Detalhar seus fluxos com a Administração: destinatário/ciência/prazo e reunião/itens/participantes, respectivamente, como desenho funcional a validar.
+- [x] Implementar atos oficiais e vínculo entre documentos, com tipos/modelos e permissões próprias.
+- [x] Preparar fila de assinatura, assinantes, ordem, recusa/cancelamento e estados; execução criptográfica real fecha na etapa 10.
+- [x] Implementar etiquetas, plano de classificação em quatro níveis, importação/reclassificação e busca.
+- [x] Preparar processamento assíncrono para OCR, PDFs compilados, exportações e assinaturas em lote.
+
+**Fechamento técnico em 10/11/2026:** [FECHAMENTO_ETAPA_6.md](FECHAMENTO_ETAPA_6.md), **9/9 itens no recorte documentado**. Aceitação local **196/196** e HTTPS **196/196**, incluindo editor/concorrência/DOCX, módulos próprios, fila de assinaturas e quatro trabalhos reais PDF/ZIP/PDF-A/OCR. PDF/A-2b aprovado pelo veraPDF (144 regras, zero falhas); OCR reconheceu PDF sem texto incorporado. Regressões locais: workflow 533/533, contatos 86/86 e domínio 54/54. Migração 012 protege o envelope de assinatura; originais/fingerprints preservados. Worker permanente/infraestrutura seguem na etapa 9, criptografia na 10, entrega por canais na 11. Homologação municipal e desenho definitivo de intimação/reunião pendentes.
 
 **Aceite:** cada módulo possui fluxo funcional próprio, não apenas um tipo selecionável; documentos vinculados e versões permanecem rastreáveis. Itens que dependem de assinatura/envio mantêm pendência explícita até as etapas finais.  
 **Origem:** objeto página 24; páginas 41–42, 52–55, 71–78, 85.

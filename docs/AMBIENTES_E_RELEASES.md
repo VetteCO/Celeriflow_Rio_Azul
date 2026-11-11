@@ -4,7 +4,7 @@
 
 | Ambiente | Destino | Estado e uso |
 |---|---|---|
-| SaaS publicado | `https://rioazul.celeriflow.com.br` | Deployment `65BvRYJyfBwKhaSKPiEkuUQhgBxS`, commit `9db8323`; Vercel `celeriflow-hub`, conta autorizada `celeriflow@gmail.com`. Fechamento em `FECHAMENTO_ETAPAS_5_7.md`; 810/810 verificações HTTPS na versão final. |
+| SaaS publicado | `https://rioazul.celeriflow.com.br` | Deployment `EzWvo8RCfAYqe7ZR82Z1jjRSAC9L`, commit `1602f39`; Vercel `celeriflow-hub`, conta autorizada `celeriflow@gmail.com`. Etapa 6 em `FECHAMENTO_ETAPA_6.md`; READY, build/lint/tipos, health e 196/196 verificações autenticadas HTTPS aprovados. |
 | Execução web local anterior | `http://localhost:3100` | Build local; `.env.local` aponta a serviços reais compartilhados com a publicação. Não é isolamento de dados. Servidor encerrado após os ensaios. |
 | Preparação de desenvolvimento | `rio_desenvolvimento`, PostgreSQL local, porta 55439 | Banco novo, massa fictícia própria, arquivos privados em diretório exclusivo. |
 | Preparação de homologação | `rio_homologacao`, mesmo cluster local | Banco independente, UUIDs/e-mails próprios, sem cópia da produção. |
@@ -35,13 +35,20 @@ Os três bancos locais são reprodutíveis por `stage0:databases`, permanecem pr
 
 ## Release e reversão
 
-- Referência publicada atual: commit funcional `9db8323`, deployment acima, etapas 5/7 e regressões do núcleo/cidadão com 810/810 verificações HTTPS. Versão anterior consolidada: `52302eb`, deployment `Cdhh77Qjnj83sgZMgJnDx9LzHRb7`, etapas 3/4. O incremento inicial 5/7 `a758bdc` foi sucedido pela correção de streaming `9db8323`; não promover novamente a versão intermediária com a falha de download. Consultar `git status` e os dossiês para os registros documentais posteriores.
+- Referência publicada atual: commit funcional `1602f39`, deployment acima, incremento da etapa 6. Referência anterior: `9db8323`, deployment `65BvRYJyfBwKhaSKPiEkuUQhgBxS`, etapas 5/7 com 810/810 verificações HTTPS; etapa 3/4 em `52302eb`, deployment `Cdhh77Qjnj83sgZMgJnDx9LzHRb7`. O incremento inicial 5/7 `a758bdc` foi sucedido pela correção de streaming `9db8323`; não promover novamente a versão intermediária com a falha de download. A migração 012 protege envelopes novos e deve ser considerada em qualquer reversão; não remover snapshots para permitir uso de versão antiga. Consultar `git status` e os dossiês para os registros documentais posteriores.
 - Roteiro: conferir diff → testes afetados → build/lint/tipos → registrar commit e artefatos → push → conferir remoto → publicar com CLI Vercel autenticada → smoke HTTPS e conferência visual → registrar URL/ID e resultado.
 - Publicação direta pela CLI foi usada anteriormente; não presumir que um deployment sincroniza o GitHub. Remoto desejado: `https://github.com/Celeriflow-Hub/Celeriflow_Rio_Azul`.
 - Se o push falhar, preservar código/commit local e registrar bloqueio; não pedir tokens em conversa nem gravá-los em arquivos versionados.
 - Reverter aplicação para deployment conhecido só após conferir compatibilidade com schema aditivo. Não remover colunas/tabelas, editar migrações aplicadas ou truncar registros como rollback.
 - Migração com falha: transação por arquivo; corrigir pendência ainda não aplicada ou criar nova migração se já houver aplicação. Histórico/checksum divergente interrompe o executor.
 - Versionamento da baseline é exclusivo de instalações novas; nenhum dos nove arquivos históricos foi alterado nesta etapa.
+
+## Incremento da etapa 6 — 10/11/2026
+
+- Migração 012 aplicada por transação/checksum/trava; checagem somente leitura: **12 históricos válidos, nenhuma pendência**. Não altera as onze migrações anteriores nem dados existentes.
+- Novas instalações: baseline + 12 migrações, 52 tabelas; três reconstruções independentes com guardas de envelope/FKs/checksums/rollback aprovados.
+- PDF/A/OCR foram exercitados com ferramentas extraídas em diretório temporário aprovado, sem configurar infraestrutura permanente ou alterar as variáveis dos provedores. Configuração operacional em `PROCESSAMENTO_GED.md`.
+- O push do commit funcional foi bloqueado por autenticação Git não interativa. A publicação Vercel não equivale ao envio ao GitHub; commits e bundle local devem permanecer preservados.
 
 ## Incremento das etapas 1 e 2 — 10/11/2026
 

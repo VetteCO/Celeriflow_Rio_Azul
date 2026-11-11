@@ -1,5 +1,7 @@
 # Processamento documental — etapas 6–7
 
+**Atualização de 10/11/2026:** configuração operacional atual e aceitação real dos conversores em [PROCESSAMENTO_GED.md](PROCESSAMENTO_GED.md) e [FECHAMENTO_ETAPA_6.md](FECHAMENTO_ETAPA_6.md). Dependências e migrações desta frente foram integradas; PDF/ZIP/PDF-A/OCR já foram executados em rodadas controladas. O suporte Windows usa `JOBS_VERAPDF_BIN=java.exe` com `JOBS_VERAPDF_JAR`, sem launcher `.bat`. Os registros abaixo sobre ausência de execução descrevem a rodada histórica original; operação permanente continua dependente da infraestrutura da etapa 9.
+
 ## Entrega e integração
 
 Implementação em arquivos próprios: `src/db/jobs-schema.ts`, migração `004_jobs.sql`, `src/lib/jobs/`, `src/app/api/jobs/`, `src/app/processamento/page.tsx` e `scripts/document-worker.ts`.
