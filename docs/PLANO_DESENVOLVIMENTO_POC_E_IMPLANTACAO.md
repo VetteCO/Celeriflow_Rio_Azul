@@ -217,6 +217,8 @@ Cada etapa será desdobrada em incrementos pequenos com backend, interface, migr
 **Aceite:** processo territorial completo testado com base municipal validada e retorno real das integrações aplicáveis. O backend de fiscalização deve operar antes do desenvolvimento móvel.  
 **Origem:** páginas 37–41, 45–46, 50–52, 63–66.
 
+**Publicação e aceite HTTPS:** versão funcional `1f00cc6`, deployment `4VfwFB5GRdrhbzBNeAGm3o4UJmyZ`, **187/187** verificações aprovadas e originais preservados. Pendências acima continuam abertas, assim como as alíneas avançadas de formulários documentadas em `REVISAO_FORMULARIOS_0_9_2026-11-10.md`.
+
 ### Etapa 9 — Gestão, capacitação e operação SaaS
 
 - [x] Relatórios de volumetria, produtividade, eficiência, qualidade, leitura, assiduidade, acessos, consumo, auditoria e georreferenciamento, no recorte reconciliado com SQL.
@@ -233,6 +235,8 @@ Cada etapa será desdobrada em incrementos pequenos com backend, interface, migr
 **Incremento técnico:** relatórios **92/92**, EAD/suporte **101/101**, restauração da aplicação com banco/arquivos isolados **12/12**. Carga local sustentada com **60 identidades distintas**, lotes de 60 leituras concorrentes, **3.180/3.180** respostas aprovadas em 61.169 ms (53 rodadas, p95 1.015 ms); o dimensionamento da mistura real municipal permanece aberto. Item de continuidade tem HTTPS, auditoria, executores de monitoramento/backup e restauração exercitada; monitoramento/agendamento permanente e redundância contratada continuam pendentes, conforme infraestrutura adiada. Dossiê: [FECHAMENTO_ETAPAS_8_9.md](FECHAMENTO_ETAPAS_8_9.md). Os três itens operacionais abertos não são convertidos em aceite por este ensaio.
 
 **Aceite:** relatórios conferem com os dados de origem, restauração e exportação são demonstradas e materiais/rotinas operacionais estão disponíveis. SLA de disponibilidade exige medição contínua, não apenas declaração.
+
+**Aceite HTTPS:** relatórios **92/92**, EAD/suporte **101/101**, carga de **60 identidades distintas** com **2.580/2.580** leituras em 61.141 ms (43 rodadas concorrentes, p95 1.281 ms). Limpeza própria e preservação confirmadas. A restauração isolada **12/12** e os limites de medição constam do dossiê; capacidade de leitura sustentada não encerra dimensionamento integral/SLA.
 
 ### Etapa 10 — Integrações finais: identidade, certificados e assinatura
 

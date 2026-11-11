@@ -4,13 +4,13 @@
 
 | Ambiente | Destino | Estado e uso |
 |---|---|---|
-| SaaS publicado | `https://rioazul.celeriflow.com.br` | Deployment `EzWvo8RCfAYqe7ZR82Z1jjRSAC9L`, commit `1602f39`; Vercel `celeriflow-hub`, conta autorizada `celeriflow@gmail.com`. Etapa 6 em `FECHAMENTO_ETAPA_6.md`; READY, build/lint/tipos, health e 196/196 verificações autenticadas HTTPS aprovados. |
+| SaaS publicado | `https://rioazul.celeriflow.com.br` | Deployment `4VfwFB5GRdrhbzBNeAGm3o4UJmyZ`, commit `1f00cc6`; Vercel `celeriflow-hub`, conta autorizada `celeriflow@gmail.com`. Incremento das etapas 8/9 em `FECHAMENTO_ETAPAS_8_9.md`; READY, build/lint/tipos remotos, 187/187 territorial/operação, 92/92 relatórios e 101/101 EAD/suporte HTTPS aprovados. Carga: 2.580/2.580 leituras com 60 identidades distintas em 61.141 ms. |
 | Execução web local anterior | `http://localhost:3100` | Build local; `.env.local` aponta a serviços reais compartilhados com a publicação. Não é isolamento de dados. Servidor encerrado após os ensaios. |
 | Preparação de desenvolvimento | `rio_desenvolvimento`, PostgreSQL local, porta 55439 | Banco novo, massa fictícia própria, arquivos privados em diretório exclusivo. |
 | Preparação de homologação | `rio_homologacao`, mesmo cluster local | Banco independente, UUIDs/e-mails próprios, sem cópia da produção. |
 | Preparação de apresentação | `rio_apresentacao`, mesmo cluster local | Banco independente, massa própria. Não representa apresentação homologada nem login Firebase provisionado. |
 
-Os três bancos locais são reprodutíveis por `stage0:databases`, permanecem preservados após o ensaio e ficam parados. Não têm endpoint Neon/WebSocket, conta Firebase ou Blob remoto próprios. A etapa 0 entrega separação da massa e reconstrução estrutural; publicação de novos SaaS e ativação de provedores são trabalhos posteriores de implantação. Worker, redundância e restauração integral da aplicação continuam na etapa 9.
+Os três bancos locais são reprodutíveis por `stage0:databases`, permanecem preservados após o ensaio e ficam parados. Não têm endpoint Neon/WebSocket, conta Firebase ou Blob remoto próprios. A etapa 0 entrega separação da massa e reconstrução estrutural; publicação de novos SaaS e ativação de provedores são trabalhos posteriores de implantação. A restauração integral da aplicação com arquivos isolados foi exercitada no incremento das etapas 8/9; worker permanente e redundância continuam pendentes de infraestrutura.
 
 ## Configuração
 
@@ -25,7 +25,7 @@ Os três bancos locais são reprodutíveis por `stage0:databases`, permanecem pr
 
 ## Reconstrução de código e dados
 
-1. Obter o código da versão pretendida e conferir o inventário SHA-256 em `EVIDENCIAS_ETAPA_0.json` para os arquivos organizacionais/instalação.
+1. Obter o código da versão pretendida e conferir o inventário SHA-256 do seu dossiê (`EVIDENCIAS_ETAPAS_8_9.json` para o incremento atual). `EVIDENCIAS_ETAPA_0.json` conserva o registro organizacional/histórico da versão em que foi gerado.
 2. Node **24.x**, `npm ci` a partir de `package-lock.json`. Não reutilizar `.next` de outra versão.
 3. Preparar configuração privada a partir do modelo, sem sobrescrever o `.env.local` existente.
 4. Banco novo: `npm run db:migrate -- --apply --initialize-empty`. Banco existente revisado: `npm run db:migrate -- --apply`. Checagem: `npm run db:migrate -- --check`.
@@ -35,7 +35,7 @@ Os três bancos locais são reprodutíveis por `stage0:databases`, permanecem pr
 
 ## Release e reversão
 
-- Referência publicada atual: commit funcional `1602f39`, deployment acima, incremento da etapa 6. Referência anterior: `9db8323`, deployment `65BvRYJyfBwKhaSKPiEkuUQhgBxS`, etapas 5/7 com 810/810 verificações HTTPS; etapa 3/4 em `52302eb`, deployment `Cdhh77Qjnj83sgZMgJnDx9LzHRb7`. O incremento inicial 5/7 `a758bdc` foi sucedido pela correção de streaming `9db8323`; não promover novamente a versão intermediária com a falha de download. A migração 012 protege envelopes novos e deve ser considerada em qualquer reversão; não remover snapshots para permitir uso de versão antiga. Consultar `git status` e os dossiês para os registros documentais posteriores.
+- Referência publicada atual: commit funcional `1f00cc6`, deployment acima, incremento das etapas 8/9. Referência anterior: `1602f39`, deployment `EzWvo8RCfAYqe7ZR82Z1jjRSAC9L`, etapa 6 com 196/196 verificações HTTPS; `9db8323`, deployment `65BvRYJyfBwKhaSKPiEkuUQhgBxS`, etapas 5/7 com 810/810 verificações HTTPS. O incremento inicial 5/7 `a758bdc` foi sucedido pela correção de streaming `9db8323`; não promover novamente a versão intermediária com a falha de download. A migração 012 protege envelopes novos e deve ser considerada em qualquer reversão; não remover snapshots para permitir uso de versão antiga. Consultar `git status` e os dossiês para os registros documentais posteriores.
 - Roteiro: conferir diff → testes afetados → build/lint/tipos → registrar commit e artefatos → push → conferir remoto → publicar com CLI Vercel autenticada → smoke HTTPS e conferência visual → registrar URL/ID e resultado.
 - Publicação direta pela CLI foi usada anteriormente; não presumir que um deployment sincroniza o GitHub. Remoto desejado: `https://github.com/Celeriflow-Hub/Celeriflow_Rio_Azul`.
 - Se o push falhar, preservar código/commit local e registrar bloqueio; não pedir tokens em conversa nem gravá-los em arquivos versionados.

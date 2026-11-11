@@ -134,6 +134,8 @@ Dossiê: [FECHAMENTO_ETAPAS_8_9.md](FECHAMENTO_ETAPAS_8_9.md). Aceite local fina
 
 O incremento não declara Sisobra integrado: os quatro pedidos permanecem aguardando configuração, sem assinatura/transmissão/recibo governamental. Infraestrutura contínua foi adiada pelo solicitante. Registros históricos anteriores de capacidade/restauração permanecem como evidência de suas respectivas versões; este complemento supera essas lacunas somente no recorte descrito.
 
+**Confirmação na versão publicada `1f00cc6`:** territorial/operação **187/187**, relatórios **92/92**, EAD/suporte **101/101** em HTTPS. Carga de leitura com **60 identidades distintas**, **2.580/2.580** respostas, 43 rodadas concorrentes em 61.141 ms, p95 1.281 ms. Limpeza e originais preservados. Deployment `4VfwFB5GRdrhbzBNeAGm3o4UJmyZ`, READY; assertivas/hashes em `EVIDENCIAS_ETAPAS_8_9.json`. As alíneas avançadas de formulários da revisão 0–9 permanecem abertas; não são homologadas por estes cenários.
+
 ## 3. Acesso, contas e identidade
 
 | ID / fonte | Subrequisitos preservados | Escopo / E | Verificação e critério de aceitação |

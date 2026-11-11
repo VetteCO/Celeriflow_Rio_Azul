@@ -104,12 +104,1022 @@
           "sha256": "36e4830a32516882c0b9087d879994f83e23cbd6fefbcbb6ad511cf0539c6966"
         },
         {
+          "file": "report-chart.png",
+          "sha256": "fe202e4969d8f8f20371bee942887f40ed42349f070bc1e2512ce3af8e4c426d"
+        },
+        {
           "file": "results.json",
           "sha256": "e47504df7f69eda97207b645029cf3be51b909df5c39bda3ccd4a2fb10b745ab"
         },
         {
           "file": "results.redacted.json",
           "sha256": "ccbed57b7303f8037e6c6ed37146e7a24b10611c3a2a89ea97b24b4fb1e852c5"
+        }
+      ],
+      "assertions": [
+        {
+          "assertion": "existing-admin-database-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "admin-session",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "existing-intake-active",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-exclusive-sector",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "api-sql-same-database",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-exclusive-sector",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "api-sql-same-database",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-exclusive-sector",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "api-sql-same-database",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "configure-exclusive-business-hours",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "configure-exclusive-business-hours",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "configure-exclusive-business-hours",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "provision-temporary-firebase-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "provision-temporary-firebase-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "provision-temporary-firebase-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "provision-temporary-firebase-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-create-legislacao",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-ATIVAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-create-fluxos",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-ATIVAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-impossible-project-areas-rejected",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-create-projetos",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-PROTOCOLAR",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-upload-original",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "module-file-owned-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-upload-original",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "module-file-owned-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-read-record",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-PROTOCOLAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-REVISAR_ANEXO",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-REVISAR_ANEXO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-REVISAR_ANEXO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-pdf-rectangle-real-scale-area",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-generate-annotated-pdf",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "module-file-owned-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-read-record",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-derived-pdf-new-hash-and-original-page-count",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-annotated-pdf-does-not-overwrite-original",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-SOLICITAR_PROCESSAMENTO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-SOLICITAR_PROCESSAMENTO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-SOLICITAR_PROCESSAMENTO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-SOLICITAR_PROCESSAMENTO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-sisobra-requests-never-invent-government-receipts",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-legal-parameter-comparison",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-legal-comparison-binds-both-revisions",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-DEFERIR",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-AVANCAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-DEFERIR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "89-project-approval-has-own-multisector-flow",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-inspection-complaint-source",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-create-fluxos",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-ATIVAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-create-ambiental",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-upload-original",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "module-file-owned-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-read-record",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-PROTOCOLAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-AVANCAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-INDEFERIR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-environmental-decision-retains-project-and-origin",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-create-fluxos",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-ATIVAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-create-fiscalizacao",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-upload-original",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "module-file-owned-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-read-record",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-PROTOCOLAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-reader-cannot-register-field-inspection",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "89-outside-sector-cannot-register-field-inspection",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "89-invalid-gps-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-evidence-from-other-process-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-repeated-field-operation",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-repeated-field-operation",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-concurrent-replay-has-one-revision",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-offline-replay-after-ack-loss",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-old-revision-replay-preserves-received-time",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-reused-id-different-content-rejected",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "89-second-field-visit",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-authorized-field-gps-map",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-gps-map-includes-authorized-inspection",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-outside-gps-map",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-gps-map-does-not-cross-document-scope",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-AVANCAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-DEFERIR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-no-field-mutation-after-decision",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-import-real-shp-dbf-prj",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-shp-reprojects-to-wgs84-and-preserves-attributes",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-create-camadas",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-ATIVAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-public-layers-before-opt-in",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-active-unpublished-layer-remains-private",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-layer-edit-lease",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-EDITAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-layer-release-lease",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-geospatial-previous-version",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-layer-publication-does-not-rewrite-source-version",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-public-authorized-layer",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-public-layer-projection-and-law-present",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-zone-hole-is-not-buildable-zone",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-proximity-uses-real-reprojected-coordinate",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-approved-project-preserves-readonly-attachments",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-browser-field-history-and-no-postdecision-form",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-browser-map-is-not-collapsed-to-icon-height",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-browser-published-reprojected-layer-rendered",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-report-grid-fits-desktop",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-browser-report-chart-not-collapsed-to-icon-height",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-sixty-distinct-firebase-and-internal-identities",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-sixty-concurrent-users-at-least-sixty-seconds",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-sustained-load-all-requests-succeeded",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-teardown-transaction",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "firebase-teardown",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: app_user",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: attachment",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: citizen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_role",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original attachment bytes preserved after cleanup",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "directory": "stages89-1794363930834",
+      "at": "2026-11-11T02:32:23.264Z",
+      "base": "https://rioazul.celeriflow.com.br",
+      "passed": 187,
+      "failed": 0,
+      "capacity": {
+        "at": "2026-11-11T02:31:23.292Z",
+        "base": "https://rioazul.celeriflow.com.br",
+        "concurrency": 60,
+        "distinctIdentities": 60,
+        "rounds": 43,
+        "elapsedMs": 61141,
+        "requests": 2580,
+        "passed": 2580,
+        "p50Ms": 942,
+        "p95Ms": 1281,
+        "maxMs": 3113,
+        "scope": "Carga de leitura autenticada por pelo menos 60 segundos/10 rodadas com 60 identidades próprias; não comprova todo o perfil de uso municipal nem SLA contínuo."
+      },
+      "originalTables": {
+        "app_user": 15,
+        "application_migration": 12,
+        "attachment": 1,
+        "audit_log": 4272,
+        "business_counter": 4,
+        "calendar_holiday": 0,
+        "citizen": 2,
+        "citizen_identity": 2,
+        "department": 6,
+        "document": 5,
+        "document_access": 0,
+        "document_deadline": 2,
+        "document_job": 2,
+        "document_job_blob": 2,
+        "document_job_text": 0,
+        "document_movement": 9,
+        "document_participation": 9,
+        "document_read_receipt": 2,
+        "document_recipient": 21,
+        "email_message": 3,
+        "external_request": 2,
+        "module_anonymous_access": 0,
+        "module_anonymous_operation": 0,
+        "module_business_hours": 0,
+        "module_citizen_alias": 0,
+        "module_contact_account": 0,
+        "module_contact_legacy": 0,
+        "module_contact_merge": 0,
+        "module_contact_profile": 0,
+        "module_contact_segment": 0,
+        "module_diary_catalog": 0,
+        "module_edit_lease": 0,
+        "module_file": 0,
+        "module_mandate": 0,
+        "module_passcode": 0,
+        "module_record": 0,
+        "module_sector_tag": 0,
+        "module_version": 0,
+        "operation_course": 0,
+        "operation_page_metric": 3,
+        "operation_participation_history": 9,
+        "operation_progress": 0,
+        "operation_report": 0,
+        "operation_report_job": 0,
+        "operation_ticket": 0,
+        "organization": 1,
+        "permission": 8,
+        "role": 6,
+        "user_admin_department": 0,
+        "user_department": 0,
+        "user_profile": 9,
+        "user_role": 15
+      },
+      "originals": [
+        {
+          "sha256": "1de6ca1a0a34c0c206f8e1d0a83b8189551e4b46d0fb2be61740bee94b5acfc0",
+          "actualBytes": 78
+        }
+      ],
+      "artifacts": [
+        {
+          "file": "acceptance.json",
+          "sha256": "a51fc4fd53ebc3177e52834eabce18ead296137f9bc88b7e3c104b4b23d494b7"
+        },
+        {
+          "file": "annotated.private.pdf",
+          "sha256": "e238a9fdebb0ae6cd3ab2e0ea0a57db4bb3b543cd0cb38d2cf3454914d68c716"
+        },
+        {
+          "file": "capacity.json",
+          "sha256": "32ddb2c02f95128663760f114f43ddb605efce2b9256847454b4db53b608c97b"
+        },
+        {
+          "file": "geoportal.png",
+          "sha256": "e7c01bf0417dc4bce23239450b74c2e7aacd298a5ce2dd460dcd86c2ca076a63"
+        },
+        {
+          "file": "inspection-history.png",
+          "sha256": "72b82f96941897690538b5cdb3efcdf513b0c7d230231b09723540b2e5a86e37"
+        },
+        {
+          "file": "report-chart.png",
+          "sha256": "fe202e4969d8f8f20371bee942887f40ed42349f070bc1e2512ce3af8e4c426d"
+        },
+        {
+          "file": "results.json",
+          "sha256": "cacb23338f77b3d2cd0790ec0ee4e6d0a969ca3f092922a635fd09cb60d33358"
+        },
+        {
+          "file": "results.redacted.json",
+          "sha256": "261620691f23efa9c9eba8b63fa27b766b14c93332565011c6a93508291b6ea5"
         }
       ],
       "assertions": [
@@ -1412,9 +2422,878 @@
       ]
     },
     {
+      "directory": "operations-validation-9377dd3c-1bba-41e6-9c9d-1c11ccf530c4",
+      "file": "results.redacted.json",
+      "sha256": "c75634d1a42830bc1b5daa4e6b2fc4624825d366e73dd449180c36f29e3e318c",
+      "passed": 92,
+      "assertions": [
+        {
+          "assertion": "baseline_fingerprints_captured",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "anonymous_reports_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "anonymous_report-jobs_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "anonymous_geo_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "restricted_reports_denied",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "catalog_real_sources_present",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_0_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_0_unknown_is_not_zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_1_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_1_pages_and_hash_match",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_2_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_2_unknown_is_not_zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "reports_json_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "metrics_finite_unique",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "core_volume_and_bytes_reconcile_sql",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "historical_type_0_reconciles_sql",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "historical_type_1_reconciles_sql",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "historical_type_2_reconciles_sql",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "unmatched_filter_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "unmatched_filter_does_not_return_global_volume",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "immediate_csv_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "immediate_csv_csv_header",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "immediate_pdf_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "immediate_pdf_pdf_pages",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "immediate_xlsx_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "immediate_xlsx_ooxml",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "historical_empty_cutoff_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "historical_empty_cutoff_no_retroactive_population",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "geo_historical_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "geo_safe_fields_and_valid_coordinates",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "geo_band_percentages_reconcile",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_csv_accepted",
+          "outcome": "PASS",
+          "status": 202
+        },
+        {
+          "assertion": "queue_csv_reuse_same_id",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "worker_csv_targeted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_csv_ready_snapshot_scope",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_csv_ttl_seven_days",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_csv_authorized",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "download_csv_hash_size_match",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queued_csv_csv_header",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_csv_anonymous_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "download_csv_other_report_owner_denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "blob_csv_exists",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "blob_csv_not_public",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "snapshot_csv_owner_read",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "snapshot_csv_matches_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "ready_csv_reused",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_pdf_accepted",
+          "outcome": "PASS",
+          "status": 202
+        },
+        {
+          "assertion": "queue_pdf_reuse_same_id",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "worker_pdf_targeted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_pdf_ready_snapshot_scope",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_pdf_ttl_seven_days",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_pdf_authorized",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "download_pdf_hash_size_match",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queued_pdf_pdf_pages",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_pdf_anonymous_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "download_pdf_other_report_owner_denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "blob_pdf_exists",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "blob_pdf_not_public",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "snapshot_pdf_owner_read",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "snapshot_pdf_matches_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "ready_pdf_reused",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_xlsx_accepted",
+          "outcome": "PASS",
+          "status": 202
+        },
+        {
+          "assertion": "queue_xlsx_reuse_same_id",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "worker_xlsx_targeted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_xlsx_ready_snapshot_scope",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_xlsx_ttl_seven_days",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_xlsx_authorized",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "download_xlsx_hash_size_match",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queued_xlsx_ooxml",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_xlsx_anonymous_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "download_xlsx_other_report_owner_denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "blob_xlsx_exists",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "blob_xlsx_not_public",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "snapshot_xlsx_owner_read",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "snapshot_xlsx_matches_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "ready_xlsx_reused",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "three_report_formats_exercised",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "ready_and_download_audit_preserved",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "cleanup_owned_blobs_1_removed",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "cleanup_owned_blobs_2_removed",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "cleanup_owned_blobs_3_removed",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "cleanup_only_owned_jobs_removed",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_document_movement",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_document_participation",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_attachment",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_module_record",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_module_version",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_module_file",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_document_job",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_app_user",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
       "directory": "learning-support-63ae355e-87d7-43d4-b8cf-dc8dfd080996",
       "file": "results.redacted.json",
       "sha256": "ad050c6ddcf5f9c4c4387298fe7678211199aa992195da557fae9be15d395260",
+      "passed": 101,
+      "assertions": [
+        {
+          "assertion": "existing-active-admin-resolved",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "existing-admin-session",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "create-exclusive-sector",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "api-database-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "provision-owned-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "provision-owned-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "provision-owned-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "n3-cannot-create-course",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "invalid-course-threshold-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "create-owned-two-lesson-course",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "learner-course-list",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "course-published-without-answer-key",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-before-completion-denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "cannot-skip-first-lesson",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "assessment-before-lessons-denied",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "out-of-range-lesson-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "complete-first-lesson",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "first-lesson-progress",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "lesson-idempotency",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "lesson-repeat-does-not-advance",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "assessment-after-only-one-lesson-denied",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "complete-second-lesson",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "incomplete-assessment-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "assessment-failed",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "failed-score-without-certificate",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "failed-assessment-no-certificate",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "assessment-passed",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "passed-score-certified",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certified-assessment-immutable",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "certificate-download-status",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "certificate-private-pdf-headers",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-download-status",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "certificate-private-pdf-headers",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-stable-sha256",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-parseable-pdf",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-bound-to-own-learner",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "other-user-certificate-denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "query-user-id-cannot-impersonate",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "anonymous-certificate-denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "other-user-own-progress-only",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "other-user-no-progress-leak",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-sql-immutable",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-critical-ticket",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "ticket-critical-sla",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-high-ticket",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "ticket-high-sla",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-normal-ticket",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "ticket-normal-sla",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "ticket-other-user-read-denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "ticket-other-user-write-denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "ticket-anonymous-denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "other-user-ticket-list",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "ticket-list-private-to-requester",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "n3-cannot-change-ticket-status",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "n3-cannot-assign-ticket",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "n3-cannot-close-ticket",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "rating-before-closure-denied",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "requester-reply",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "requester-reply-is-not-support-first-response",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "manager-invalid-assignee-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "manager-assign-and-start",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "support-first-response-and-assignment",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "manager-escalate",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "support-first-response-immutable",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "manager-resolve",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "support-resolved-timestamp",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "manager-cannot-rate-another-requester",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "invalid-ticket-rating-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "requester-rate-resolved-ticket",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "ticket-rating-persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "resolved-cannot-skip-reopen",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "manager-reopen-ticket",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "reopen-clears-rating-and-resolution",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "reopened-ticket-rating-denied",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "manager-close-again",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "requester-rates-new-closure",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "support-final-sql-state-and-history",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-owned-resources-cleaned",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "firebase-owned-accounts-cleaned",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "firebase-cleanup-confirmed-absent",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "firebase-cleanup-confirmed-absent",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "firebase-cleanup-confirmed-absent",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "no-ambiguous-requests",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "directory": "learning-support-41047831-5ce3-4742-80f8-bf0e60a2a9f6",
+      "file": "results.redacted.json",
+      "sha256": "027e166ab31dbadb157178cef2c3849957910bcda8d34110eb7f2c99a9abeba5",
       "passed": 101,
       "assertions": [
         {

@@ -1,5 +1,7 @@
 # Continuidade, backup e encerramento contratual
 
+**Atualização das etapas 8/9:** a aplicação restaurada com armazenamento isolado foi validada em `restore-app-1794362542089` (**12/12**). O ensaio de 60 identidades distintas também foi executado, além de relatórios e EAD/suporte. Resultados, comandos, versão publicada e pendências estão em [FECHAMENTO_ETAPAS_8_9.md](FECHAMENTO_ETAPAS_8_9.md). As descrições históricas abaixo não substituem esse registro posterior. Redundância física, agendamento e monitoramento contínuo permanecem pendentes.
+
 ## Situação verificável
 
 Implementados: exportação autenticada de todas as tabelas `public` em JSON, originais de `attachment` e `module_file`, manifesto SHA-256 e ZIP; worker de backup com `pg_dump`, JSON e arquivos; consulta autenticada de conectividade. Não foram executados backups, migrações, restaurações, carga ou alterações remotas nesta entrega.
@@ -35,6 +37,16 @@ Replicar os artefatos completos para destinos independentes com criptografia, co
 6. Registrar término, tempos observados, perda de dados observada, falhas e evidências. Comparar RPO/RTO contratados; somente marcar recuperação validada quando todas as verificações passarem.
 
 O JSON é formato aberto para portabilidade, não substitui o dump para restauração PostgreSQL. Identidades Firebase, configurações de provedores, DNS, secrets e conteúdo EAD hospedado por terceiros exigem inventário e procedimento próprio; não estão incorporados ao dump do banco.
+
+### Ensaio executável da aplicação restaurada
+
+```powershell
+npm run validate:restore-app -- --run --authorize-full-export
+```
+
+Exige PostgreSQL 18 em `%LOCALAPPDATA%/Temp/opencode/postgresql18/pgsql/bin`, Node 24 e a configuração privada atual do executor. Usa dump/exportação consistentes, cluster novo, diretório de originais próprio e portas HTTP livres. Confere todas as tabelas/arquivos e FKs; remapeia somente o banco de ensaio e testa sessão/autorização/download pela aplicação Next. O modo `RESTORE_SQL_ENDPOINT`/`RESTORE_STORAGE_ROOT` é exclusivo de loopback e banco confirmado por `RESTORE_DATABASE_NAME`, recusado em Vercel; não usar em implantação remota. Uma referência ausente no armazenamento isolado retorna ausência, sem buscar a origem. Evidências e configurações privadas ficam no diretório restrito da rodada, que deve seguir a política institucional de retenção.
+
+O processo encerra aplicação, ponte SQL e cluster próprios ao concluir. Os arquivos restaurados e o dump são preservados para auditoria. A rodada final conferiu o original de 78 bytes; streaming HTTP `chunked` sem `Content-Length` é aceito, com bytes/hash efetivamente conferidos. Este ensaio não configura recuperação automática nem substitui exercício de desastre dos provedores externos.
 
 ## Exportação e encerramento
 
