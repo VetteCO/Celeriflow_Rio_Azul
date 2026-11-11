@@ -72,6 +72,7 @@ export type ModuleData = {
   sealedHash?: string;
   signatureEnvelope?: { id: string; requestedAt: string; requestedBy: string; revision: number; hash: string; snapshot: { title: string; body: string; data: Record<string, unknown>; files: { id: string; filename: string; mimeType: string; size: number; sha256: string }[] } };
   geometry?: GeoCollection;
+  inspections?: { operationId: string; capturedAt: string; latitude: number; longitude: number; accuracy?: number; findings: string; measures: string; fileIds: string[]; receivedAt: string; actorId: string; hash: string }[];
   measurements?: { fileId: string; page: number; scale: number; points: number[][]; type: "distancia" | "area"; result: number; shape?: "polyline" | "polygon" | "rectangle" | "ellipse"; coordinateSystem?: "PDF_VIEWPORT_POINTS"; color?: string; width?: number; opacity?: number; precision?: number; fileHash?: string }[];
   jobs?: { id: string; kind: string; status: "AGUARDANDO_CONFIGURACAO"; at: string }[];
 };

@@ -1,7 +1,7 @@
 # Plano de desenvolvimento — POC 100% e implantação integral
 
 **Versão:** 10/11/2026.  
-**Situação:** execução; etapas 0–7 tecnicamente encerradas nos recortes documentados, com evidências e homologação formal pendente. Etapas 8 e 9 permanecem abertas.
+**Situação:** etapas 0–7 tecnicamente encerradas nos recortes documentados. Incremento funcional das etapas 8 e 9 concluído e validado internamente no recorte abaixo; aceite integral permanece aberto para Sisobra, bases municipais, infraestrutura permanente, dimensionamento do uso real e homologação formal.
 **Base técnica:** `VALIDACAO_INTERNA_POC_2026-11-10.md`.
 
 ## 1. Diretrizes acordadas
@@ -204,29 +204,33 @@ Cada etapa será desdobrada em incrementos pequenos com backend, interface, migr
 
 ### Etapa 8 — Urbanismo, fiscalização e geoprocessamento
 
-- [ ] Aprovação de projetos: construção/parcelamento, participantes, arquivos PDF/DWG, revisão, aceitação/recusa, anotações e selos.
-- [ ] Implementar medições em plantas PDF, escalas, áreas/distâncias e cálculo de parâmetros urbanísticos.
-- [ ] Implementar licenciamento ambiental, fiscalização de obras/posturas e conexão com denúncias/protocolos.
-- [ ] Criar formulários e API de fiscalização, anexos, GPS e IDs/idempotência para sincronização futura do aplicativo offline.
-- [ ] Entregar mapa de viabilidade e recursos geoespaciais previstos no bloco “1Map”: camadas GeoJSON/SHP, filtros, proximidade, publicação autorizada e geoportal.
+- [x] Aprovação de projetos: construção/parcelamento, participantes, arquivos PDF/DWG, revisão, aceitação/recusa, anotações e selos textuais; assinatura criptográfica na etapa 10.
+- [x] Implementar medições em plantas PDF, escalas, áreas/distâncias e cálculo de parâmetros urbanísticos.
+- [x] Implementar licenciamento ambiental, fiscalização de obras/posturas e conexão com denúncias/protocolos.
+- [x] Criar formulários e API de fiscalização, anexos, GPS e IDs/idempotência para sincronização futura do aplicativo offline.
+- [x] Entregar mapa de viabilidade e recursos geoespaciais previstos no bloco “1Map”: camadas GeoJSON/SHP, filtros, proximidade, publicação autorizada e geoportal.
 - [ ] Integrar Sisobra para alvarás/Habite-se: envio, retorno, retificação, cancelamento/reativação e histórico; concluir autenticação/assinatura dependente de certificado na etapa 10.
 - [ ] Cadastrar legislação, zoneamento e bases fornecidas pelo Município, com controle de versão.
+
+**Incremento técnico:** [FECHAMENTO_ETAPAS_8_9.md](FECHAMENTO_ETAPAS_8_9.md). Cinco itens funcionais encerrados; cadastro/versionamento de legislação e camadas implementado, com fornecimento/conferência municipal pendentes. Sisobra conserva somente pedidos de intenção e histórico aguardando configuração; serialização XSD, assinatura/transmissão e retorno real ainda dependem da integração final, sem recibo fictício. Aceite local: **187/187**, incluindo SHP/PRJ/DBF real, revisão legal, medições contra PDF original, vistorias concorrentes e conferência visual de mapa/gráfico. Homologação humana pendente.
 
 **Aceite:** processo territorial completo testado com base municipal validada e retorno real das integrações aplicáveis. O backend de fiscalização deve operar antes do desenvolvimento móvel.  
 **Origem:** páginas 37–41, 45–46, 50–52, 63–66.
 
 ### Etapa 9 — Gestão, capacitação e operação SaaS
 
-- [ ] Relatórios de volumetria, produtividade, eficiência, qualidade, leitura, assiduidade, acessos, consumo, auditoria e georreferenciamento.
-- [ ] Painéis filtráveis por período/setor/usuário/módulo; exportações CSV, PDF, XLSX e gráficos conforme o requisito; geração assíncrona quando necessária.
-- [ ] Relatórios automatizados para acompanhamento contratual e faturamento (TR 11.8).
-- [ ] EAD integrado: vídeos por módulo, ordem das aulas, progresso, avaliação, nota e certificado PDF.
-- [ ] Central de ajuda e suporte: chamados/chat, responsáveis, escalonamento, histórico, avaliação e acompanhamento dos SLAs.
+- [x] Relatórios de volumetria, produtividade, eficiência, qualidade, leitura, assiduidade, acessos, consumo, auditoria e georreferenciamento, no recorte reconciliado com SQL.
+- [x] Painéis filtráveis por período/setor/usuário/módulo; exportações CSV, PDF, XLSX e gráficos conforme o requisito; geração assíncrona quando necessária.
+- [x] Relatórios automatizáveis para acompanhamento contratual e faturamento (TR 11.8); executores/idempotência entregues, agendamento permanente e regra contratual dependem da operação/parametrização.
+- [x] EAD integrado: vídeos por módulo, ordem das aulas, progresso, avaliação, nota e certificado PDF; conteúdo institucional e treinamento humano pendentes.
+- [x] Central de ajuda e suporte: chamados/chat, responsáveis, escalonamento, histórico, avaliação e acompanhamento dos SLAs.
 - [ ] HTTPS, observabilidade, alertas, trilhas de auditoria, backup automatizado e ensaio de restauração de banco e arquivos.
 - [ ] Comprovar armazenamento redundante nos locais exigidos; verificar limites reais dos planos contratados de Neon/Blob e complementar a arquitetura quando necessário.
-- [ ] Exportação integral em formatos abertos com anexos originais e rotina de encerramento contratual.
-- [ ] Preparar manuais, capacitação presencial por perfil, certificados, agenda de visita mensal e procedimento de manutenção com aviso prévio.
+- [x] Exportação integral em formatos abertos com anexos originais e rotina de encerramento contratual.
+- [x] Preparar manuais, capacitação presencial por perfil, certificados, agenda de visita mensal e procedimento de manutenção com aviso prévio; execução/agenda municipal ainda pendentes.
 - [ ] Validar capacidade para os 60 usuários previstos no quadro e dimensionar carga com o uso municipal; cadastro de 60 usuários não equivale a teste de 60 simultâneos.
+
+**Incremento técnico:** relatórios **92/92**, EAD/suporte **101/101**, restauração da aplicação com banco/arquivos isolados **12/12**. Carga local sustentada com **60 identidades distintas**, lotes de 60 leituras concorrentes, **3.180/3.180** respostas aprovadas em 61.169 ms (53 rodadas, p95 1.015 ms); o dimensionamento da mistura real municipal permanece aberto. Item de continuidade tem HTTPS, auditoria, executores de monitoramento/backup e restauração exercitada; monitoramento/agendamento permanente e redundância contratada continuam pendentes, conforme infraestrutura adiada. Dossiê: [FECHAMENTO_ETAPAS_8_9.md](FECHAMENTO_ETAPAS_8_9.md). Os três itens operacionais abertos não são convertidos em aceite por este ensaio.
 
 **Aceite:** relatórios conferem com os dados de origem, restauração e exportação são demonstradas e materiais/rotinas operacionais estão disponíveis. SLA de disponibilidade exige medição contínua, não apenas declaração.
 

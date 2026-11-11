@@ -20,6 +20,7 @@ export function availableActions(row: RecordState, actor: Actor): string[] {
   if (status === "EM_ANDAMENTO") {
     actions.push("RESPONDER", "REVISAR_ANEXO");
     const step = row.data.workflow?.steps[row.data.step ?? 0];
+    if (family === "fiscalizacao" && step?.departments.some(id => actor.departmentIds.includes(id))) actions.push("REGISTRAR_VISTORIA");
     if (step && step.departments.some(id => actor.departmentIds.includes(id))) {
       if (step.departments.some(id => actor.departmentIds.includes(id) && !row.data.completedDepartments?.includes(id))) actions.push("CONCLUIR_SETOR");
       if (step.departments.every(id => row.data.completedDepartments?.includes(id))) {

@@ -13,12 +13,13 @@ export async function POST(req:Request,{params:paramsPromise}:{params:Promise<{i
  const params = await paramsPromise;
  let pendingStorage:string|undefined;
  try {
-  const ctx=await context(req,"doc:edit");const row=await getRecord(params.id,ctx);if(!canManage(row,ctx)||row.status==="PUBLICADO")throw new ModuleError("Registro não permite anotação.",403);
+   const ctx=await context(req,"doc:edit");const row=await getRecord(params.id,ctx);if(!canManage(row,ctx)||!["RASCUNHO","EM_ANDAMENTO"].includes(row.status))throw new ModuleError("Registro não permite anotação.",403);
   const p=z.object({revision:z.number().int().positive(),fileId:z.string().uuid(),stamp:z.string().trim().min(3).max(300)}).parse(await req.json());
   const [file]=await db.select().from(moduleFile).where(and(eq(moduleFile.id,p.fileId),eq(moduleFile.recordId,row.id)));
   if(!file||file.mimeType!=="application/pdf")throw new ModuleError("Selecione um PDF original.");
   const blob=await downloadAttachment(file.storageKey);if(!blob)throw new ModuleError("Original indisponível.",404);
-  const document=await PDFDocument.load(await new Response(blob.stream).arrayBuffer());const font=await document.embedFont(StandardFonts.Helvetica);
+   const original=Buffer.from(await new Response(blob.stream).arrayBuffer());if(createHash("sha256").update(original).digest("hex")!==file.sha256)throw new ModuleError("Integridade do original divergente.",409);
+   const document=await PDFDocument.load(original);const font=await document.embedFont(StandardFonts.Helvetica);
   const marks=(row.data.measurements??[]).filter(m=>m.fileId===file.id&&m.fileHash===file.sha256&&m.coordinateSystem==="PDF_VIEWPORT_POINTS");
   for(const m of marks) {
    const page=document.getPages()[m.page-1];if(!page)throw new ModuleError("Página da medição inexistente.");

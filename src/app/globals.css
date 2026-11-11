@@ -256,7 +256,7 @@ table.table { border-collapse: collapse; width: 100%; background: var(--surface)
 .app-account { margin-left: auto; color: white; font-size: 13px; }
 .app-account:hover { color: white; }
 .nav-toggle { border: 0; color: white; background: transparent; width: 32px; height: 32px; cursor: pointer; padding: 5px; }
-.app-shell svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+.nav-toggle svg, .app-sidebar svg, .grid-details svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; }
 .app-sidebar { background: #edf2ef; border-right: 1px solid var(--line); min-width: 0; }
 .app-sidebar nav { display: grid; gap: 3px; padding: 6px; }
 .app-sidebar a { display: flex; gap: 12px; align-items: center; height: 39px; padding: 8px; text-decoration: none; white-space: nowrap; font-size: 14px; }

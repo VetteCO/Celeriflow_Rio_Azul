@@ -1,0 +1,3164 @@
+{
+  "version": 1,
+  "purpose": "Etapas 8/9: recortes territoriais e operacionais executados. Integração Sisobra, bases municipais, infraestrutura permanente, mistura de carga municipal e homologação têm pendências explícitas no dossiê.",
+  "runs": [
+    {
+      "directory": "stages89-1794363212328",
+      "at": "2026-11-11T02:19:58.232Z",
+      "base": "http://localhost:3100",
+      "passed": 187,
+      "failed": 0,
+      "capacity": {
+        "at": "2026-11-11T02:18:54.809Z",
+        "base": "http://localhost:3100",
+        "concurrency": 60,
+        "distinctIdentities": 60,
+        "rounds": 53,
+        "elapsedMs": 61169,
+        "requests": 3180,
+        "passed": 3180,
+        "p50Ms": 753,
+        "p95Ms": 1015,
+        "maxMs": 2487,
+        "scope": "Carga de leitura autenticada por pelo menos 60 segundos/10 rodadas com 60 identidades próprias; não comprova todo o perfil de uso municipal nem SLA contínuo."
+      },
+      "originalTables": {
+        "app_user": 15,
+        "application_migration": 12,
+        "attachment": 1,
+        "audit_log": 4085,
+        "business_counter": 4,
+        "calendar_holiday": 0,
+        "citizen": 2,
+        "citizen_identity": 2,
+        "department": 6,
+        "document": 5,
+        "document_access": 0,
+        "document_deadline": 2,
+        "document_job": 2,
+        "document_job_blob": 2,
+        "document_job_text": 0,
+        "document_movement": 9,
+        "document_participation": 9,
+        "document_read_receipt": 2,
+        "document_recipient": 21,
+        "email_message": 3,
+        "external_request": 2,
+        "module_anonymous_access": 0,
+        "module_anonymous_operation": 0,
+        "module_business_hours": 0,
+        "module_citizen_alias": 0,
+        "module_contact_account": 0,
+        "module_contact_legacy": 0,
+        "module_contact_merge": 0,
+        "module_contact_profile": 0,
+        "module_contact_segment": 0,
+        "module_diary_catalog": 0,
+        "module_edit_lease": 0,
+        "module_file": 0,
+        "module_mandate": 0,
+        "module_passcode": 0,
+        "module_record": 0,
+        "module_sector_tag": 0,
+        "module_version": 0,
+        "operation_course": 0,
+        "operation_page_metric": 3,
+        "operation_participation_history": 9,
+        "operation_progress": 0,
+        "operation_report": 0,
+        "operation_report_job": 0,
+        "operation_ticket": 0,
+        "organization": 1,
+        "permission": 8,
+        "role": 6,
+        "user_admin_department": 0,
+        "user_department": 0,
+        "user_profile": 9,
+        "user_role": 15
+      },
+      "originals": [
+        {
+          "sha256": "1de6ca1a0a34c0c206f8e1d0a83b8189551e4b46d0fb2be61740bee94b5acfc0",
+          "actualBytes": 78
+        }
+      ],
+      "artifacts": [
+        {
+          "file": "acceptance.json",
+          "sha256": "0c82977691be7450cd5ff55fd69978b27f131f360d08c816f768098cdc8b8a6f"
+        },
+        {
+          "file": "annotated.private.pdf",
+          "sha256": "d05d91061dd1b84ea8038e4ffd4dcebb95ee362a0b649d7be00fe1d9b6b50b1a"
+        },
+        {
+          "file": "capacity.json",
+          "sha256": "d48036221e119d5921c791ab70d3f7396051ce189a1b0f13a365c87c8c15792f"
+        },
+        {
+          "file": "geoportal.png",
+          "sha256": "e7c01bf0417dc4bce23239450b74c2e7aacd298a5ce2dd460dcd86c2ca076a63"
+        },
+        {
+          "file": "inspection-history.png",
+          "sha256": "36e4830a32516882c0b9087d879994f83e23cbd6fefbcbb6ad511cf0539c6966"
+        },
+        {
+          "file": "results.json",
+          "sha256": "e47504df7f69eda97207b645029cf3be51b909df5c39bda3ccd4a2fb10b745ab"
+        },
+        {
+          "file": "results.redacted.json",
+          "sha256": "ccbed57b7303f8037e6c6ed37146e7a24b10611c3a2a89ea97b24b4fb1e852c5"
+        }
+      ],
+      "assertions": [
+        {
+          "assertion": "existing-admin-database-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "admin-session",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "existing-intake-active",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-exclusive-sector",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "api-sql-same-database",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-exclusive-sector",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "api-sql-same-database",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-exclusive-sector",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "api-sql-same-database",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "configure-exclusive-business-hours",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "configure-exclusive-business-hours",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "configure-exclusive-business-hours",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "provision-temporary-firebase-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "provision-temporary-firebase-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "provision-temporary-firebase-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "provision-temporary-firebase-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-create-legislacao",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-ATIVAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-create-fluxos",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-ATIVAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-impossible-project-areas-rejected",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-create-projetos",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-PROTOCOLAR",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-upload-original",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "module-file-owned-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-upload-original",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "module-file-owned-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-read-record",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-PROTOCOLAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-REVISAR_ANEXO",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-REVISAR_ANEXO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-REVISAR_ANEXO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-pdf-rectangle-real-scale-area",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-generate-annotated-pdf",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "module-file-owned-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-read-record",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-derived-pdf-new-hash-and-original-page-count",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-annotated-pdf-does-not-overwrite-original",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-SOLICITAR_PROCESSAMENTO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-SOLICITAR_PROCESSAMENTO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-SOLICITAR_PROCESSAMENTO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-SOLICITAR_PROCESSAMENTO",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-sisobra-requests-never-invent-government-receipts",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-legal-parameter-comparison",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-legal-comparison-binds-both-revisions",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-DEFERIR",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-AVANCAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-DEFERIR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-MEDIR",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "89-project-approval-has-own-multisector-flow",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-inspection-complaint-source",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-create-fluxos",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-ATIVAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-create-ambiental",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-upload-original",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "module-file-owned-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-read-record",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-PROTOCOLAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-AVANCAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-INDEFERIR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-environmental-decision-retains-project-and-origin",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-create-fluxos",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-ATIVAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-create-fiscalizacao",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-upload-original",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "module-file-owned-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-read-record",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-PROTOCOLAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-reader-cannot-register-field-inspection",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "89-outside-sector-cannot-register-field-inspection",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "89-invalid-gps-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-evidence-from-other-process-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-repeated-field-operation",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-repeated-field-operation",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-concurrent-replay-has-one-revision",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-offline-replay-after-ack-loss",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-old-revision-replay-preserves-received-time",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-reused-id-different-content-rejected",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "89-second-field-visit",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-authorized-field-gps-map",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-gps-map-includes-authorized-inspection",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-outside-gps-map",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-gps-map-does-not-cross-document-scope",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-AVANCAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-CONCLUIR_SETOR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-DEFERIR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-no-field-mutation-after-decision",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "89-import-real-shp-dbf-prj",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-shp-reprojects-to-wgs84-and-preserves-attributes",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-create-camadas",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-ATIVAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-public-layers-before-opt-in",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-active-unpublished-layer-remains-private",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-layer-edit-lease",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-EDITAR",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-layer-release-lease",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-geospatial-previous-version",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-layer-publication-does-not-rewrite-source-version",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-public-authorized-layer",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "89-public-layer-projection-and-law-present",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-zone-hole-is-not-buildable-zone",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-proximity-uses-real-reprojected-coordinate",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-approved-project-preserves-readonly-attachments",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-browser-field-history-and-no-postdecision-form",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-browser-map-is-not-collapsed-to-icon-height",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-browser-published-reprojected-layer-rendered",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-report-grid-fits-desktop",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-browser-report-chart-not-collapsed-to-icon-height",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-provision-distinct-capacity-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "89-sixty-distinct-firebase-and-internal-identities",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-sixty-concurrent-users-at-least-sixty-seconds",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "89-sustained-load-all-requests-succeeded",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-teardown-transaction",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "firebase-teardown",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: app_user",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: attachment",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: citizen",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original rows preserved: user_role",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "original attachment bytes preserved after cleanup",
+          "outcome": "PASS"
+        }
+      ]
+    }
+  ],
+  "supporting": [
+    {
+      "directory": "operations-validation-e6c0e7f0-20d9-41e6-8e1a-37ddf2f1a9c6",
+      "file": "results.redacted.json",
+      "sha256": "1144d5587457bfcca074f00406358075b97a6bd6fecd3b7d9bfea14075766e68",
+      "passed": 92,
+      "assertions": [
+        {
+          "assertion": "baseline_fingerprints_captured",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "anonymous_reports_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "anonymous_report-jobs_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "anonymous_geo_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "restricted_reports_denied",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "catalog_real_sources_present",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_0_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_0_unknown_is_not_zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_1_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_1_pages_and_hash_match",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_2_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "catalog_source_2_unknown_is_not_zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "reports_json_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "metrics_finite_unique",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "core_volume_and_bytes_reconcile_sql",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "historical_type_0_reconciles_sql",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "historical_type_1_reconciles_sql",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "historical_type_2_reconciles_sql",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "unmatched_filter_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "unmatched_filter_does_not_return_global_volume",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "immediate_csv_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "immediate_csv_csv_header",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "immediate_pdf_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "immediate_pdf_pdf_pages",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "immediate_xlsx_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "immediate_xlsx_ooxml",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "historical_empty_cutoff_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "historical_empty_cutoff_no_retroactive_population",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "geo_historical_ok",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "geo_safe_fields_and_valid_coordinates",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "geo_band_percentages_reconcile",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_csv_accepted",
+          "outcome": "PASS",
+          "status": 202
+        },
+        {
+          "assertion": "queue_csv_reuse_same_id",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "worker_csv_targeted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_csv_ready_snapshot_scope",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_csv_ttl_seven_days",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_csv_authorized",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "download_csv_hash_size_match",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queued_csv_csv_header",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_csv_anonymous_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "download_csv_other_report_owner_denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "blob_csv_exists",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "blob_csv_not_public",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "snapshot_csv_owner_read",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "snapshot_csv_matches_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "ready_csv_reused",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_pdf_accepted",
+          "outcome": "PASS",
+          "status": 202
+        },
+        {
+          "assertion": "queue_pdf_reuse_same_id",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "worker_pdf_targeted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_pdf_ready_snapshot_scope",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_pdf_ttl_seven_days",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_pdf_authorized",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "download_pdf_hash_size_match",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queued_pdf_pdf_pages",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_pdf_anonymous_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "download_pdf_other_report_owner_denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "blob_pdf_exists",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "blob_pdf_not_public",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "snapshot_pdf_owner_read",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "snapshot_pdf_matches_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "ready_pdf_reused",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_xlsx_accepted",
+          "outcome": "PASS",
+          "status": 202
+        },
+        {
+          "assertion": "queue_xlsx_reuse_same_id",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "worker_xlsx_targeted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_xlsx_ready_snapshot_scope",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queue_xlsx_ttl_seven_days",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_xlsx_authorized",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "download_xlsx_hash_size_match",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "queued_xlsx_ooxml",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "download_xlsx_anonymous_denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "download_xlsx_other_report_owner_denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "blob_xlsx_exists",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "blob_xlsx_not_public",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "snapshot_xlsx_owner_read",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "snapshot_xlsx_matches_persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "ready_xlsx_reused",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "three_report_formats_exercised",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "ready_and_download_audit_preserved",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "cleanup_owned_blobs_1_removed",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "cleanup_owned_blobs_2_removed",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "cleanup_owned_blobs_3_removed",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "cleanup_only_owned_jobs_removed",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_document_movement",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_document_participation",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_attachment",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_module_record",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_module_version",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_module_file",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_document_job",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_department",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "preservation_app_user",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "directory": "learning-support-63ae355e-87d7-43d4-b8cf-dc8dfd080996",
+      "file": "results.redacted.json",
+      "sha256": "ad050c6ddcf5f9c4c4387298fe7678211199aa992195da557fae9be15d395260",
+      "passed": 101,
+      "assertions": [
+        {
+          "assertion": "existing-active-admin-resolved",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "existing-admin-session",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "create-exclusive-sector",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "api-database-binding",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "provision-owned-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "provision-owned-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "provision-owned-user",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "n3-cannot-create-course",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "invalid-course-threshold-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "create-owned-two-lesson-course",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "learner-course-list",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "course-published-without-answer-key",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-before-completion-denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "cannot-skip-first-lesson",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "assessment-before-lessons-denied",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "out-of-range-lesson-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "complete-first-lesson",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "first-lesson-progress",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "lesson-idempotency",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "lesson-repeat-does-not-advance",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "assessment-after-only-one-lesson-denied",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "complete-second-lesson",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "incomplete-assessment-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "assessment-failed",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "failed-score-without-certificate",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "failed-assessment-no-certificate",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "assessment-passed",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "passed-score-certified",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certified-assessment-immutable",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "certificate-download-status",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "certificate-private-pdf-headers",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-download-status",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "certificate-private-pdf-headers",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-stable-sha256",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-parseable-pdf",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-bound-to-own-learner",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "other-user-certificate-denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "query-user-id-cannot-impersonate",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "anonymous-certificate-denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "other-user-own-progress-only",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "other-user-no-progress-leak",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "certificate-sql-immutable",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-critical-ticket",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "ticket-critical-sla",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-high-ticket",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "ticket-high-sla",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "create-normal-ticket",
+          "outcome": "PASS",
+          "status": 201
+        },
+        {
+          "assertion": "ticket-normal-sla",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "ticket-other-user-read-denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "ticket-other-user-write-denied",
+          "outcome": "PASS",
+          "status": 404
+        },
+        {
+          "assertion": "ticket-anonymous-denied",
+          "outcome": "PASS",
+          "status": 401
+        },
+        {
+          "assertion": "other-user-ticket-list",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "ticket-list-private-to-requester",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "n3-cannot-change-ticket-status",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "n3-cannot-assign-ticket",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "n3-cannot-close-ticket",
+          "outcome": "PASS",
+          "status": 403
+        },
+        {
+          "assertion": "rating-before-closure-denied",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "requester-reply",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "requester-reply-is-not-support-first-response",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "manager-invalid-assignee-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "manager-assign-and-start",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "support-first-response-and-assignment",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "manager-escalate",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "support-first-response-immutable",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "manager-resolve",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "support-resolved-timestamp",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "manager-cannot-rate-another-requester",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "invalid-ticket-rating-denied",
+          "outcome": "PASS",
+          "status": 400
+        },
+        {
+          "assertion": "requester-rate-resolved-ticket",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "ticket-rating-persisted",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "resolved-cannot-skip-reopen",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "manager-reopen-ticket",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "reopen-clears-rating-and-resolution",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "reopened-ticket-rating-denied",
+          "outcome": "PASS",
+          "status": 409
+        },
+        {
+          "assertion": "manager-close-again",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "requester-rates-new-closure",
+          "outcome": "PASS",
+          "status": 200
+        },
+        {
+          "assertion": "support-final-sql-state-and-history",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-owned-resources-cleaned",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "firebase-owned-accounts-cleaned",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "sql-cleanup-confirmed-zero",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "firebase-cleanup-confirmed-absent",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "firebase-cleanup-confirmed-absent",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "firebase-cleanup-confirmed-absent",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "no-ambiguous-requests",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "directory": "restore-app-1794362542089",
+      "file": "results.json",
+      "sha256": "15458ca2a255c56d6f4c28dee1e4be27f499a78fa83b41e27d653091df5e7d92",
+      "passed": 12,
+      "restore": {
+        "status": "RESTORED_APPLICATION_AND_ISOLATED_STORAGE_VERIFIED",
+        "startedAt": "2026-11-11T02:02:22.245Z",
+        "completedAt": "2026-11-11T02:02:59.796Z",
+        "rtoRehearsalMs": 37551,
+        "remappedOriginals": 3
+      },
+      "assertions": [
+        {
+          "assertion": "fresh-backup-manifest-and-dump",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "database-and-files-restored",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "only-restored-db-storage-keys-remapped",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "restored-application-http-ready",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "restored-application-authenticates-real-session",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "restored-application-authorizes-original-document",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "restored-app-download-original-hash",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "restored-app-uses-real-file-size",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "restored-application-rejects-anonymous-download",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "missing-isolated-file-does-not-fall-back-to-source-blob",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "restored-reader-cannot-mutate-administration",
+          "outcome": "PASS"
+        },
+        {
+          "assertion": "source-storage-key-was-never-remapped",
+          "outcome": "PASS"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "file": "package-lock.json",
+      "sha256": "e3e4e6f305f0426ed485a53ab57eb36bd91f4deb97cab8d5bc6166b686759e53"
+    },
+    {
+      "file": "package.json",
+      "sha256": "299dbcda0b0ae67d4fa03942b85e167ac8e9dac3283e5ec11712af32620255b2"
+    },
+    {
+      "file": "scripts/restore-operations.ts",
+      "sha256": "219692124c6bfcb4a0a9b4993fb68fe29a6ad4ee91d5307c1f980752dce8527c"
+    },
+    {
+      "file": "scripts/restore-sql-bridge.ts",
+      "sha256": "bb4f367be31c64611cefc16e49345714ce672cf5df857817685b84a0df74fe5b"
+    },
+    {
+      "file": "scripts/stages89-scenarios.ts",
+      "sha256": "52b3dc966c01a89fb91346b0f77276ab06629afecb3aa67dce6b9b725832da32"
+    },
+    {
+      "file": "scripts/validate-capacity.ts",
+      "sha256": "9dcd4544ba3b42bae0f91374f5bb0f67b3cbbde538a9b23056daa11aa77b2f53"
+    },
+    {
+      "file": "scripts/validate-integrated.ts",
+      "sha256": "1cceacb8eee907f9a0d05dacfa4eee5e0ff52dcdc95dec20e2011fe7ce1f97a4"
+    },
+    {
+      "file": "scripts/validate-learning-support.ts",
+      "sha256": "27ac9cbaba7d12439b81e3bf5ef1816ada775662327a342f139f5e2855c5a9f8"
+    },
+    {
+      "file": "scripts/validate-operations.ts",
+      "sha256": "b1d57edf053c95725aad26e580f8ba67b6b8059b05a047db37fd661dc315b911"
+    },
+    {
+      "file": "scripts/validate-restored-application.ts",
+      "sha256": "bccc70b72b7f6af12649e2bb55246060971472ffa8528f8d51197855d4e333a4"
+    },
+    {
+      "file": "scripts/validate-stages-8-9.ts",
+      "sha256": "ea6f34d2803cda73eac2667fcbac43c2e16cb32a5051cc7da6dc2b60024b778f"
+    },
+    {
+      "file": "src/app/admin/page.tsx",
+      "sha256": "a509684baeaeda68568f3a2322bfa108a69d3be98a9c3920ff8a747d9f469bd2"
+    },
+    {
+      "file": "src/app/ajuda/page.tsx",
+      "sha256": "4a88adc462327deb80908ff59583435be3ea2dcfb8d356787f0e1c5f00781caa"
+    },
+    {
+      "file": "src/app/api/admin/departments/[id]/route.ts",
+      "sha256": "6f9cf723395374847a3eee41f429ecbfcd8d44c6f938e546f07fc8f7b1c8aeda"
+    },
+    {
+      "file": "src/app/api/admin/departments/route.ts",
+      "sha256": "5db854d68cbb33f8df5150c916d44d74f28c5cf289d2f3489788d7d03586afbb"
+    },
+    {
+      "file": "src/app/api/admin/holidays/route.ts",
+      "sha256": "c44dc197411e14a0e9add621d256d161c45505e6e0881a4445a6f583d5226f1b"
+    },
+    {
+      "file": "src/app/api/admin/me/route.ts",
+      "sha256": "907266866dfcf41e28f89105535be834a926b6f913cabf6d14355cfe36e7b7ea"
+    },
+    {
+      "file": "src/app/api/admin/users/[id]/history/route.ts",
+      "sha256": "1f635b3d59e7ce14861b5402543e508c99fc8884fac131e4f04d5331596b109c"
+    },
+    {
+      "file": "src/app/api/admin/users/[id]/role/route.ts",
+      "sha256": "5b12094441fc24b483d64cead660a2b652c9b621d6f21ee4e8b687017e82c677"
+    },
+    {
+      "file": "src/app/api/admin/users/[id]/route.ts",
+      "sha256": "e4bb2e09c3b898bf71eb4173ff3f7fed66fd733ed6cfb7089bb04985a7de5b5c"
+    },
+    {
+      "file": "src/app/api/admin/users/route.ts",
+      "sha256": "8fc590c15a9c6dc653d1a94890f2f315bf4d441e3c6ff04553abdaf89890cb19"
+    },
+    {
+      "file": "src/app/api/attachments/[id]/route.ts",
+      "sha256": "040259b109860132750674021bb3e295d522d04d0e7a472d0b4acc289a25dd65"
+    },
+    {
+      "file": "src/app/api/auth/govbr/callback/route.ts",
+      "sha256": "33cae677dafd80b243330c8f359214cf23230617eaa1c074b71eab963c8cd627"
+    },
+    {
+      "file": "src/app/api/auth/govbr/link/route.ts",
+      "sha256": "91440971190189e19ce22f653e5cc39768bfbaf6ee98af911d8f0b21248db4b1"
+    },
+    {
+      "file": "src/app/api/auth/govbr/login/route.ts",
+      "sha256": "33a18d78d2d5f67021090475afca2751f0f330a6fd4e270430a558a76478ad5b"
+    },
+    {
+      "file": "src/app/api/cep/route.ts",
+      "sha256": "396885eb7dad6f863d0d3d2ed86ea7062f230f1cdbb43f25c5394d77153c7a25"
+    },
+    {
+      "file": "src/app/api/cidadao/conta/cadastro/route.ts",
+      "sha256": "493b114c5623eef6107bededdb78acf0d5b207bed593cca8ddbbefd7dea440b8"
+    },
+    {
+      "file": "src/app/api/cidadao/conta/route.ts",
+      "sha256": "83942576636e45f78d344ff0eb12861441c64125f9f286e8fb5d7f9e014d0620"
+    },
+    {
+      "file": "src/app/api/cidadao/requerimentos/[key]/attachments/[id]/route.ts",
+      "sha256": "d5aabd789300f8bf00a34f9be87fecacb7450056c104131e0641d3ea6d2a9f23"
+    },
+    {
+      "file": "src/app/api/cidadao/requerimentos/[key]/attachments/route.ts",
+      "sha256": "d32d2b0f80270e56bb109458fd42669fbdfc2546945558faac0be4cf7039b78e"
+    },
+    {
+      "file": "src/app/api/cidadao/requerimentos/[key]/route.ts",
+      "sha256": "4428610528eb940982c97013ad2467f51c6807324e43df7b73eacaec4d23d150"
+    },
+    {
+      "file": "src/app/api/cidadao/requerimentos/route.ts",
+      "sha256": "555079ecd5a8099359842f8c289b8e3ce334d7a6c6d53385c94cfa46704c9527"
+    },
+    {
+      "file": "src/app/api/circulars/[id]/read/route.ts",
+      "sha256": "38b26f4bbe49b97f7d4eb390ab08fa7c7cd822506f475d561cf32175e22f647c"
+    },
+    {
+      "file": "src/app/api/circulars/[id]/recipients/route.ts",
+      "sha256": "cebce7f097fcfca13e408c7db5a11d7afc39bacd9cc5a4b2e77f3271e834a127"
+    },
+    {
+      "file": "src/app/api/circulars/[id]/route.ts",
+      "sha256": "ea636cf606ff5fa98077bcdd22a87c521d63ec2541256b4bcd0bf2f0a2690efe"
+    },
+    {
+      "file": "src/app/api/circulars/route.ts",
+      "sha256": "c49476c6c68cf787f42b6af1931beda436983513538a1d7560b3885da5942ab8"
+    },
+    {
+      "file": "src/app/api/deadlines/[id]/route.ts",
+      "sha256": "58a6a0de8c3fe4c91a0daa73d039d876466bcdf1fc60aad3df8c4d1393d99092"
+    },
+    {
+      "file": "src/app/api/deadlines/calculate/route.ts",
+      "sha256": "c874595a838ce6811e02b5e3191ab4141bfa27f9697a1ace380866291bd16625"
+    },
+    {
+      "file": "src/app/api/deadlines/route.ts",
+      "sha256": "fe3400d2f737d9cf6b21cb5ac4afbead88d2440768bfee15fcef1350df6b56c1"
+    },
+    {
+      "file": "src/app/api/documents/[id]/actions/route.ts",
+      "sha256": "2a84838f07f9e6c714d52a6e95da961dd7de30ff9734c1d6640e92ecc59bd0be"
+    },
+    {
+      "file": "src/app/api/documents/[id]/assignment/route.ts",
+      "sha256": "b9e185840d4874a113db70ca20aec21538edef2d9dc65957097aa26072800293"
+    },
+    {
+      "file": "src/app/api/documents/[id]/attachments/route.ts",
+      "sha256": "05cdcb240ec573fd7a796e32c7615e9c00ea9c5cf08f83302c0c7af263d48b46"
+    },
+    {
+      "file": "src/app/api/documents/[id]/deadlines/route.ts",
+      "sha256": "bfe498ddf2994f585a5985bb8e65f96114a6206c091230df635a1892f166ace9"
+    },
+    {
+      "file": "src/app/api/documents/[id]/forward/route.ts",
+      "sha256": "ef2b4a61798192d5738e45ba14eaeca897391e36153365769564e2326e9d3ada"
+    },
+    {
+      "file": "src/app/api/documents/[id]/receive/route.ts",
+      "sha256": "4961baa8b25138c6a24192299a1057949a658fb2138eb7605bf01abe3ab605bc"
+    },
+    {
+      "file": "src/app/api/documents/[id]/route.ts",
+      "sha256": "ddf9e5d254eb075e84569f6f5507254a5f13925f963af7d0740ff31c743f7ca2"
+    },
+    {
+      "file": "src/app/api/documents/route.ts",
+      "sha256": "88011405e91415c3272e55c8cf491822ed8580a51b7ab76469f8cb1fc8b23f9a"
+    },
+    {
+      "file": "src/app/api/email/inbound/route.ts",
+      "sha256": "ffb42dee7c9fdd03df1349c9bdf4f97407729ec4cbcf377541bf638651c69df3"
+    },
+    {
+      "file": "src/app/api/email/inbound/simulate/route.ts",
+      "sha256": "78a6f0d9a7355a040fb5137da49959b07477da9b7272e006f439cc4ff3874d5b"
+    },
+    {
+      "file": "src/app/api/health/route.ts",
+      "sha256": "5d1098200f698e556cbee7a84d834e6fc2726fd99f28776e9370c767c4f24ba5"
+    },
+    {
+      "file": "src/app/api/jobs/[id]/download/route.ts",
+      "sha256": "c8e15166b551792fc43352743a229fbda18f14fd29c50977ca006ad06e2b7c78"
+    },
+    {
+      "file": "src/app/api/jobs/[id]/route.ts",
+      "sha256": "ff679361489b9725c8821513f545225e655db4356b95799320068c27eba918ea"
+    },
+    {
+      "file": "src/app/api/jobs/[id]/text/route.ts",
+      "sha256": "5e03a400b8ee9bd013942e412b681f0db8b47b2e3daeee659083ab9f8f8d5a37"
+    },
+    {
+      "file": "src/app/api/jobs/[id]/validation/route.ts",
+      "sha256": "f69c75774b2fa42774aa10782f19eb82a78742ed89130f0b89e8f0a7834331d1"
+    },
+    {
+      "file": "src/app/api/jobs/options/route.ts",
+      "sha256": "7ae233fbd4f38a5aca0176102f5a12bcfb81bfd121a6d82eddd1e4b401969834"
+    },
+    {
+      "file": "src/app/api/jobs/route.ts",
+      "sha256": "949159528517f30f21c80a6ced3cbeb8cf1beb435ba96628394c18a6c73bc1e3"
+    },
+    {
+      "file": "src/app/api/modules/[family]/export/route.ts",
+      "sha256": "d90bf0ca87c1460fd960068917966ba52a22afc251b632a113f23a9256f4efaa"
+    },
+    {
+      "file": "src/app/api/modules/[family]/route.ts",
+      "sha256": "7771c46ee8c23ec3ae583595a5b976489d591d145c1a1bf644e8a8c2fa4aeb2b"
+    },
+    {
+      "file": "src/app/api/modules/anonymous/files/[fileId]/route.ts",
+      "sha256": "6a5c9f8adfba1fe30c4dee5d2fcdc32983cbda9cc0a279fd95e5988386021528"
+    },
+    {
+      "file": "src/app/api/modules/anonymous/files/route.ts",
+      "sha256": "6e509cca6c70697fe75adf15b08c4967ebc3698da43da5c8676ed8d3a5a2b407"
+    },
+    {
+      "file": "src/app/api/modules/anonymous/route.ts",
+      "sha256": "e2eb0244624273ea70c0f7cc01639413e40389874aaaf1b46d437480120ac448"
+    },
+    {
+      "file": "src/app/api/modules/business-hours/route.ts",
+      "sha256": "e5cec890e0fc568a9666555f5b4d3d215790f92f08cd07090d34f5f8b0361ed2"
+    },
+    {
+      "file": "src/app/api/modules/classification/route.ts",
+      "sha256": "d9c0048986032267fde2b3cdb09620a98ccde422a7b8176fd4134118053710c5"
+    },
+    {
+      "file": "src/app/api/modules/contatos/[id]/legado/route.ts",
+      "sha256": "0f7cb68ea2343725eb597e1448c7dacfb2c34108a9127ae965dd0f59a3940e50"
+    },
+    {
+      "file": "src/app/api/modules/contatos/[id]/route.ts",
+      "sha256": "625e50a18b6fc058609805f728480326c85d4070081d92d108870784cca18638"
+    },
+    {
+      "file": "src/app/api/modules/contatos/import/route.ts",
+      "sha256": "24cc2dac987ca13b86c381af1887e33875f9299c49c3a312d84ac95c57e13a2e"
+    },
+    {
+      "file": "src/app/api/modules/contatos/perfis/[id]/route.ts",
+      "sha256": "1c764959f4253e684e6709e42bc28399739193e9abdfbdeec782749525f930e9"
+    },
+    {
+      "file": "src/app/api/modules/contatos/perfis/publicos/route.ts",
+      "sha256": "3f5514be875f0bf3251b55b249f272487825625e501fb1b10ad22c10f0ff0dfb"
+    },
+    {
+      "file": "src/app/api/modules/contatos/perfis/route.ts",
+      "sha256": "58eee4783f249942a6230be3107d8e663d9228f25fa57fc11cccc18c0564c7ec"
+    },
+    {
+      "file": "src/app/api/modules/contatos/route.ts",
+      "sha256": "d5b4aadab4ffc3f6c33fd9aa638b692c44fbf71caee68dfb2d757c7ae018b2c7"
+    },
+    {
+      "file": "src/app/api/modules/contatos/segmentos/[id]/route.ts",
+      "sha256": "39a47123efdca3cc95b9eb768c8b09e39262ff756c1ac1f28b88518e1d82bddf"
+    },
+    {
+      "file": "src/app/api/modules/contatos/segmentos/route.ts",
+      "sha256": "0dbdd95fa93163d5e9765f376a1fbcf4d8943bf1ef40407fda9181d95d6015bf"
+    },
+    {
+      "file": "src/app/api/modules/contatos/unificar/route.ts",
+      "sha256": "9995f1c9a709f44705daa380c0e1cc461c505d7b8bc8c93ff5d659a169ae3ea3"
+    },
+    {
+      "file": "src/app/api/modules/delegations/report/route.ts",
+      "sha256": "8f6eda8ceacca26747c413100c10c87cf3b03b481314edd3ac7517dc0d92bf6e"
+    },
+    {
+      "file": "src/app/api/modules/diary-catalog/editions/[id]/route.ts",
+      "sha256": "d40d4db3b076e4fdb334d9be92fae9999f61b2c244c3ad7c0ac73a4cba77d5e0"
+    },
+    {
+      "file": "src/app/api/modules/diary-catalog/route.ts",
+      "sha256": "895ae810fa5ed45caa22fa4b1db69d4cfc560539da8298c72ac64fe09d8a3554"
+    },
+    {
+      "file": "src/app/api/modules/editions/[id]/route.ts",
+      "sha256": "8af986a4be73b0705f15ae7027bcd1fce3750989425559b479d28b59f4f340ca"
+    },
+    {
+      "file": "src/app/api/modules/editions/route.ts",
+      "sha256": "7b5123b03f22c0cc1e40d0159051e16f4b7cfeccd86c1766617c7dc5727a83f6"
+    },
+    {
+      "file": "src/app/api/modules/external/[id]/files/[fileId]/route.ts",
+      "sha256": "e9b2f702849635468e0968c62594e193c9d3afbf3d1f206b466eb26cddde78fe"
+    },
+    {
+      "file": "src/app/api/modules/external/[id]/files/route.ts",
+      "sha256": "807e75a56998845f5eb1c51b55355ee420ee28084406a3f4eac141a707edf15e"
+    },
+    {
+      "file": "src/app/api/modules/external/[id]/route.ts",
+      "sha256": "58c6617293f74d8a3b7d7ed320deb35fa483c11561d83417b333af209cbd3266"
+    },
+    {
+      "file": "src/app/api/modules/external/mandates/[id]/route.ts",
+      "sha256": "ad2ac39a77525c587dadefef2b6b0700f45801dca9667239c1a7b014ae7fb0d7"
+    },
+    {
+      "file": "src/app/api/modules/external/mandates/route.ts",
+      "sha256": "a504a2b946d6e213d794531b05e4cb6104fcfd03700c1ce8a92b96195f14c2a7"
+    },
+    {
+      "file": "src/app/api/modules/external/route.ts",
+      "sha256": "0e3556d86d4e6a7ef20d92420124915bbf4fc37768b3d155d7a691bf0d072d70"
+    },
+    {
+      "file": "src/app/api/modules/geospatial/import/route.ts",
+      "sha256": "2ea513c8a39982875d9e7d2c3fff7f55345dde9ac40c362af1e0e7ef00265bf8"
+    },
+    {
+      "file": "src/app/api/modules/geospatial/services/route.ts",
+      "sha256": "6ae26851e11572d146e8279f175b6d2b644e2c2d1a875e758575198a8d7947f5"
+    },
+    {
+      "file": "src/app/api/modules/options/route.ts",
+      "sha256": "a5d58ed052315877e93ad9e9a42c290f3805148af6c5ff87c6deb7eb6aa8df50"
+    },
+    {
+      "file": "src/app/api/modules/public/route.ts",
+      "sha256": "0c14b5457e629f785ad9859cdefb55fe95ff50839027422630f231354f6b9a0e"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/annotate/route.ts",
+      "sha256": "df9aafbc5115affbc95a3724eac40126839ec82189905370ad5b487c8a3f554a"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/completion/route.ts",
+      "sha256": "0e5b4823bf91006230ad9af0efe52dd0bb3410cd0f21f305aa5676d16bf55a96"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/delegation/route.ts",
+      "sha256": "205f6ae61974ba3fa7f23313b31f99ccff8f50863aa1f7a5a83184d0565ea566"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/docx/route.ts",
+      "sha256": "83a1f62fe3f807a8fd0e872c311641657c7b6888bcbc6b063a3c3cd50bb90503"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/export/route.ts",
+      "sha256": "7dcc63196d08f473c672250c4d9cdd410241c4fbd4d5d0b96c252aff023dc990"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/files/[fileId]/route.ts",
+      "sha256": "7035bc92c3a3e8a59622d641afeb89fc1228aff6089218ad2ae6e2aeb2d9bf88"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/files/route.ts",
+      "sha256": "81301ce681c806f4f862e6e4bdd05b242e507482a9847a750a09fb2d636ae8b9"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/inspections/route.ts",
+      "sha256": "281fbeaa02abe8ee6da9b27474e3b9d7a7eae28f4facff6766afb9081ccb99cc"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/lease/route.ts",
+      "sha256": "1eb49abce1065e7e3cc07414c104db07d051f41b14576b9863a9841600bcae4f"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/route.ts",
+      "sha256": "97b30f497738b4f17535768fd63322911a6bc8ed5b5283261abe4b8c09b0d052"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/urban-analysis/route.ts",
+      "sha256": "d71b2466999530c44071b34e9813bff69df92d862c9d538e2aa2183283198c28"
+    },
+    {
+      "file": "src/app/api/modules/records/[id]/versions/[revision]/route.ts",
+      "sha256": "a7f1d47275acc3a61e7bb64f52846a71052b0ee55a580be99a4321ff62b07661"
+    },
+    {
+      "file": "src/app/api/modules/signatures/route.ts",
+      "sha256": "6ea28d1107931806d5bd0848bcf3c9118aa5c274db9147d79e420de8f0fc90b1"
+    },
+    {
+      "file": "src/app/api/operations/audit/route.ts",
+      "sha256": "10c19ef0bdaa1c32662c01f34f57ee3cba0065afe60541f6d18cc8925b6ff7ac"
+    },
+    {
+      "file": "src/app/api/operations/contract-reports/route.ts",
+      "sha256": "5f6ee99c409ae218361ce2a1cf16a23d445f73f0d44a6fabca5438cb58df0101"
+    },
+    {
+      "file": "src/app/api/operations/courses/[id]/route.ts",
+      "sha256": "15a6adf96c82f66a8e4cedc3dd8a816bef1ec34115e8479e05c71d66d0a38697"
+    },
+    {
+      "file": "src/app/api/operations/courses/route.ts",
+      "sha256": "cdcb1a588f04e0393ab74da9e879e956181abb10f60fb627135d2957fc924eba"
+    },
+    {
+      "file": "src/app/api/operations/delegations/route.ts",
+      "sha256": "1ed953566f5fb882373478ddc4d13907946645184858793ea3408600d8e068f2"
+    },
+    {
+      "file": "src/app/api/operations/export/route.ts",
+      "sha256": "baf28524f1a120cdf85b3d73134e0e79184345cd8f8d304d1928aea13688039b"
+    },
+    {
+      "file": "src/app/api/operations/geo/route.ts",
+      "sha256": "ba43b560e7f7c7f7e7dd98992def1edb221f7301961853aeb38621007172feb6"
+    },
+    {
+      "file": "src/app/api/operations/health/route.ts",
+      "sha256": "68bab36a3c4d16f70d417877bd5274983e843b83df1d8a4d126e157c310ca0cf"
+    },
+    {
+      "file": "src/app/api/operations/report-jobs/[id]/route.ts",
+      "sha256": "09a943261ead54cbaa5af09cca131a67b341d80c5e92a8f411d7f91eddb00ce6"
+    },
+    {
+      "file": "src/app/api/operations/report-jobs/route.ts",
+      "sha256": "cffacff33da8a5f73d863a0c2fa83059df8c699cb76c4832b393f0a12494432f"
+    },
+    {
+      "file": "src/app/api/operations/reports/route.ts",
+      "sha256": "f4bba162ea0743c7a4d68d08728c639dce484fe61dc9d0f112bb336dbd55d6b6"
+    },
+    {
+      "file": "src/app/api/operations/scheduled/route.ts",
+      "sha256": "99d2ef75cf5094f8aaa8806666dbb8ce9b93df3d90af7e0cb1ebe79f91768d8e"
+    },
+    {
+      "file": "src/app/api/operations/tickets/[id]/route.ts",
+      "sha256": "a4f8325928d3b13d8fb757df2ff8bafa7062d4df0d28165877982629bd2526e0"
+    },
+    {
+      "file": "src/app/api/operations/tickets/route.ts",
+      "sha256": "2df5fff374520d1aafec830b3a8f716427fbb0239a5b0a8ae1d9355f09a276f4"
+    },
+    {
+      "file": "src/app/api/process-tree/route.ts",
+      "sha256": "a85972760c9a258c089923f0ad10d7f01742ee50685054ddd317abfe58eb810f"
+    },
+    {
+      "file": "src/app/api/publico/[key]/route.ts",
+      "sha256": "bc2faf14ea64027bcd74e29204a58326bdbb54cebc272f4b151c242bba89e442"
+    },
+    {
+      "file": "src/app/arvore/page.tsx",
+      "sha256": "e8c1d4c7e4a1fb076898c288ef78e8537ca58cfd99e161923d2fb6f6f5153162"
+    },
+    {
+      "file": "src/app/calendario/page.tsx",
+      "sha256": "a15f978021c5d1e65d4aa758df0a02f256253971e627a5c66b156c905cfb1406"
+    },
+    {
+      "file": "src/app/cidadao/conta/ContactProfileFields.tsx",
+      "sha256": "121aa552a2d9647dfedc8570cbfec6fd3f0e712c8af158fd843a67afcd08aa4b"
+    },
+    {
+      "file": "src/app/cidadao/conta/ExternalAccount.tsx",
+      "sha256": "ab5d597dc6da72dc8c47d563fc6c46e705717171198d5d385861bab38445f281"
+    },
+    {
+      "file": "src/app/cidadao/conta/cadastro/page.tsx",
+      "sha256": "eb3964cf527e95200b364da815e4746602cb68dc8ff7fdc483bdf3b4db819263"
+    },
+    {
+      "file": "src/app/cidadao/conta/page.tsx",
+      "sha256": "245ca1152025f0f28a4b35e340d574968b48b7ff91c68a8740777f754e6e036e"
+    },
+    {
+      "file": "src/app/cidadao/page.tsx",
+      "sha256": "e2ed7d4efbdd8c1ec36e07bf537fcf379f4508da8474bba9239ab4a2f7a73d73"
+    },
+    {
+      "file": "src/app/cidadao/processos/[key]/page.tsx",
+      "sha256": "a206f27f99bb92bf713a877695ef1389381ce92eacdb45d337fc43fed5f3be43"
+    },
+    {
+      "file": "src/app/circulares/[id]/page.tsx",
+      "sha256": "3f0e6c773a63483ca3ae81e03b3614871c57346859cbb73782d3f3b74bd609a7"
+    },
+    {
+      "file": "src/app/circulares/nova/page.tsx",
+      "sha256": "2d18f878f0d7c2678a65279f0b6345c08cfa57680811a18040407769223475c4"
+    },
+    {
+      "file": "src/app/circulares/page.tsx",
+      "sha256": "d997424304b67fbde16ddbd3dea0e7eba0da3e80ea92342cbf72fca97020aea4"
+    },
+    {
+      "file": "src/app/documentos/[id]/page.tsx",
+      "sha256": "4d819a17c37bef31320034a9791b3282b6f8edf8c02f1e45042137b7d8699e04"
+    },
+    {
+      "file": "src/app/documentos/novo/page.tsx",
+      "sha256": "af52a3dcc3e6551b11202f18a3d5f6fe8faa5c98778d532414792ac448735c41"
+    },
+    {
+      "file": "src/app/documentos/page.tsx",
+      "sha256": "10419b3e52cf5fa7097d51e21a8c3692b8d8344570df5075e507f1a1586745a1"
+    },
+    {
+      "file": "src/app/error.tsx",
+      "sha256": "eab0d9bc98f6c5acb8543326e47debac507f6d9d18d0b478363a8d6cfe07465d"
+    },
+    {
+      "file": "src/app/gestao/Content.tsx",
+      "sha256": "330291d3303f939947d20ee05dde497073bd8016b8192e0103bec6499d4a8b83"
+    },
+    {
+      "file": "src/app/gestao/DocxImport.tsx",
+      "sha256": "1c2d96e5ca1bfca0fac6aacb3048ed37ee97c13ef70c00b4af845cd715aa6793"
+    },
+    {
+      "file": "src/app/gestao/Form.tsx",
+      "sha256": "5c01339f4310756b64398557b83d12c2ba34448011c34748d3d2c943ded69b3a"
+    },
+    {
+      "file": "src/app/gestao/Inspection.tsx",
+      "sha256": "e8ecaf2eb64fed47b6bb73e52054f9164db9db7e939a820c1c30edf700648b73"
+    },
+    {
+      "file": "src/app/gestao/PdfMeasure.tsx",
+      "sha256": "391ef03d44046624763142ac84c30539482a032d79ed66cfcc4f83f7dbdf93c4"
+    },
+    {
+      "file": "src/app/gestao/PdfPreview.tsx",
+      "sha256": "dd0ff11c792fe3826a907aa80b1b646e8f4ba3d4f24e29e68a0afc8118616908"
+    },
+    {
+      "file": "src/app/gestao/ShapefileImport.tsx",
+      "sha256": "6e58092cb34a34afa020443421f3bf45e6f2c2df6169f6e00d47d07889c68fd0"
+    },
+    {
+      "file": "src/app/gestao/Signers.tsx",
+      "sha256": "78a81bc8fc68a0ea0047e4ee5976f2a98738bc8b01b82d33b2520ef49c339896"
+    },
+    {
+      "file": "src/app/gestao/UrbanAnalysis.tsx",
+      "sha256": "fe1e11f97a3a8d56991075e6e5b48aea80c9c4a9c2f8d3f527cd05f24ea1a90a"
+    },
+    {
+      "file": "src/app/gestao/WorkflowRules.tsx",
+      "sha256": "ae409e4986d4a7106efaff1653c8e1e620f17833a35d1530c275196f5c88b969"
+    },
+    {
+      "file": "src/app/gestao/[family]/novo/page.tsx",
+      "sha256": "9c86594137e9e952236e616b6edf29c7d1a59448c22b874761291d18cfe01d13"
+    },
+    {
+      "file": "src/app/gestao/[family]/page.tsx",
+      "sha256": "998c6fba12fa246a276daeb8ecbe94eddb1437842e003a73a5723f361ea170eb"
+    },
+    {
+      "file": "src/app/gestao/anonimo/page.tsx",
+      "sha256": "affc8c3ec30c805befe9020e2dbde1141b271b0e86559ec3b35ac8fbd605a054"
+    },
+    {
+      "file": "src/app/gestao/assinaturas/page.tsx",
+      "sha256": "fdb477749572065222bceba8e0acd76f19c3fd325a3aa083aa05cbd5c2af5e2c"
+    },
+    {
+      "file": "src/app/gestao/central/[id]/page.tsx",
+      "sha256": "f3bb18e38996573485c01f8100fb92bad58be213d9d54c913be659e90b546b6a"
+    },
+    {
+      "file": "src/app/gestao/central/client.tsx",
+      "sha256": "dbffc7073c81aa3aa56b9676f230249a7aee7ae68fd25eded227cd960e5b45fc"
+    },
+    {
+      "file": "src/app/gestao/central/mandatos/page.tsx",
+      "sha256": "d6449d640a5f79f713958ad1e90317cddd31bc5007f2641136315322fbc47d76"
+    },
+    {
+      "file": "src/app/gestao/central/novo/page.tsx",
+      "sha256": "aa0533f2bcbe3d2aec9c34d0bdd2df267d44d99ea978f623c51439f698fa62b5"
+    },
+    {
+      "file": "src/app/gestao/central/page.tsx",
+      "sha256": "48ec2e247b7e9e4d5c58abbab4d75b5f06fd8cc3121f43b256598d9286227ada"
+    },
+    {
+      "file": "src/app/gestao/classificacao/lote/page.tsx",
+      "sha256": "1a9036ccb402917d65647e169b9adfe1cb7ede877393818867ca6597ba69e056"
+    },
+    {
+      "file": "src/app/gestao/client.tsx",
+      "sha256": "22cccda3e30b82ecabad0b8a7710cbe9cbf5ffd83159dca199f20afc53ac93f9"
+    },
+    {
+      "file": "src/app/gestao/contatos/ContactEditor.tsx",
+      "sha256": "ab359cefff8a53194b9242417ef48439e99981357d8570495d3d5962cfd18c8a"
+    },
+    {
+      "file": "src/app/gestao/contatos/cadastro/[id]/page.tsx",
+      "sha256": "f141d4c538e6d772abb787060f76a1643e06c39494333ee0e9e5874bcbcfd6e1"
+    },
+    {
+      "file": "src/app/gestao/contatos/importar/page.tsx",
+      "sha256": "06b51bff9a2f5c7a08fb4496d77e59827d09e6d44fdddd3df079200bfa03421a"
+    },
+    {
+      "file": "src/app/gestao/contatos/novo/page.tsx",
+      "sha256": "d7c964ebd42de98d63e1e5361295093dccdf8d39f24c100a4899d7aed417705c"
+    },
+    {
+      "file": "src/app/gestao/contatos/page.tsx",
+      "sha256": "1354cacbaa03b9d30112d84d358c376b45d69f9f1b19253bb7a80dc3b81452e4"
+    },
+    {
+      "file": "src/app/gestao/contatos/perfis/page.tsx",
+      "sha256": "af4071df8dcdf43ecbaa9f8bb1e67cca4397261b8145e70d45e6d0ebb9f90a4d"
+    },
+    {
+      "file": "src/app/gestao/contatos/segmentos/page.tsx",
+      "sha256": "75f49279873730e586224c262deb5c780ad21837bff4e7f7c615a23f8d130a96"
+    },
+    {
+      "file": "src/app/gestao/contatos/unificar/page.tsx",
+      "sha256": "308cda2a231d65578bc00f63dcedc4d56e5d4487c4fac65811ffc338e4af92a2"
+    },
+    {
+      "file": "src/app/gestao/delegacoes/emissoes/page.tsx",
+      "sha256": "d9a6c5c2cb768a5656f2340f11f57d0eb6235f2cbd4ae2ef2bf40a22896ac12f"
+    },
+    {
+      "file": "src/app/gestao/diario/catalogo/page.tsx",
+      "sha256": "19d4d7ac6b53be793d861ed677ab9204134c4839805f589d04b668a025c2f230"
+    },
+    {
+      "file": "src/app/gestao/edicoes/page.tsx",
+      "sha256": "4b3cb197fd12772f57b20b36e4d3c0867e3f88208043003695ebef614c686bd1"
+    },
+    {
+      "file": "src/app/gestao/expediente/page.tsx",
+      "sha256": "6ff64b1041e7d80ce85fb3c0c808f8358efa743765c3358c5f053206fffe11eb"
+    },
+    {
+      "file": "src/app/gestao/geoportal/MapServices.tsx",
+      "sha256": "b21f9f73880a79735f94b7061fdc059ba918d3447b751305344f00bdec4f094b"
+    },
+    {
+      "file": "src/app/gestao/geoportal/page.tsx",
+      "sha256": "a5f79017acf5a00ecd0f17d83f806bc3b5a709b5fe0d8c66c31a963c19d99320"
+    },
+    {
+      "file": "src/app/gestao/page.tsx",
+      "sha256": "be8406bdfd45abda7dde9e28d5636aa88cdc8b8c1ef8cf7adea37f74b6feb9fd"
+    },
+    {
+      "file": "src/app/gestao/registros/[id]/ferramentas/page.tsx",
+      "sha256": "3246821520c435f2cfad5274867f0a527cf8d65a88e2ccf1898348e3221361aa"
+    },
+    {
+      "file": "src/app/gestao/registros/[id]/page.tsx",
+      "sha256": "de48ed0266415353c5ebddc01ac5c76c2791c5bbe78aac64db1b7cc60bad8457"
+    },
+    {
+      "file": "src/app/gestao/servicos/page.tsx",
+      "sha256": "925326d894b229635ab552401b878883a87d00229bfe03ee0dc15d560fc02194"
+    },
+    {
+      "file": "src/app/globals.css",
+      "sha256": "06ceb65fc689de79a1fda7948d5aa3c5d279bd48b8d2a29f9dbcddfb43fa5a28"
+    },
+    {
+      "file": "src/app/layout.tsx",
+      "sha256": "771c20aaca7fd737e6d65da51cf7871505f9aad4876c529dbac61f52003f3730"
+    },
+    {
+      "file": "src/app/login-govbr/page.tsx",
+      "sha256": "4427031ca949b980e1243b7407e1ef38345d44e2680ad6c494a0fea24ffc3997"
+    },
+    {
+      "file": "src/app/not-found.tsx",
+      "sha256": "a01169c5dcf3c4cc0d3ba4a66d3810b5fb63bcbb90077d64a3170bc267879121"
+    },
+    {
+      "file": "src/app/operacao/auditoria/page.tsx",
+      "sha256": "a6e68fca9097949b894fa42d75bf57f81102d514510f2b89d5904bd6d54b7b5c"
+    },
+    {
+      "file": "src/app/operacao/client.ts",
+      "sha256": "8ee715e71189df4290ebdb9510f853faafec5cea81de9b7c553e9ff209473696"
+    },
+    {
+      "file": "src/app/operacao/continuidade/page.tsx",
+      "sha256": "df3b1578fcbd310cbf71dac30e4aec62cd441260163c075c4ae7b8f2b711f3f4"
+    },
+    {
+      "file": "src/app/operacao/contratos/page.tsx",
+      "sha256": "45848f2c2d6963716875e595ae0ca28b71d20195015e324c2e0132202e36e1b3"
+    },
+    {
+      "file": "src/app/operacao/delegacoes/page.tsx",
+      "sha256": "3a3f3f534cea1c0c175f0b0be80688a671f2746afedcf362ac3a2bea2cd76222"
+    },
+    {
+      "file": "src/app/operacao/ead/page.tsx",
+      "sha256": "fb958fbf4d4bdd2e23c73b8218152937ef35d280b5ca13ff61cb47c8103bb2f5"
+    },
+    {
+      "file": "src/app/operacao/layout.tsx",
+      "sha256": "ab05260c60e1e0c91f2caca28eef2956067394c553fd7d2cd7425b913ecca78e"
+    },
+    {
+      "file": "src/app/operacao/mapa/page.tsx",
+      "sha256": "739faabd83b2267352e47843d1e6393b0fa807bb7c21e26453fdc3dd7886bbb8"
+    },
+    {
+      "file": "src/app/operacao/page.tsx",
+      "sha256": "f0b3d98924e4c5e227b53f6fd2f6a282d04523b2815e7bef925f31cb99185c59"
+    },
+    {
+      "file": "src/app/operacao/prontos/page.tsx",
+      "sha256": "b90beb13732a9bce5e2603b055031b52a8309186b0f70baebd78f4c0865b7204"
+    },
+    {
+      "file": "src/app/operacao/report-charts.tsx",
+      "sha256": "fea7c1b2fa4ba0363c61f89b38bd576c59e083ce6d7a9877efcb9472eacb92fc"
+    },
+    {
+      "file": "src/app/operacao/report-notice.tsx",
+      "sha256": "9aab2282eb4b35d1ed0052afe536a61816a3176010be2adecd94ddd414edd23e"
+    },
+    {
+      "file": "src/app/operacao/suporte/page.tsx",
+      "sha256": "4a428b2fad9a342dd7dee642eb743e40f8f6203115c01b1aaccac776edca554b"
+    },
+    {
+      "file": "src/app/page.tsx",
+      "sha256": "3ca662f39337592c9676916911f8130f6ee8225d5ff611f3815de6fae208d7c9"
+    },
+    {
+      "file": "src/app/processamento/page.tsx",
+      "sha256": "8130bb183f908e0aafd2d952ed3339405e90d391c46a906abcd78c252c8bd7e9"
+    },
+    {
+      "file": "src/app/publico/[key]/KeySearch.tsx",
+      "sha256": "4c1af0dc9a3b5cb122082a2e8ecd7c80d1e32fd103df171bddde771d28ff5803"
+    },
+    {
+      "file": "src/app/publico/[key]/page.tsx",
+      "sha256": "6237c279757fa956be98a0b56792049caeaad939a002409a1f02b6a6b0dad09b"
+    },
+    {
+      "file": "src/app/publico/page.tsx",
+      "sha256": "ad9498c3648a921b67636e90f23365c77b42bae60e6800ac707a137486b97cb4"
+    },
+    {
+      "file": "src/app/setores/page.tsx",
+      "sha256": "5bbf9de18e649d4956acea9ef05bf6dd81532c40eb15e2244ea31e7e7f42a791"
+    },
+    {
+      "file": "src/components/AppShell.tsx",
+      "sha256": "8e0fd75b017a348f08544593cf59bbcfcb4dd161ceef387689b5a4e66be36fc4"
+    },
+    {
+      "file": "src/components/DataTable.tsx",
+      "sha256": "df48bb4d3479ba53ebfc5f0928bfe5c900fd3b8458b9e267513202fa6d9ad13c"
+    },
+    {
+      "file": "src/components/DepartmentPicker.tsx",
+      "sha256": "5f2ceb6abfa14b049f7f419db97252d2d9f3c54128ba1d349d59210c65604b61"
+    },
+    {
+      "file": "src/components/MaskedInput.tsx",
+      "sha256": "3d52a5abe4342562a700cd52b48b1a2adc7c1ed6abd87e1ce2319fdbbf3c5d3f"
+    },
+    {
+      "file": "src/components/ProfileFields.tsx",
+      "sha256": "08fdb8b3b0c9bad8b9867d542ac9459a0267e92c7d9ec586455302ae13cdcd32"
+    },
+    {
+      "file": "src/components/RichText.tsx",
+      "sha256": "ffbcedb54787f8941c13fabb3715b044b43286b7ccd42f283dfe5e0d8c2c89fc"
+    },
+    {
+      "file": "src/components/WorkflowField.tsx",
+      "sha256": "6977526759399aee39247d51b855e9e135eb7728912fddd9d1edecd60a07f477"
+    },
+    {
+      "file": "src/components/session.tsx",
+      "sha256": "815d7a16c4478553626c7caf0b4f0906f750dbe59ee5aeab24e6a202cee556cf"
+    },
+    {
+      "file": "src/db/bootstrap-users.ts",
+      "sha256": "2fa9bf246c512c374837e843d894bd74427ab77bdd7ad94ec1e9d96227450db7"
+    },
+    {
+      "file": "src/db/bootstrap/legacy-base.sql",
+      "sha256": "b8eeb25e5eea1ae20ce60c942479668b016f18a9fb7a8bd6448de23bfaf0bf0f"
+    },
+    {
+      "file": "src/db/index.ts",
+      "sha256": "a7905b7501c75c478b89cd9d082c832617b8d571237e6cc79bf54b131b26876c"
+    },
+    {
+      "file": "src/db/jobs-schema.ts",
+      "sha256": "ea279b903358ad7b448965b1a88ea1b4ac111cf15776277925a5ec627f750ae0"
+    },
+    {
+      "file": "src/db/migrations/0001_core.sql",
+      "sha256": "bb9ab9049a49f51896c546dc865c0af27747afe1ca9df434a64e434f9639fdae"
+    },
+    {
+      "file": "src/db/migrations/002_modules.sql",
+      "sha256": "692a59e9ac43ca46a9693d20886b321b1ea4cd7770ae80ec70bc863396b74fb7"
+    },
+    {
+      "file": "src/db/migrations/003_operations.sql",
+      "sha256": "326bcdc7d0850fe5ec7aef6e331091864c1fb2f23d6a44509fb5a18c9a816053"
+    },
+    {
+      "file": "src/db/migrations/004_jobs.sql",
+      "sha256": "69eb926ef0389205567d9e7de2415419c919142ce4b2a8cd10a316d7a0de8e73"
+    },
+    {
+      "file": "src/db/migrations/005_modules_completion.sql",
+      "sha256": "4ed12a74721097e65c700bfc570c149cf86b4416856893f6baf1252acb279a52"
+    },
+    {
+      "file": "src/db/migrations/006_contacts_anonymous.sql",
+      "sha256": "81887c9e1489f7486001215be90f7084411ed4982bed27b4f094bfd0c2b3fc61"
+    },
+    {
+      "file": "src/db/migrations/007_workflow_diary.sql",
+      "sha256": "6795c782a14bc748d434706cd6a547feb7862eebbdfb13b4eb7551eb30ab9fc7"
+    },
+    {
+      "file": "src/db/migrations/008_operations_completion.sql",
+      "sha256": "c15d4768b0a0ec142af3525e6a2a373856bf898e23fe4649f5a976703a3b035a"
+    },
+    {
+      "file": "src/db/migrations/009_contacts_external.sql",
+      "sha256": "deb768cb2e0fe956101a1697437cdba5726f1ce2091ec93fcb59ebbd5a2d4431"
+    },
+    {
+      "file": "src/db/migrations/010_administration_core_completion.sql",
+      "sha256": "48afb9c661938431de0c6f740290f19e95beb379570511915d2d7e374114e491"
+    },
+    {
+      "file": "src/db/migrations/011_circulars_citizen_completion.sql",
+      "sha256": "c011f2d91bd20b669217d534f55461efd2247244c74474233e43f2c9832d0208"
+    },
+    {
+      "file": "src/db/migrations/012_ged_signature_snapshot.sql",
+      "sha256": "50fe35c60bf881ad3eac59a30428eb327948d184485bab0f625164b7e66d10df"
+    },
+    {
+      "file": "src/db/modules-schema.ts",
+      "sha256": "cff4f5126eb13579d4e21d481cb578854f65a2e58ee5e26d62e36f30a5802993"
+    },
+    {
+      "file": "src/db/operations-schema.ts",
+      "sha256": "35565f7055f561194cef7100ebce9c589202bc4be79f8ddd7fcc07c2a00d23ef"
+    },
+    {
+      "file": "src/db/schema.ts",
+      "sha256": "962703b72d915cde5179e5055c841349ce79b8af30927ab5279e11c15e23a8ae"
+    },
+    {
+      "file": "src/db/seed-cenario.ts",
+      "sha256": "de1bba3724629296fa967110f5e2b7cf4d82884fb27894fa147f02d5c947189a"
+    },
+    {
+      "file": "src/db/seed.ts",
+      "sha256": "45c3a0acd24f547ce00f7e8636e60ab6dd9e3880cf51c9273ba6142d33008c31"
+    },
+    {
+      "file": "src/lib/auth.ts",
+      "sha256": "21cac56a5750239bcb8ba4f657d67000470f44c4abff55480bdde4c3fad2d1b6"
+    },
+    {
+      "file": "src/lib/blob-stream.test.ts",
+      "sha256": "c57b36ca39e266408596622e0759519a89013c95edb727ce17495bd771241f68"
+    },
+    {
+      "file": "src/lib/blob-stream.ts",
+      "sha256": "4b6cb60a1a8e4b8c32bb278fde8a4bd5b14552f4432c6fd4d5a39bf321bf7ae9"
+    },
+    {
+      "file": "src/lib/blob.ts",
+      "sha256": "e1acbaee961edcc78831db4b81e02c76a61f3b9cd0bd8b5e3fe28724955d2519"
+    },
+    {
+      "file": "src/lib/brazilian-values.ts",
+      "sha256": "f2907339b720c22ca328ee69aff6250baad9df4a5f0a5b4a273b4c5c326ed4c2"
+    },
+    {
+      "file": "src/lib/circulars.ts",
+      "sha256": "702aa67135f1a7b1e091ae4063d54ba2c75f6dd1d6c3cbfb8673ac1afb905348"
+    },
+    {
+      "file": "src/lib/citizen-auth.ts",
+      "sha256": "b2e696c022b99a01cd9cba5ac94f023e41011d794248be66bb7e2012e79b522e"
+    },
+    {
+      "file": "src/lib/citizen-contact.ts",
+      "sha256": "4fa4229b446279290e92b9e3e87a60bdfbb8749a453310d28444a04c1de2d986"
+    },
+    {
+      "file": "src/lib/core-write-guard.ts",
+      "sha256": "28fd1d131920373ce6faaada7d0404499ae187248c626a081eba683f8923c6fd"
+    },
+    {
+      "file": "src/lib/cpf.ts",
+      "sha256": "98c04895421baba6b7c2f5abc545ccd1e9b3722596fb6062c23e210dd92a5bc4"
+    },
+    {
+      "file": "src/lib/department-scope.ts",
+      "sha256": "5b8e966c4c29c99c55a16fb977bd6cc2776292cb735230e4c935f45ea8c9a5a0"
+    },
+    {
+      "file": "src/lib/document-actions.ts",
+      "sha256": "c032862c5eb800b4ca8bf6646e3954490c5cf424d969177b9f950b78fb224588"
+    },
+    {
+      "file": "src/lib/document-visibility.ts",
+      "sha256": "95e16355e323462f496c55f7ed8f5d52b565cc78d4147f9a918515464596ec5a"
+    },
+    {
+      "file": "src/lib/email.ts",
+      "sha256": "88d129fa85890a5ebd5c1efedb722ea4819236ba60e868aa7b3895fa70657b92"
+    },
+    {
+      "file": "src/lib/firebase-admin.ts",
+      "sha256": "956b9f3f5f0558ae065af8ac656174ee7965799245011e3bdeac0e0919de1a28"
+    },
+    {
+      "file": "src/lib/firebase-client.ts",
+      "sha256": "19c0b8c00746a00f0a24e81560485f2572a1a5a993f9e3ad21f39e7a6e15d510"
+    },
+    {
+      "file": "src/lib/govbr.ts",
+      "sha256": "6caf7a89283b2fd986dbb5a22f29893579e95cad46f077f10e88019903dbed65"
+    },
+    {
+      "file": "src/lib/inbound.ts",
+      "sha256": "3452eb397c9bf7b78ff8760f02d2c82bade6a092906bc6ca277705ed743b8561"
+    },
+    {
+      "file": "src/lib/input-masks.ts",
+      "sha256": "50554804f644a1f0eccd3262fa379ab385da47160413fc8ced2a28d06009a5d6"
+    },
+    {
+      "file": "src/lib/jobs/commands.ts",
+      "sha256": "154b5a9e574cecd5ad60a690ecac4ca7aa34d8ca81e0e00e2b6f4be5ad73c059"
+    },
+    {
+      "file": "src/lib/jobs/queue.ts",
+      "sha256": "97f6f9899a656087658bdbe07579362fa77a72c5b2b7f3a265b06fa1f902c847"
+    },
+    {
+      "file": "src/lib/jobs/render.test.ts",
+      "sha256": "55e6bc49f95042e234b1f2f0f519b09882c703421ac2f92573a52453498142f4"
+    },
+    {
+      "file": "src/lib/jobs/render.ts",
+      "sha256": "a62db817ed9d6edca5bdff090db2476790f9d66ec4efa5a91abe3b60e8a2a569"
+    },
+    {
+      "file": "src/lib/jobs/server.ts",
+      "sha256": "96e439adcf6aaecf98213417476d66abcaabebf5ee725872faa38314d5548c6d"
+    },
+    {
+      "file": "src/lib/jobs/types.ts",
+      "sha256": "4e47043824215f4896123d1c5be731106aadbe6993b18eb660a722cb9d2aeb7d"
+    },
+    {
+      "file": "src/lib/jobs/worker.ts",
+      "sha256": "5383d387ecdc4ceeec833b21d09885233ef2d373cc71ecfa44b2326167a9cb81"
+    },
+    {
+      "file": "src/lib/jobs/zip.ts",
+      "sha256": "09833e2bd8dae71422c7b88bc5c4803afb6290655985d8afb5303817c1b44649"
+    },
+    {
+      "file": "src/lib/mask.ts",
+      "sha256": "a2bb2a4ba80407ed5506e01eafccb18eeb43c02758d78258afeb1adbae841374"
+    },
+    {
+      "file": "src/lib/modules/actions.test.ts",
+      "sha256": "8b6096139ba696457feb502f631353fb2e9930cfba501a17974d97e5e3095224"
+    },
+    {
+      "file": "src/lib/modules/actions.ts",
+      "sha256": "41206af7ceccd703b9f7e438b0fb0c6ffbdbf12c8aa12df009da1dc941eee4b6"
+    },
+    {
+      "file": "src/lib/modules/anonymous.ts",
+      "sha256": "af3d1e64baf6b69a9c34f64d4c2e0979289a2fd3a6b768c1f9f54251f8467ece"
+    },
+    {
+      "file": "src/lib/modules/business-hours.test.ts",
+      "sha256": "4e1a8d417d832a331ea0d7e525bf44aa617fbaaa6f1044bedecbc261219f6f0d"
+    },
+    {
+      "file": "src/lib/modules/business-hours.ts",
+      "sha256": "a128222a3f9d0ad6db0edb1625c3780370adadfc27b6f22a42ba6a379d96d0bb"
+    },
+    {
+      "file": "src/lib/modules/calendar.ts",
+      "sha256": "e958787985e7b2376f198aace4102fc5a90d96c89e01999cf49a166a9ad09a9f"
+    },
+    {
+      "file": "src/lib/modules/contact-profile.test.ts",
+      "sha256": "b59f59d62c7177c5bbab5b07e6a1c4193db2e09257a0c98ae81da3b7bb2db1c8"
+    },
+    {
+      "file": "src/lib/modules/contact-profile.ts",
+      "sha256": "6c072c1e7c09fbb439ad7110660a8c1e434a3f1660dc17914aa3f7f771606966"
+    },
+    {
+      "file": "src/lib/modules/contacts.ts",
+      "sha256": "0f0ca4a9626bd8d1e50470a0f173bb9a2683fad852d040afdf3b8cf8508e3bfc"
+    },
+    {
+      "file": "src/lib/modules/diary-catalog.test.ts",
+      "sha256": "7752454e3e97c18e703bba2f372241b471f4dfefe1bfa99d21603bb565869e4b"
+    },
+    {
+      "file": "src/lib/modules/diary-catalog.ts",
+      "sha256": "6c29f6bba08ba66c87854a7bbacb5bc59316899003ad566878273175b2618320"
+    },
+    {
+      "file": "src/lib/modules/document-pdf.test.ts",
+      "sha256": "db323cafe3b9825621c40450451cdf8eda201b10f3bc6c7525b141f7cca9a7bb"
+    },
+    {
+      "file": "src/lib/modules/document-pdf.ts",
+      "sha256": "635958dda281f9a99d0806cfdfa5b7041b3e4d75afb8819639002ff6e089fdb3"
+    },
+    {
+      "file": "src/lib/modules/domain.ts",
+      "sha256": "ed7bad3688d4c290d36a30ee17f521df82363111d509894ab1356cacef6a5fd2"
+    },
+    {
+      "file": "src/lib/modules/external.ts",
+      "sha256": "ee3678024d61892a11bd2eb07f596ef279c9bd01c860dc5564aab7bcd472560f"
+    },
+    {
+      "file": "src/lib/modules/formats.ts",
+      "sha256": "ea24afca5a282593d001f8070f132cf04b95c35ad74b108b6d8f7b0b92f5cc07"
+    },
+    {
+      "file": "src/lib/modules/geospatial.ts",
+      "sha256": "83f45395cbf1d89b4229bc7301df00f5bc3a81cf1554fec8639d119225ce4946"
+    },
+    {
+      "file": "src/lib/modules/modules.test.ts",
+      "sha256": "ec6d5e21a8d9328a60909ef8b6d3fbd84b1cf1fcaf787b4dc79d9de40a9c02be"
+    },
+    {
+      "file": "src/lib/modules/policy.ts",
+      "sha256": "6630372b6d6b37b43f1e3f98aed0cbdfab420a03bab394110d1c87f89d8f7f13"
+    },
+    {
+      "file": "src/lib/modules/server.ts",
+      "sha256": "617a2391ae82c6d19b170de45c1cd0738ca49adfd4a0784653a47f3a3f0f2df6"
+    },
+    {
+      "file": "src/lib/modules/service-search.ts",
+      "sha256": "1dd953e94938205e6622c756e82dbdf8305109d5a4065e8129bd44fa2c6ef3fa"
+    },
+    {
+      "file": "src/lib/modules/signatures.ts",
+      "sha256": "947c699453b591241a05f3315ab1472675b84430f0e8077cc9b77d39f83b94c2"
+    },
+    {
+      "file": "src/lib/modules/territorial.test.ts",
+      "sha256": "5d7d9393bf5c4a95e3f16e0e19b25eb8ec8f4e9db27a18ed870941cab1d53695"
+    },
+    {
+      "file": "src/lib/modules/territorial.ts",
+      "sha256": "659182752bb68307ba3680c9ffd35c99b70dfe3862e75705cc7f84dc14cc6b68"
+    },
+    {
+      "file": "src/lib/modules/workflow-validation.test.ts",
+      "sha256": "4fe7d9cc2b78f6d9cd8748e8dd6406a00faf2f3463b21d37475337d83404448e"
+    },
+    {
+      "file": "src/lib/numbering.test.ts",
+      "sha256": "b44b3115b220f197679b007b5eb6f26e5548fd90ab094a9d0d8aaf89456e13ea"
+    },
+    {
+      "file": "src/lib/numbering.ts",
+      "sha256": "bd331228a8b602a86198acc055bdac45f667bee260716b9a8d2f71f2068547d9"
+    },
+    {
+      "file": "src/lib/operations/backup-worker.ts",
+      "sha256": "c6213a3f395a4d22714a1b315a922625897c682067259268a4d33f78da29cc35"
+    },
+    {
+      "file": "src/lib/operations/billing.test.ts",
+      "sha256": "9c076435ea95e07a9f6ae00edcad2ab165c53d0fc9d0c8ca3cbcae5b005d1f13"
+    },
+    {
+      "file": "src/lib/operations/billing.ts",
+      "sha256": "0d5c2c54ec2a0ca3fbc1b376d8440f3a6c052e4c0c169e67f933a0f16e3e1765"
+    },
+    {
+      "file": "src/lib/operations/completion-reports.ts",
+      "sha256": "5295a72b442f8f4d46c8afe3eb8c23e875af33ec20739b5b6a38c98c30899b7f"
+    },
+    {
+      "file": "src/lib/operations/consistent-report.ts",
+      "sha256": "4d7c2bc1e8b3ef3e4eebc8a0004ce2ff2e3e7d0b915389b41eca8e0c700f946b"
+    },
+    {
+      "file": "src/lib/operations/formats.test.ts",
+      "sha256": "2629d1bef0c0be2896d82554d0f15040c4e266356e2a5f61f3e4357e39f870b2"
+    },
+    {
+      "file": "src/lib/operations/formats.ts",
+      "sha256": "72186b248fd8c9864c87596386e7e7f48a529355a004bdf1a8396f63be5952c0"
+    },
+    {
+      "file": "src/lib/operations/geo.ts",
+      "sha256": "3142bf3f3c5e5bb27436a6cfc1e7405db049fc130b7006ff55abd447af121354"
+    },
+    {
+      "file": "src/lib/operations/historical-reports.ts",
+      "sha256": "e3bf9ffb21b64995239552fd9cddbe632eef0c015a4215c13e522c85d068b03d"
+    },
+    {
+      "file": "src/lib/operations/page-worker.ts",
+      "sha256": "0c84033bd7c85737e6bd391d33b500b2f78f95534a7dcef95939250b220982ae"
+    },
+    {
+      "file": "src/lib/operations/query.ts",
+      "sha256": "ba918c0591641690ded5950a1398baf8584887603b7a174677254bb11ec11261"
+    },
+    {
+      "file": "src/lib/operations/report-worker.ts",
+      "sha256": "e19e9a387ad5a1d3a85a6b5daf7eaf3cefefcbe884b41a1245ad74607bc82ab4"
+    },
+    {
+      "file": "src/lib/operations/reports.ts",
+      "sha256": "60592a6818cc3e2b050d773316bff6f0b66e262488d1c3bcdb3510e9ef482ae1"
+    },
+    {
+      "file": "src/lib/operations/scheduled.ts",
+      "sha256": "05325dd52285df647ffb7c877defa93099c6c0f3be252b9cf1ace62f5f0b31a8"
+    },
+    {
+      "file": "src/lib/operations/server.ts",
+      "sha256": "102da21dd33c9baf8ca32bb9981371ccad574d9d9d93ec5d498fc467f867e3f5"
+    },
+    {
+      "file": "src/lib/operations/snapshot-helpers.test.ts",
+      "sha256": "1846a2eeb82a2d39953e603c36c98eaee5f8296fd5b846f7d99ec6119a51e540"
+    },
+    {
+      "file": "src/lib/operations/snapshot-helpers.ts",
+      "sha256": "5f54b23630d3ae20cd9502be606dfa157e202b578ea205eb00319a30265df4c3"
+    },
+    {
+      "file": "src/lib/operations/stream-export.ts",
+      "sha256": "153a147cee440fb9c4cd00e76ed37a1b09bde18c5a6cb41e00e1db30fc1a5df9"
+    },
+    {
+      "file": "src/lib/process-tree.ts",
+      "sha256": "3240e53b6c460cbec1d40372b6271b963cb1bbac73e1ab58673260f82cc5b684"
+    },
+    {
+      "file": "src/lib/profile-validation.test.ts",
+      "sha256": "eb84ad2e33a324e4eae8659f411f94d9abef46eddc601d588b6734b0bdf29701"
+    },
+    {
+      "file": "src/lib/profile-validation.ts",
+      "sha256": "8d655015861d3424c370944f25ada2586bfa51f181711c3cb8f38ccda9bc4493"
+    },
+    {
+      "file": "src/lib/public-document.ts",
+      "sha256": "44d167fc741626902ce4bcea5b17e4fd166126df491c5645ab49c1276f3d84c3"
+    },
+    {
+      "file": "src/lib/rbac.ts",
+      "sha256": "e8bd394eb212f095a2c2c53653010b4b59d0409459e51d99c86b4cc364435e66"
+    },
+    {
+      "file": "src/lib/restore-runtime.test.ts",
+      "sha256": "2faa4d06936aa19900a7eafbb42902a12f98161c782db11b89028087229366ba"
+    },
+    {
+      "file": "src/lib/restore-runtime.ts",
+      "sha256": "7bd473048cf35d1b1cdf474feb0df820c138eea772c1b77d8d6c47f7812bdeaa"
+    },
+    {
+      "file": "src/lib/tax-id.ts",
+      "sha256": "b1f5f2ad0707aac49a1cd5fb9f5f2faaca243345199595a40680a89d8ac6d56a"
+    },
+    {
+      "file": "src/lib/user-administration.ts",
+      "sha256": "cbf4d859040fda1c849199e6562d390aebafa9c1810ec77b84e0e3f2dd09a248"
+    }
+  ]
+}

@@ -10,6 +10,7 @@ import { canManage, canRead, redacted } from "./policy";
 import { workflowDeadline } from "./business-hours";
 import { validatePublication } from "./diary-catalog";
 import { availableActions } from "./actions";
+import { inspectionSchema, urbanParameters } from "./territorial";
 import { canRequestSignature, signatureContent, signersSchema } from "./signatures";
 export { canRead, redacted } from "./policy";
 
@@ -103,7 +104,8 @@ export function validateBusiness(family: Family, data: ModuleData) {
   if (family === "pauta" && !data.agenda?.length) throw new ModuleError("Inclua os itens da reunião.");
   if (family === "ouvidoria" && v.modalidade !== "Anônima" && !data.identity) throw new ModuleError("Informe a identificação do manifestante.");
   if (family === "fiscalizacao" && (Math.abs(Number(v.latitude)) > 90 || Math.abs(Number(v.longitude)) > 180)) throw new ModuleError("Coordenadas inválidas.");
-  if (family === "projetos" && Number(v.areaTerreno) <= 0) throw new ModuleError("A área do terreno deve ser positiva.");
+  if (family === "projetos") { try { urbanParameters(v); } catch (e) { throw new ModuleError((e as Error).message); } }
+  if (family === "legislacao") for (const key of ["ocupacaoMaxima", "coeficienteMaximo", "permeabilidadeMinima"]) { if (v[key]?.trim() && (Number(v[key]) < 0 || key !== "coeficienteMaximo" && Number(v[key]) > 100)) throw new ModuleError("Parâmetros legais devem ser não negativos; taxas percentuais não podem exceder 100%."); }
   if (family === "delegacoes" && (!z.string().uuid().safeParse(v.digitador).success || !Number.isInteger(Number(v.limite)) || Number(v.limite) < 1 || Number(v.limite) > 100)) throw new ModuleError("Informe um digitador válido e limite entre 1 e 100.");
 }
 export async function createRecord(familyInput: string, input: unknown, ctx: Context) {
@@ -165,13 +167,17 @@ export async function createRecord(familyInput: string, input: unknown, ctx: Con
   return redacted(created, ctx);
 }
 
-const commandSchema = z.object({ revision: z.number().int().positive(), action: z.enum(["EDITAR", "ATIVAR", "SUSPENDER", "PROTOCOLAR", "CONCLUIR_SETOR", "AVANCAR", "DEFERIR", "INDEFERIR", "RESPONDER", "CIENCIA", "ENCERRAR_REUNIAO", "SOLICITAR_ASSINATURA", "RECUSAR_ASSINATURA", "CANCELAR_ASSINATURAS", "REVISAR_ANEXO", "MEDIR", "PREPARAR_EDICAO", "PUBLICAR", "SOLICITAR_PROCESSAMENTO", "CANCELAR", "ARQUIVAR", "REABRIR", "UNIFICAR_CONTATO", "CONCLUIR", "CLASSIFICAR"]), payload: z.record(z.unknown()).default({}), note: z.string().trim().max(10000).default("") });
+const commandSchema = z.object({ revision: z.number().int().positive(), action: z.enum(["EDITAR", "ATIVAR", "SUSPENDER", "PROTOCOLAR", "CONCLUIR_SETOR", "AVANCAR", "DEFERIR", "INDEFERIR", "RESPONDER", "CIENCIA", "ENCERRAR_REUNIAO", "SOLICITAR_ASSINATURA", "RECUSAR_ASSINATURA", "CANCELAR_ASSINATURAS", "REVISAR_ANEXO", "MEDIR", "REGISTRAR_VISTORIA", "PREPARAR_EDICAO", "PUBLICAR", "SOLICITAR_PROCESSAMENTO", "CANCELAR", "ARQUIVAR", "REABRIR", "UNIFICAR_CONTATO", "CONCLUIR", "CLASSIFICAR"]), payload: z.record(z.unknown()).default({}), note: z.string().trim().max(10000).default("") });
 export async function command(id: string, input: unknown, ctx: Context) {
   const cmd = commandSchema.parse(input); const row = await getRecord(id, ctx);
   const family = row.family as Family;
   if (configFamilies.includes(family)) admin(ctx);
   else if (cmd.action !== "RECUSAR_ASSINATURA" && !canManage(row, ctx)) throw new ModuleError("Você pode consultar, mas não alterar este registro.", 403);
   if (family === "delegacoes" && row.ownerId !== ctx.user.id) throw new ModuleError("Somente o autorizador pode alterar a delegação.", 403);
+  if (cmd.action === "REGISTRAR_VISTORIA") {
+    const inspection = inspectionSchema.parse(cmd.payload), existing = row.data.inspections?.find(i => i.operationId === inspection.operationId);
+    if (existing) { if (existing.actorId !== ctx.user.id || existing.hash !== createHash("sha256").update(JSON.stringify(canonical(inspection))).digest("hex")) throw new ModuleError("Identificador de vistoria reutilizado com outro conteúdo ou autor.", 409); return redacted(row, ctx); }
+  }
   if (row.revision !== cmd.revision) throw new ModuleError("O registro foi alterado por outro servidor. Recarregue antes de salvar.", 409);
   if (row.status === "PUBLICADO") throw new ModuleError("A publicação é imutável.", 409);
   const data = structuredClone(row.data); let status = row.status; let body = row.body; let title = row.title;
@@ -304,12 +310,31 @@ export async function command(id: string, input: unknown, ctx: Context) {
       data.files = [...(data.files ?? []), { ...review, actorId: ctx.user.id, at: now }]; break;
     }
     case "MEDIR": {
+      if (!["RASCUNHO", "EM_ANDAMENTO"].includes(status)) throw new ModuleError("A medição exige documento em elaboração ou análise.", 409);
       const measurement = z.object({ fileId: z.string().uuid(), page: z.number().int().positive(), scale: z.number().positive(), type: z.enum(["distancia", "area"]), points: z.array(z.array(z.number().finite()).length(2)).min(2).max(1000), shape: z.enum(["polyline", "polygon", "rectangle", "ellipse"]), coordinateSystem: z.literal("PDF_VIEWPORT_POINTS"), color: z.string().regex(/^#[0-9a-fA-F]{6}$/), width: z.number().min(0.5).max(10), opacity: z.number().min(0.1).max(1), precision: z.number().int().min(0).max(4), fileHash: z.string().length(64) }).parse(payload);
       const [file] = await db.select().from(moduleFile).where(and(eq(moduleFile.id, measurement.fileId), eq(moduleFile.recordId, id)));
       if (!file || file.mimeType !== "application/pdf") throw new ModuleError("Selecione uma planta PDF deste processo.");
       if (file.sha256 !== measurement.fileHash) throw new ModuleError("A medição não corresponde ao original selecionado.", 409);
       if ((measurement.type === "distancia") !== (measurement.shape === "polyline")) throw new ModuleError("Forma incompatível com o tipo de medição.");
+      const { downloadAttachment } = await import("@/lib/blob"), { PDFDocument } = await import("pdf-lib");
+      const original = await downloadAttachment(file.storageKey); if (!original) throw new ModuleError("Original indisponível.", 404);
+      const bytes = Buffer.from(await new Response(original.stream).arrayBuffer());
+      if (createHash("sha256").update(bytes).digest("hex") !== file.sha256) throw new ModuleError("Integridade do original divergente.", 409);
+      let pdf; try { pdf = await PDFDocument.load(bytes); } catch { throw new ModuleError("A planta deve ser um PDF legível."); }
+      const page = pdf.getPages()[measurement.page - 1]; if (!page) throw new ModuleError("Página inexistente na planta.");
+      if (page.getRotation().angle !== 0) throw new ModuleError("Normalize a rotação da planta antes de medir e gerar derivados.");
+      const box = page.getCropBox(); if (measurement.points.some(([x,y]) => x < 0 || y < 0 || x > box.width || y > box.height)) throw new ModuleError("Os pontos da medição devem permanecer dentro da página original.");
       data.measurements = [...(data.measurements ?? []), { ...measurement, result: measureShape(measurement.points, measurement.scale, measurement.type, measurement.shape) }]; break;
+    }
+    case "REGISTRAR_VISTORIA": {
+      active(); if (family !== "fiscalizacao") throw new ModuleError("Selecione um processo de fiscalização.");
+      stage(); const inspection = inspectionSchema.parse(payload);
+      if (Date.parse(inspection.capturedAt) > Date.now() + 300000) throw new ModuleError("A captura não pode estar no futuro.");
+      if ((data.inspections?.length ?? 0) >= 1000) throw new ModuleError("Limite de vistorias deste processo atingido.");
+      const files = inspection.fileIds.length ? await db.select().from(moduleFile).where(and(eq(moduleFile.recordId,id),inArray(moduleFile.id,inspection.fileIds))) : [];
+      if (files.length !== new Set(inspection.fileIds).size) throw new ModuleError("As evidências devem pertencer a este processo.");
+      data.inspections = [...(data.inspections ?? []), { ...inspection, receivedAt: now, actorId: ctx.user.id, hash: createHash("sha256").update(JSON.stringify(canonical(inspection))).digest("hex") }];
+      data.values = { ...data.values, latitude: String(inspection.latitude), longitude: String(inspection.longitude), checklist: inspection.findings, providencias: inspection.measures }; break;
     }
     case "PREPARAR_EDICAO": {
       if (family !== "diario" || status !== "RASCUNHO") throw new ModuleError("Selecione uma edição em preparação.");
@@ -355,7 +380,10 @@ export async function command(id: string, input: unknown, ctx: Context) {
   if (cmd.action === "REABRIR") { data.evaluationCycle = (data.evaluationCycle ?? 0) + 1; delete data.evaluation; }
   const leaseGate = cmd.action === "EDITAR" ? sql`EXISTS(SELECT 1 FROM module_edit_lease WHERE record_id=${id}::uuid AND actor_id=${ctx.user.id}::uuid AND expires_at>now() AND token_hash=${createHash("sha256").update(z.string().min(32).parse(payload.leaseToken)).digest("hex")} FOR SHARE)` : sql`true`;
   const [updated] = await db.update(moduleRecord).set({ title, body, data, status, participants, departmentId, access: cmd.action === "PUBLICAR" ? "PUBLICO" : row.access, revision: row.revision + 1, actorId: ctx.user.id, externalActorUid: null, action: cmd.action, note: cmd.note }).where(and(eq(moduleRecord.id, id), eq(moduleRecord.revision, cmd.revision),leaseGate)).returning();
-  if (!updated) throw new ModuleError("Conflito de edição. Recarregue o registro.", 409);
+  if (!updated) {
+    if (cmd.action === "REGISTRAR_VISTORIA") { const current = await getRecord(id,ctx), inspection = inspectionSchema.parse(cmd.payload); const saved = current.data.inspections?.find(i => i.operationId === inspection.operationId); if (saved?.actorId === ctx.user.id && saved.hash === createHash("sha256").update(JSON.stringify(canonical(inspection))).digest("hex")) return redacted(current,ctx); }
+    throw new ModuleError("Conflito de edição. Recarregue o registro.", 409);
+  }
   return redacted(updated, ctx);
 }
 function stageForReopen(row: ModuleRecord, ctx: Context) {

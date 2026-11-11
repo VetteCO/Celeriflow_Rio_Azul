@@ -119,6 +119,21 @@ Dossiê e roteiro humano: [FECHAMENTO_ETAPA_6.md](FECHAMENTO_ETAPA_6.md). Evidê
 
 Fechamento técnico: **9/9 itens do plano no recorte documentado**. Aceitação **196/196 local + 196/196 HTTPS**, mais **533/533** da regressão local de workflow, **86/86** de contatos e **54/54** testes de domínio. Reconstrução de três bancos com baseline + 12 migrações, guardas/FKs/checksums/rollback aprovados. Código `1602f39` publicado em `dpl_EzWvo8RCfAYqe7ZR82Z1jjRSAC9L`, READY, confirmado com autenticação no SaaS. Preservados 15 servidores, cinco documentos, seis setores, anexo original e sete fingerprints. O encerramento técnico dos nove itens do plano não atribui homologação integral a todas as alíneas da implantação nem à POC 9/9.
 
+### Complemento de fechamento — etapas 8 e 9, 10/11/2026 (execuções UTC em 11/11)
+
+Dossiê: [FECHAMENTO_ETAPAS_8_9.md](FECHAMENTO_ETAPAS_8_9.md). Aceite local final **187/187**, relatórios **92/92**, EAD/suporte **101/101**, recuperação da aplicação **12/12**, domínio/guardas **57/57**. Migrações preservadas, 12 checksums válidos, nenhuma pendência.
+
+| Requisito/alínea | Evidência incremental | Limite de aceite |
+|---|---|---|
+| URB-P38-01.b/c; URB-P38-02; URB-P39-01.d/e; URB-P40-01.b/e | Planta PDF e DWG preservados, anexo obrigatório, recusa fundamentada/aceitação, área calculada no servidor, página/coordenadas/hash conferidos e cópia anotada de hash próprio; comparação com revisão legal ativa. | Recortes funcionais exercitados. Vigência/enquadramento municipal, repertório completo de anotações/participantes/produtos e assinatura real conservam aceite individual; não se declara homologação integral de URB. |
+| FIS-P50-01.a/d/f; AMB-P51-01.a/b/c/d; OFF-P37-01.c (backend) | Processos próprios vinculados a projeto/protocolo, etapas e decisões distintas; vistoria com GPS/evidências e captura/recebimento, repetição concorrente com uma revisão, recusa de payload divergente/setor não autorizado/arquivo de outro processo. | Backend exercitado; aplicativo offline/lojas, recebimento de e-mail e demais alíneas móveis não são inferidos. |
+| GEO-P65-01.a/g; GEO-P65-02.f/h; GEO-P66-01.a/c/e | SHP/PRJ/DBF real reprojetado para WGS84, atributos preservados, versão anterior consultada, publicação opt-in, filtros/proximidade e vazios de polígonos conferidos; mapa acessível pela tela. | Base municipal, estilos/fornecedores geocartográficos, atualização geosserviço e compartilhamento avançado mantêm aceite individual. |
+| REL-P80–83; EAD-P80-01; SUP-P84 | Relatórios reconciliados com SQL, três formatos e jobs dirigidos com hash/privacidade/reutilização; ciclo EAD e certificado, chamado/escalonamento/avaliação; gráfico e tabela conferidos no desktop. | Escopo detalhado em FECHAMENTO_OPERACAO e nos resultados; conteúdo municipal, atendimento humano e canais reais permanecem pendentes. |
+| OPS-P84-01.e; OPS-P83-02 (recuperação) | Exportação consistente de 52 tabelas, dump/NDJSON/DDL/originais e restauração em PostgreSQL 18; aplicação Next autenticada no clone, arquivo isolado/remapeado de 78 bytes com hash correto, anônimo/N3 recusados e ausência local sem fallback para a origem. | Ensaio concluído em 37.551 ms para este acervo; não atesta RTO de desastre, agendamento permanente ou redundância física. |
+| Objeto E24 — 60 usuários | 60 identidades internas/Firebase próprias e distintas; 53 lotes de 60 leituras concorrentes, **3.180/3.180** respostas em 61.169 ms, p95 1.015 ms; limpeza própria e originais reconferidos. | Supera o ensaio anterior de nove identidades; mistura real de tramitação/anexos e dimensionamento municipal continuam pendentes. |
+
+O incremento não declara Sisobra integrado: os quatro pedidos permanecem aguardando configuração, sem assinatura/transmissão/recibo governamental. Infraestrutura contínua foi adiada pelo solicitante. Registros históricos anteriores de capacidade/restauração permanecem como evidência de suas respectivas versões; este complemento supera essas lacunas somente no recorte descrito.
+
 ## 3. Acesso, contas e identidade
 
 | ID / fonte | Subrequisitos preservados | Escopo / E | Verificação e critério de aceitação |

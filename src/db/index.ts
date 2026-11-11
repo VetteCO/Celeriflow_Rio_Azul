@@ -1,6 +1,9 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
+import { restoreRuntime } from "@/lib/restore-runtime";
+
+restoreRuntime();
 
 if (!process.env.DATABASE_URL) {
   // Não quebra build na Vercel sem env; falha só em runtime.

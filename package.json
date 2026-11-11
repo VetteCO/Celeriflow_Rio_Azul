@@ -32,6 +32,8 @@
     "validate:stages34": "tsx --env-file=.env.local scripts/validate-stages-3-4.ts",
     "validate:stages57": "tsx --env-file=.env.local scripts/validate-stages-5-7.ts",
     "validate:stage6": "tsx --env-file=.env.local scripts/validate-stage6.ts",
+    "validate:stages89": "tsx --env-file=.env.local scripts/validate-stages-8-9.ts",
+    "validate:restore-app": "tsx --env-file=.env.local scripts/validate-restored-application.ts",
     "validate:contacts": "tsx --env-file=.env.local scripts/validate-contacts.ts",
     "validate:learning-support": "tsx --env-file=.env.local scripts/validate-learning-support.ts",
     "validate:operations": "tsx --env-file=.env.local scripts/validate-operations.ts",
@@ -65,6 +67,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
+    "@types/pg": "^8.23.1",
     "@types/proj4": "^2.5.5",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^18.3.3",
@@ -74,6 +77,7 @@
     "drizzle-kit": "^0.24.2",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.5.29",
+    "pg": "^8.23.1",
     "tsx": "^4.23.15",
     "typescript": "^5.5.4"
   }

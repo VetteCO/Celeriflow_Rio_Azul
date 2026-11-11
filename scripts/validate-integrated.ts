@@ -177,6 +177,11 @@ async function main() {
     users.push({ ...u, name, email, password, token: await token(u.firebaseUid) });
   }
   const [ua, ub, uc, n3] = users;
+  if (args.includes("--stages89")) {
+    const { stages89 } = await import("./stages89-scenarios");
+    await stages89({ base:base.origin,dir,users,sectors,api,check,scenario,own,ownModuleFile,values,provision:async(index:number)=>{const name=`Servidor municipal ${index+1}`,email=`servidor.${randomUUID()}@example.invalid`,password=randomBytes(30).toString("base64url");const u=await api("89-provision-distinct-capacity-user","/api/admin/users",admin,"POST",{name,email,password,departmentId:a,role:"NIVEL_2"},[201]);return {...u,name,email,password,token:await token(u.firebaseUid)};} });
+    return;
+  }
   if (args.includes("--stage6")) {
     const { stage6 } = await import("./stage6-scenarios");
     await stage6({ base: base.origin, dir, users, sectors, api, check, scenario, own, ownModuleFile, values });
