@@ -1,6 +1,6 @@
 # Revisão incremental de formulários — etapas 0–9
 
-Data: 10/11/2026. Estado: complemento local implementado e verificado; ainda não publicado. O fechamento integral de 0–9 permanece aberto.
+Data: 10/11/2026. Estado: complemento implementado, verificado e publicado no incremento `381d54f`, mantido na publicação das etapas 3/4 (`52302eb`). As verificações isoladas descritas abaixo são o registro histórico do complemento. O fechamento integral de 0–9 permanece aberto.
 
 ## Lacunas encontradas e correções
 

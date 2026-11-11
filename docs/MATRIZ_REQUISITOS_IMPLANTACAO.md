@@ -91,6 +91,20 @@ Publicação deste complemento bloqueada: dois deployments CLI e um GitHub falha
 
 Rodadas finais: **156/156 local + 156/156 HTTPS**, mais **119/119 de regressão das etapas 1/2** no incremento local. SaaS `rioazul.celeriflow.com.br`, deployment `Cdhh77Qjnj83sgZMgJnDx9LzHRb7`, commit `52302eb`. Migração 011 aditiva; reconstrução de três bancos com 52 tabelas/12 históricos e checksums/FKs/rollback aprovados. Preservados 15 servidores, cinco documentos, seis setores e o anexo original por fingerprints e SHA-256. Este fechamento não equivale à homologação municipal nem à POC integral 9/9.
 
+### Fechamento incremental das etapas 5 e 7 — 10/11/2026
+
+**Etapa 5: 6/6; etapa 7: 10/10 itens técnicos no recorte documentado.** Dossiê e roteiro humano: [FECHAMENTO_ETAPAS_5_7.md](FECHAMENTO_ETAPAS_5_7.md). Inventário de evidências: `EVIDENCIAS_ETAPAS_5_7.json`.
+
+| Recorte de entrega | Implementação e evidência | Estado e limite |
+|---|---|---|
+| Sete cenários POC sem identidade avançada/canais reais; F01/F02/F04–F08/F11/F12 | Admin/Nível 3, editor/memorando/calendário, numeração concorrente, tramitação, circulares, conta/CEP/protocolo e QR/sigilo exercitados na mesma versão SaaS final. | 119 + 158 verificações HTTPS; homologação humana dos cenários pendente. Login avançado e retorno real de e-mail continuam nas etapas 10/11. |
+| Workflow/atendimento — páginas 42–63 e 85–87 | Capacidades por perfil/etapa, vários setores com conclusão explícita, anexos obrigatórios, condições, SLA, decisão e histórico; chamados, e-SIC, RH, PAD, judicial e seletivo com ciclos exercitados. | Implementado e validado por API/Chrome. Não atribui aceite integral às alíneas avançadas de formulários ainda registradas na revisão individual. |
+| Árvore e exportações | Quatro trabalhos assíncronos reais: PDF/ZIP completos e personalizados; capa, paginação e seleção; SHA-256 dos artefatos e bytes originais no ZIP conferidos; download autenticado. | Processamento direcionado executado pelo worker local contra a fila do SaaS. Operação permanente permanece na etapa 9/infraestrutura. |
+| Contatos/representação/delegação — páginas 76–80 | Suíte de contatos 86/86; mandato com aceite, escopo e revogação; uso concorrente de delegação com um vencedor, identificação de atores, cancelamento e relatório/CSV navegáveis. | Representação de acesso operante; instrumento com assinatura real mantém dependência da etapa 10. Relatório não divulga documentos fora do escopo. |
+| Carta e Diário | Filtros e busca por vocabulário/descrição; ligação do serviço ao assunto; catálogo, preparação, busca/calendário, edição informativa e hash imutáveis. | Busca semântica preparada localmente; publicação certificada depende da etapa 10. |
+
+**Versão final:** commit `9db8323`, deployment `65BvRYJyfBwKhaSKPiEkuUQhgBxS`, alias `rioazul.celeriflow.com.br`. **810/810 verificações HTTPS** (533 integração/workflow, 119 núcleo, 158 circulares/cidadão), 34 testes de domínio e build/lint/tipos aprovados. Erro real de streaming encontrado na regressão do cidadão foi corrigido antes do encerramento; três downloads sucessivos passaram no navegador. Preservados 15 servidores, cinco documentos, seis setores e o anexo original, com limpeza própria, sete fingerprints e SHA-256. Encerramento técnico não equivale à POC 9/9 nem à homologação integral.
+
 ## 3. Acesso, contas e identidade
 
 | ID / fonte | Subrequisitos preservados | Escopo / E | Verificação e critério de aceitação |

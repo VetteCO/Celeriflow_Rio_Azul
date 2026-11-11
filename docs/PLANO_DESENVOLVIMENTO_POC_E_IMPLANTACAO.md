@@ -1,7 +1,7 @@
 # Plano de desenvolvimento — POC 100% e implantação integral
 
 **Versão:** 10/11/2026.  
-**Situação:** execução; etapas 0, 1, 2, 3 e 4 tecnicamente encerradas, com evidências e homologação formal pendente.
+**Situação:** execução; etapas 0, 1, 2, 3, 4, 5 e 7 tecnicamente encerradas nos recortes documentados, com evidências e homologação formal pendente. Etapas 6, 8 e 9 permanecem abertas.
 **Base técnica:** `VALIDACAO_INTERNA_POC_2026-11-10.md`.
 
 ## 1. Diretrizes acordadas
@@ -156,12 +156,14 @@ Cada etapa será desdobrada em incrementos pequenos com backend, interface, migr
 
 ### Etapa 5 — Integração das telas e validação do núcleo
 
-- [ ] Padronizar mensagens, carregamento, erros, validação de formulários e prevenção de submissão duplicada.
-- [ ] Revisar navegação e ações exibidas por perfil; garantir que todo fluxo interno tenha entrada pela interface.
-- [ ] Testar permissões, concorrência de numeração, tramitação, leitura, sigilo e recuperação de falhas.
-- [ ] Executar roteiro Admin → Nível 3 → memorando → circular → cidadão → consulta pública no ambiente publicado.
-- [ ] Entregar ao usuário roteiro de testes e registrar defeitos encontrados nas telas.
-- [ ] Atualizar documentação e remover indicação de identidade “verificada” quando não houver autenticação externa real.
+- [x] Padronizar mensagens, carregamento, erros, validação de formulários e prevenção de submissão duplicada.
+- [x] Revisar navegação e ações exibidas por perfil; garantir que todo fluxo interno tenha entrada pela interface.
+- [x] Testar permissões, concorrência de numeração, tramitação, leitura, sigilo e recuperação de falhas.
+- [x] Executar roteiro Admin → Nível 3 → memorando → circular → cidadão → consulta pública no ambiente publicado.
+- [x] Entregar ao usuário roteiro de testes e registrar defeitos encontrados nas telas.
+- [x] Atualizar documentação e remover indicação de identidade “verificada” quando não houver autenticação externa real.
+
+**Fechamento técnico em 10/11/2026:** [FECHAMENTO_ETAPAS_5_7.md](FECHAMENTO_ETAPAS_5_7.md), 6/6 itens. Na versão HTTPS final, 119/119 verificações do núcleo, 158/158 de circulares/cidadão e 533/533 de integração/workflow: **810/810**, incluindo Chrome, downloads autenticados e QR móvel. Identidade avançada e e-mail real continuam nos marcos finais; homologação humana pendente.
 
 **Aceite:** os sete subitens que não dependem de login avançado/e-mail passam; os outros dois continuam explicitamente pendentes. Esta etapa não libera a POC 100%.
 
@@ -182,16 +184,18 @@ Cada etapa será desdobrada em incrementos pequenos com backend, interface, migr
 
 ### Etapa 7 — Workflow, atendimento ampliado e publicação
 
-- [ ] Configurar assuntos, campos condicionais, anexos obrigatórios, roteamento e etapas sem salto indevido.
-- [ ] Implementar processo administrativo multissetorial, prazos/SLA por etapa e decisão deferido/indeferido.
-- [ ] Gerar árvore processual em PDF e anexos em ZIP, com versões completa/personalizada, paginação e processamento assíncrono.
-- [ ] Entregar chamados técnicos, Ouvidoria (identificada/sigilosa/anônima), e-SIC e requerimentos pessoais restritos ao RH.
-- [ ] Entregar PAD, processos judiciais e processo seletivo simplificado com seus campos, busca, prazos e exportações.
-- [ ] Implementar contatos PF/PJ, organizações, importação/exportação, unificação e procuração eletrônica.
-- [ ] Implementar contrassenha/delegação: autorização explícita, limite de uso, cancelamento, identificação de autorizador/digitador e relatório de documentos emitidos.
-- [ ] Entregar Carta de Serviços com filtros, descrições completas, canais, prazos e conexão com os assuntos do protocolo; preparar busca semântica.
-- [ ] Implementar Diário Oficial: atos, cadernos/seções, edições ordinárias/extraordinárias, calendário, busca e publicação imutável. Assinatura de edição fecha na etapa 10.
-- [ ] Ampliar central externa: autenticação comum, caixa pessoal, representantes, avaliação do atendimento e dados públicos autorizados.
+- [x] Configurar assuntos, campos condicionais, anexos obrigatórios, roteamento e etapas sem salto indevido.
+- [x] Implementar processo administrativo multissetorial, prazos/SLA por etapa e decisão deferido/indeferido.
+- [x] Gerar árvore processual em PDF e anexos em ZIP, com versões completa/personalizada, paginação e processamento assíncrono.
+- [x] Entregar chamados técnicos, Ouvidoria (identificada/sigilosa/anônima), e-SIC e requerimentos pessoais restritos ao RH.
+- [x] Entregar PAD, processos judiciais e processo seletivo simplificado com seus campos, busca, prazos e exportações.
+- [x] Implementar contatos PF/PJ, organizações, importação/exportação, unificação e procuração eletrônica.
+- [x] Implementar contrassenha/delegação: autorização explícita, limite de uso, cancelamento, identificação de autorizador/digitador e relatório de documentos emitidos.
+- [x] Entregar Carta de Serviços com filtros, descrições completas, canais, prazos e conexão com os assuntos do protocolo; preparar busca semântica.
+- [x] Implementar Diário Oficial: atos, cadernos/seções, edições ordinárias/extraordinárias, calendário, busca e publicação imutável. Assinatura de edição fecha na etapa 10.
+- [x] Ampliar central externa: autenticação comum, caixa pessoal, representantes, avaliação do atendimento e dados públicos autorizados.
+
+**Fechamento técnico em 10/11/2026:** [FECHAMENTO_ETAPAS_5_7.md](FECHAMENTO_ETAPAS_5_7.md), 10/10 itens no recorte funcional desta etapa; **533/533 verificações HTTPS** da suíte integrada e 86/86 da suíte local de contatos. Quatro trabalhos PDF/ZIP completos/personalizados executados de fato, com paginação, hashes e originais conferidos. Busca semântica preparada por vocabulário local; procuração de acesso por mandato; Diário informativo imutável. Worker permanente depende da infraestrutura/etapa 9; assinatura de instrumento/edição certificada, da etapa 10. Recursos avançados de formulários mantêm controle individual na implantação, conforme dossiê. Homologação municipal pendente.
 
 **Aceite:** um processo configurado percorre todas as etapas com documentos, prazos e decisões; Ouvidoria preserva identidade conforme modalidade; edição publicada permanece íntegra. Publicação certificada só conclui após assinatura real.  
 **Origem:** páginas 42–63, 76–80, 85–87.

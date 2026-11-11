@@ -10,7 +10,8 @@ test("download owns the provider reader while its HTTP body remains usable after
   await Promise.resolve();
   assert.equal(source.locked, true);
   assert.equal(forwarded.locked, false);
-  assert.equal(Readable.isDisturbed(forwarded), false);
+  // Node 20's stream declarations and the DOM lib use distinct web-stream types.
+  assert.equal(Readable.isDisturbed(forwarded as unknown as Parameters<typeof Readable.isDisturbed>[0]), false);
   assert.deepEqual(new Uint8Array(await new Response(forwarded).arrayBuffer()), bytes);
   assert.equal(source.locked, false);
 });
