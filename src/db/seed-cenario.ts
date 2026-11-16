@@ -71,16 +71,14 @@ async function main() {
     ]);
     await db.update(schema.document).set({ status: "OPEN" }).where(eq(schema.document.id, mem.id));
     try {
-      const url = await uploadAttachment(
-        "lista-materiais.txt",
-        Buffer.from("Lista de materiais de escritório (demonstração): papel A4, canetas, pastas.", "utf-8")
-      );
+      const content = Buffer.from("Lista de materiais de escritório: papel A4, canetas, pastas.", "utf-8");
+      const url = await uploadAttachment("lista-materiais.txt", content);
       await db.insert(schema.attachment).values({
         documentId: mem.id,
         filename: "lista-materiais.txt",
         mimeType: "text/plain",
         storageKey: url,
-        size: 76,
+        size: content.length,
       });
     } catch {
       console.log("WARN anexo Blob pulado (token?)");

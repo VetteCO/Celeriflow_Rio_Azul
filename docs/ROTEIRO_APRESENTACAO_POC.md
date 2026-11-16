@@ -6,7 +6,7 @@
 ## 0. Preparação (véspera + 1h antes) — checklist
 
 - [ ] `npm run db:seed` em banco **limpo de ensaio** (ou documentar os existentes)
-- [ ] Logins testados: `admin@email.com`, `teste.admin@email.com`, `teste.nivel3@email.com` (senha padrão do ensaio)
+- [ ] Conferir os acessos: `admin@email.com`, `jose.antunes@aurora.mg.gov.br` e `maria.goulart@aurora.mg.gov.br`, com as credenciais individuais de cada conta
 - [ ] Internet principal + backup 4G/5G; notebook + fonte + celular (QR) + caixa de e-mail real de demonstração
 - [ ] Aba anônima reservada para o portal do cidadão
 - [ ] `NEXT_PUBLIC_APP_URL` apontando para a URL que a comissão vai ver (localhost só se presencial no seu equipamento)
@@ -25,9 +25,9 @@
 | Min | Ação (cliques) | O que a comissão vê | ATENDE se |
 |---|---|---|---|
 | 0 | `/admin` → login master | Login Firebase funcionando | login ok |
-| 5 | Criar usuário "Servidor Demonstração" (Nível 3, CPL) | Criação + role + auditoria | usuário criado ao vivo |
+| 5 | Criar usuário "Camila Fernandes" (Nível 3, CPL) | Criação + role + auditoria | usuário criado ao vivo |
 | 8 | Alternar um usuário para Admin e de volta | Troca de perfil + claim sincronizada | diferença de perfis visível |
-| 11 | Sair, entrar com `teste.nivel3@email.com`, tentar criar memorando e circular | Bloqueio (API 403, não só botão) | bloqueio demonstrado |
+| 11 | Sair, entrar com `maria.goulart@aurora.mg.gov.br`, tentar criar memorando e circular | Bloqueio (API 403, não só botão) | bloqueio demonstrado |
 | 14 | "Entrar com gov.br (ensaio)" → CPF + nome → vincular | Selo "gov.br verificada" + `GOVBR_SIMULATED_LOGIN`/`GOVBR_LINKED` no audit | auth externa + vínculo + log |
 | 18 | `/publico/<chave>` (usar chave do protocolo existente) | CPF `***.456.789-**`, QR, chave inválida → erro tratado | máscara LGPD + QR + chave |
 

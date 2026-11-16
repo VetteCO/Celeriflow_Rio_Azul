@@ -11,7 +11,7 @@ A aplicação local utilizada aponta para os mesmos serviços de dados da public
 ## Acesso
 
 - Entrada: `https://rioazul.celeriflow.com.br/admin`.
-- Conta principal: **Helena Duarte**, `helena.duarte@auroradasveredas.example`, Administrador Geral, vinculada aos setores do cenário.
+- Conta principal: **Helena Duarte**, `helena.duarte@aurora.mg.gov.br`, Administrador Geral, vinculada aos setores do cenário.
 - Demais contas: Marcos Azevedo (Nível 1), Clara Ribeiro (Nível 2), Rafael Nogueira (Nível 3), Laura Antunes (Auditor), Renata Paiva (Administrador Local).
 - Senhas aleatórias e dados de acesso estão somente em `%LOCALAPPDATA%\Temp\opencode\demo-aurora-20261111\access.private.json`. O arquivo não integra o repositório.
 - Para exibir o certificado de EAD, entrar como **Rafael Nogueira**: o progresso é individual. Helena pode administrar os cursos e atender os chamados.

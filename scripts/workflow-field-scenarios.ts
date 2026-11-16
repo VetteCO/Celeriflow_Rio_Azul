@@ -54,7 +54,7 @@ export async function workflowFieldScenarios(h: Harness) {
       await page.getByLabel("Título / assunto", { exact: false }).fill("Conservação do acesso à biblioteca");
       await page.getByLabel("Identificação", { exact: false }).filter({ has: page.locator("option") }).selectOption("Identificada");
       await page.getByLabel("Finalidade", { exact: false }).selectOption("Solicitação");
-      const identity = page.getByRole("group", { name: "Identificação do manifestante", exact: true }); await identity.getByLabel("Nome", { exact: true }).fill("Beatriz Moreira"); await identity.getByLabel("E-mail", { exact: true }).fill("beatriz@auroradasveredas.example");
+      const identity = page.getByRole("group", { name: "Identificação do manifestante", exact: true }); await identity.getByLabel("Nome", { exact: true }).fill("Beatriz Moreira"); await identity.getByLabel("E-mail", { exact: true }).fill("beatriz@aurora.mg.gov.br");
       await page.getByRole("radio", { name: "Sim", exact: true }).check(); await page.getByLabel("Detalhe da solicitação", { exact: false }).fill("Conferir o nivelamento e a largura do passeio."); await page.getByLabel("Nota da equipe", { exact: false }).fill("Informação interna de instrução");
       check("fields-date-and-lock-visible-internal", await page.getByLabel("Data do registro", { exact: false }).inputValue() === businessDate() && await page.getByLabel("Origem do atendimento", { exact: false }).isDisabled());
       await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click(); await page.getByRole("heading", { name: "Conservação do acesso à biblioteca", exact: true }).waitFor();
