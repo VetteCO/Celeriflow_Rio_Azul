@@ -3,6 +3,16 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { onIdTokenChanged, type User } from "firebase/auth";
 import { firebaseClient } from "@/lib/firebase-client";
+import { PERMS, type Role } from "@/lib/rbac";
+
+export const ROLE_LABELS: Record<string, string> = {
+  ADMIN_GERAL: "Administrador geral",
+  ADMIN_LOCAL: "Administrador local",
+  NIVEL_1: "Nível 1",
+  NIVEL_2: "Nível 2",
+  NIVEL_3_VISUALIZACAO: "Nível 3 — visualização",
+  AUDITOR: "Auditor",
+};
 
 const messages: Record<string, string> = {
   unauthorized: "Entre com uma conta ativa para continuar.",
@@ -62,16 +72,33 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     const current = firebaseClient().currentUser;
     const version = ++generation.current;
     if (!current) { setRole(null); setPermissions([]); setUser(null); return; }
+    const applyClaimFallback = async () => {
+      try {
+        const tokenResult = await current.getIdTokenResult();
+        if (version !== generation.current) return;
+        const claimRole = typeof tokenResult.claims.role === "string" ? tokenResult.claims.role : null;
+        if (claimRole && Object.prototype.hasOwnProperty.call(PERMS, claimRole)) {
+          setRole(claimRole);
+          setPermissions([...PERMS[claimRole as Role]]);
+          setUser(current);
+          return;
+        }
+      } catch {
+        // Segue para estado sem perfil de servidor se não houver claim válido.
+      }
+      if (version === generation.current) { setRole(null); setPermissions([]); setUser(current); }
+    };
     try {
       const token = await current.getIdToken();
       const response = await fetch("/api/admin/me", { headers: { authorization: `Bearer ${token}` }, cache: "no-store" });
-      const data = response.ok ? await response.json() : null;
+      if (!response.ok) { await applyClaimFallback(); return; }
+      const data = await response.json();
       if (version !== generation.current) return;
-      setRole(data?.role ?? null);
+      setRole(data?.role ?? data?.roles?.[0] ?? null);
       setPermissions(data?.permissions ?? []);
       setUser(current);
     } catch {
-      if (version === generation.current) { setRole(null); setPermissions([]); setUser(current); }
+      await applyClaimFallback();
     }
   }, []);
   useEffect(() => {

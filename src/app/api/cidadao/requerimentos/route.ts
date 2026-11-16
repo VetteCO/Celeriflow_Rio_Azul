@@ -8,7 +8,7 @@ import { createDocumentWithNumber } from "@/lib/numbering";
 import { publicDocument } from "@/lib/public-document";
 import { validCpfCnpj } from "@/lib/tax-id";
 import { getCitizenSession, reserveCitizenIdentity } from "@/lib/citizen-auth";
-import {registeredCitizenForRequest,citizenContactFailure} from "@/lib/citizen-contact";
+import { registeredCitizenForRequest, citizenContactFailure } from "@/lib/citizen-contact";
 const Schema = z.object({
   name: z.string().trim().min(3).max(200), cpfCnpj: z.string().transform(s => s.replace(/\D/g, "")).refine(v=>!v||validCpfCnpj(v), "CPF/CNPJ inválido"), email: z.string().email().max(200).transform(s => s.toLowerCase()),
   phone: z.string().max(30).default(""), cep: z.string().transform(s => s.replace(/\D/g, "")).pipe(z.string().refine(v=>!v||v.length===8)), street: z.string().max(300).default(""), number: z.string().max(20), complement: z.string().max(100).default(""), district: z.string().max(200).default(""), city: z.string().max(200), state: z.string().refine(v=>!v||v.length===2), requestType: z.string().min(3).max(200), description: z.string().min(10).max(10000),
@@ -28,12 +28,24 @@ export async function POST(req: Request) {
   if(!profileRequired&&(!validCpfCnpj(b.cpfCnpj)||b.cep.length!==8||!b.city||b.state.length!==2))return NextResponse.json({error:"Confira CPF/CNPJ, CEP, cidade e UF."},{status:400});
   const target = process.env.DEFAULT_INTAKE_DEPARTMENT_ID;
   const departments = await db.select().from(department).where(eq(department.active, true));
-  const intake = target ? departments.find(d => d.id === target) : departments.find(d => /protocolo/i.test(d.name));
+  const intake = (target ? departments.find(d => d.id === target) : undefined) ?? departments.find(d => /protocolo/i.test(d.name)) ?? departments[0];
   if (!intake) return NextResponse.json({ error: "intake_department_not_configured" }, { status: 503 });
   const { requestType, description, ...registration } = b;
   let person: typeof citizen.$inferSelect;
   try {
-    person = profileRequired&&owner?await registeredCitizenForRequest(owner,b.cpfCnpj):await reserveCitizenIdentity({ ...registration, email: owner?.email ?? registration.email, id: randomUUID() });
+    if (profileRequired && owner) {
+      try {
+        person = await registeredCitizenForRequest(owner, b.cpfCnpj);
+      } catch (profileError) {
+        if (validCpfCnpj(b.cpfCnpj) && b.cep.length === 8 && !!b.city && b.state.length === 2) {
+          person = await reserveCitizenIdentity({ ...registration, email: owner.email, id: randomUUID() });
+        } else {
+          throw profileError;
+        }
+      }
+    } else {
+      person = await reserveCitizenIdentity({ ...registration, email: owner?.email ?? registration.email, id: randomUUID() });
+    }
   } catch (error) {
     const e = error as { code?: string; cause?: { code?: string } };
     if (e.code === "22012" || e.cause?.code === "22012") return NextResponse.json({ error: "identity_confirmation_required" }, { status: 409 });

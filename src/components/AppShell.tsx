@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { useSession } from "@/components/session";
+import { ROLE_LABELS, useSession } from "@/components/session";
 
 const links = [
   ["/", "Início", "M3 10 12 3l9 7v11h-6v-7H9v7H3Z"],
@@ -20,13 +20,14 @@ const links = [
 ];
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-   const { user, role, permissions } = useSession();
-   const visibleLinks = links.filter(([href]) => {
-     if (["/", "/cidadao", "/publico", "/ajuda"].includes(href)) return true;
-     if (!role) return false;
-     if (href === "/admin") return permissions.includes("*") || permissions.includes("admin:users");
-     return true;
-   });
+  const { user, role, permissions } = useSession();
+  const roleLabel = role ? (ROLE_LABELS[role] ?? role) : null;
+  const visibleLinks = links.filter(([href]) => {
+    if (["/", "/cidadao", "/publico", "/ajuda"].includes(href)) return true;
+    if (!role) return false;
+    if (href === "/admin") return permissions.includes("*") || permissions.includes("admin:users");
+    return true;
+  });
   const [expanded, setExpanded] = useState(false);
   const toggle = useRef<HTMLButtonElement>(null);
   useEffect(() => setExpanded(pathname === "/"), [pathname]);
@@ -37,7 +38,15 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [expanded]);
   return <div className={`app-shell ${expanded ? "nav-expanded" : "nav-collapsed"}`}>
     <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>
-    <header className="app-header"><button ref={toggle} className="nav-toggle" aria-label={expanded ? "Recolher menu" : "Expandir menu"} aria-expanded={expanded} onClick={() => setExpanded(!expanded)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" /></svg></button><Link href="/" className="app-brand">Celeriflow</Link><span className="app-description">Gestão municipal</span><Link className="app-account" href={user && !role ? "/cidadao/conta" : "/admin"}>{user ? "Minha conta" : "Acesso institucional"}</Link></header>
+    <header className="app-header">
+      <button ref={toggle} className="nav-toggle" aria-label={expanded ? "Recolher menu" : "Expandir menu"} aria-expanded={expanded} onClick={() => setExpanded(!expanded)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" /></svg></button>
+      <Link href="/" className="app-brand">Celeriflow</Link>
+      <span className="app-description">Gestão municipal</span>
+      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
+        {roleLabel && <span className="badge badge-role" title="Perfil de acesso">{roleLabel}</span>}
+        <Link className="app-account" style={{ marginLeft: 0 }} href={user && !role ? "/cidadao/conta" : "/admin"}>{user ? "Minha conta" : "Acesso institucional"}</Link>
+      </div>
+    </header>
     {expanded && <button className="nav-backdrop" aria-label="Recolher navegação" onClick={() => { setExpanded(false); toggle.current?.focus(); }} />}
     <aside className="app-sidebar"><nav aria-label="Navegação principal">{visibleLinks.map(([href, label, icon]) => <Link key={href} href={href} title={label} aria-label={label} aria-current={(href === "/" ? pathname === "/" : pathname.startsWith(href)) ? "page" : undefined}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icon} /></svg><span>{label}</span></Link>)}</nav></aside>
     <main id="conteudo" className="app-content">{children}</main>

@@ -7,16 +7,18 @@ import { MaskedInput } from "@/components/MaskedInput";
 import { validCpfCnpj } from "@/lib/tax-id";
 import { externalError, useExternalAccount } from "./conta/ExternalAccount";
 
-type Addr = { street: string; district: string; city: string; state: string };
+type Addr = { street: string; district: string; city: string; state: string; general?: boolean };
 type Created = { protocolNumber: string; publicKey: string; emailStatus: string };
 type Track = {
   protocolNumber: string;
   requestType: string;
   status: string;
   createdAt: string;
-   citizen?: { name?: string; cpfCnpj: string };
+  citizen?: { name?: string; cpfCnpj: string };
   history: Array<{ action: string; note: string | null; at: string }>;
 };
+
+const DRAFT_STORAGE_KEY = "cidadao-request-draft";
 
 export default function CidadaoPage() {
   const { user } = useExternalAccount();
@@ -36,25 +38,117 @@ export default function CidadaoPage() {
     description: "",
   });
   const [cepState, setCepState] = useState<"idle" | "loading" | "ok" | "error">("idle");
+  const [cepGeneral, setCepGeneral] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [created, setCreated] = useState<Created | null>(null);
   const [trackKey, setTrackKey] = useState("");
   const [tracked, setTracked] = useState<Track | null>(null);
   const [tracking, setTracking] = useState(false);
-  const [profileRequired,setProfileRequired]=useState(false);
-  const [profileLoaded,setProfileLoaded]=useState(false);
+  const [profileRequired, setProfileRequired] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
   const [registrationReady, setRegistrationReady] = useState(false);
   const [addressConfirmed, setAddressConfirmed] = useState(false);
-  useEffect(()=>{let live=true;fetch("/api/modules/contatos/perfis/publicos",{cache:"no-store"}).then(async r=>{if(!r.ok)throw new Error("Perfis de cadastro indisponíveis.");return r.json();}).then(p=>{if(live){setProfileRequired(p.length>0);setProfileLoaded(true);}}).catch(e=>{if(live)setErr(e.message);});return()=>{live=false;};},[]);
-  useEffect(()=>{setRegistrationReady(false);if(!user?.emailVerified||!profileRequired)return;let live=true;user.getIdToken().then(token=>fetch("/api/cidadao/conta/cadastro",{headers:{authorization:`Bearer ${token}`},cache:"no-store"})).then(async r=>{if(!r.ok)throw new Error("Não foi possível carregar o cadastro. Acesse Meu cadastro para conferir os dados.");const d=await r.json();if(live){setForm(f=>({...f,...d.address,name:d.name||f.name,cpfCnpj:d.values.cpfCnpj??"",phone:d.values.phone??"",cep:d.values.cep??""}));setRegistrationReady(true);}}).catch(e=>{if(live)setErr(e.message);});return()=>{live=false;};},[user,profileRequired]);
+  const [draftReady, setDraftReady] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(DRAFT_STORAGE_KEY);
+      if (raw) {
+        const draft = JSON.parse(raw) as Partial<typeof form>;
+        setForm((current) => ({ ...current, ...draft }));
+      }
+    } catch {
+      // Armazenamento local opcional.
+    }
+    setDraftReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!draftReady || created) return;
+    const timer = window.setTimeout(() => {
+      try {
+        sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(form));
+      } catch {
+        // Ignora indisponibilidade de sessionStorage.
+      }
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [draftReady, created, form]);
+
+  useEffect(() => {
+    let live = true;
+    fetch("/api/modules/contatos/perfis/publicos", { cache: "no-store" })
+      .then(async (r) => {
+        if (!r.ok) return [];
+        return r.json();
+      })
+      .then((p) => {
+        if (live) {
+          setProfileRequired(Array.isArray(p) && p.length > 0);
+          setProfileLoaded(true);
+        }
+      })
+      .catch(() => {
+        if (live) {
+          setProfileRequired(false);
+          setProfileLoaded(true);
+        }
+      });
+    return () => {
+      live = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    setRegistrationReady(false);
+    if (!user?.emailVerified || !profileRequired) return;
+    let live = true;
+    user
+      .getIdToken()
+      .then((token) =>
+        fetch("/api/cidadao/conta/cadastro", {
+          headers: { authorization: `Bearer ${token}` },
+          cache: "no-store",
+        })
+      )
+      .then(async (r) => {
+        if (!r.ok) throw new Error("fallback_form");
+        const d = await r.json();
+        if (!d?.profileId) throw new Error("fallback_form");
+        if (live) {
+          setForm((f) => ({
+            ...f,
+            ...d.address,
+            name: d.name || f.name,
+            cpfCnpj: d.values?.cpfCnpj ?? f.cpfCnpj,
+            phone: d.values?.phone ?? f.phone,
+            cep: d.values?.cep ?? f.cep,
+          }));
+          setRegistrationReady(true);
+        }
+      })
+      .catch(() => {
+        if (live) {
+          setProfileRequired(false);
+          setRegistrationReady(true);
+        }
+      });
+    return () => {
+      live = false;
+    };
+  }, [user, profileRequired]);
+
   useEffect(() => {
     if (user?.email) setForm((current) => ({ ...current, email: user.email!, name: current.name || user.displayName || "" }));
   }, [user]);
 
   function set<K extends keyof typeof form>(k: K, v: string) {
     if (["cep", "street", "district", "city", "state", "number", "complement"].includes(k)) setAddressConfirmed(false);
-    if (k === "cep") setCepState("idle");
+    if (k === "cep") {
+      setCepState("idle");
+      setCepGeneral(false);
+    }
     setForm((f) => ({ ...f, [k]: v }));
   }
 
@@ -65,13 +159,26 @@ export default function CidadaoPage() {
       return;
     }
     setErr(null);
+    setCepGeneral(false);
     setCepState("loading");
     try {
       const r = await fetch(`/api/cep?cep=${cep}`);
       const d = (await r.json()) as Addr & { error?: string };
       if (!r.ok) throw new Error(d.error ?? "falha na busca");
-       setForm((f) => f.cep.replace(/\D/g, "") === cep ? ({ ...f, street: d.street, district: d.district, city: d.city, state: d.state }) : f);
-      setAddressConfirmed(false); setCepState("ok");
+      setForm((f) =>
+        f.cep.replace(/\D/g, "") === cep
+          ? {
+              ...f,
+              street: d.street || f.street,
+              district: d.district || f.district,
+              city: d.city || f.city,
+              state: d.state || f.state,
+            }
+          : f
+      );
+      setCepGeneral(Boolean(d.general) || !d.street);
+      setAddressConfirmed(false);
+      setCepState("ok");
     } catch (e) {
       setCepState("error");
       setErr((e as Error).message);
@@ -83,10 +190,10 @@ export default function CidadaoPage() {
     if (saving) return;
     if (!addressConfirmed && !profileRequired) { setErr("Confira e confirme o endereço antes de protocolar."); return; }
     setErr(null);
-    if(!profileLoaded){setErr("Aguarde o carregamento das regras de cadastro.");return;}
-    if(profileRequired&&!user?.emailVerified){setErr("Entre e complete seu cadastro por perfil em Minha conta.");return;}
-    if(profileRequired&&!registrationReady){setErr("Aguarde o carregamento do cadastro da sua conta.");return;}
-    if ((!profileRequired||form.cpfCnpj)&&!validCpfCnpj(form.cpfCnpj)) { setErr("Informe um CPF ou CNPJ válido."); return; }
+    if (!profileLoaded) { setErr("Aguarde o carregamento das regras de cadastro."); return; }
+    if (profileRequired && !user?.emailVerified) { setErr("Entre e complete seu cadastro por perfil em Minha conta."); return; }
+    if (profileRequired && !registrationReady) { setErr("Aguarde o carregamento do cadastro da sua conta."); return; }
+    if ((!profileRequired || form.cpfCnpj) && !validCpfCnpj(form.cpfCnpj)) { setErr("Informe um CPF ou CNPJ válido."); return; }
     if (user && !user.emailVerified) { setErr("Confirme o e-mail da sua conta antes de registrar o requerimento autenticado."); return; }
     setSaving(true);
     try {
@@ -94,10 +201,11 @@ export default function CidadaoPage() {
       const r = await fetch("/api/cidadao/requerimentos", {
         method: "POST",
         headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) },
-         body: JSON.stringify({ ...form, email: user?.email ?? form.email, cpfCnpj: form.cpfCnpj.replace(/\D/g, ""), cep: form.cep.replace(/\D/g, ""), phone: form.phone.replace(/\D/g, "") }),
+        body: JSON.stringify({ ...form, email: user?.email ?? form.email, cpfCnpj: form.cpfCnpj.replace(/\D/g, ""), cep: form.cep.replace(/\D/g, ""), phone: form.phone.replace(/\D/g, "") }),
       });
       const d = (await r.json()) as Created & { error?: string };
       if (!r.ok) throw new Error(d.error ?? `http_${r.status}`);
+      try { sessionStorage.removeItem(DRAFT_STORAGE_KEY); } catch { /* Storage is optional. */ }
       setCreated(d);
     } catch (e) {
       setErr(externalError(e));
@@ -118,7 +226,7 @@ export default function CidadaoPage() {
       setTracked(d);
     } catch (e) {
       setErr((e as Error).message);
-       setTracked(null);
+      setTracked(null);
     } finally {
       setTracking(false);
     }
@@ -137,8 +245,8 @@ export default function CidadaoPage() {
           </p>
           <p className="muted">
             {created.emailStatus === "SENT"
-               ? "Confirmação aceita pelo serviço de e-mail. Confira sua caixa de entrada."
-               : "A confirmação por e-mail não foi enviada. Acompanhe seu protocolo pela chave abaixo."}
+              ? "Confirmação aceita pelo serviço de e-mail. Confira sua caixa de entrada."
+              : "A confirmação por e-mail não foi enviada. Acompanhe seu protocolo pela chave abaixo."}
           </p>
           <p>Guarde esses dois códigos — anote ou fotografe esta tela.</p>
           <Link className="btn btn-primary" href={`/publico/${encodeURIComponent(created.publicKey)}`}>Acompanhar protocolo e QR Code</Link>
@@ -163,33 +271,33 @@ export default function CidadaoPage() {
       )}
       <form onSubmit={enviar} className="form" style={{ maxWidth: 640 }}>
         <h2>Cadastro</h2>
-        {profileRequired&&<p>Os dados do titular serão obtidos do cadastro por perfil da sua conta. <Link href="/cidadao/conta/cadastro">Preencher ou atualizar meu cadastro</Link></p>}
+        {profileRequired && <p>Os dados do titular serão obtidos do cadastro por perfil da sua conta. <Link href="/cidadao/conta/cadastro">Preencher ou atualizar meu cadastro</Link></p>}
         {profileRequired && user?.emailVerified && <p role="status">{registrationReady ? `Titular do requerimento: ${form.name}.` : "Carregando cadastro do titular…"}</p>}
-        {!profileRequired&&<>
+        {!profileRequired && <>
         <div className="form-row">
           <label style={{ flex: 2 }}>
             Nome completo
-             <input required name="name" autoComplete="name" value={form.name} onChange={(e) => set("name", e.target.value)} />
+            <input required name="name" autoComplete="name" value={form.name} onChange={(e) => set("name", e.target.value)} />
           </label>
           <label style={{ flex: 1 }}>
             CPF/CNPJ
-             <MaskedInput required={!profileRequired} readOnly={profileRequired} kind="cpfCnpj" name="cpfCnpj" value={form.cpfCnpj} onValueChange={(v) => set("cpfCnpj", v)} />
+            <MaskedInput required={!profileRequired} readOnly={profileRequired} kind="cpfCnpj" name="cpfCnpj" value={form.cpfCnpj} onValueChange={(v) => set("cpfCnpj", v)} />
           </label>
         </div>
         <div className="form-row">
           <label style={{ flex: 1 }}>
             E-mail
-             <input required readOnly={!!user} type="email" name="email" spellCheck={false} value={form.email} onChange={(e) => set("email", e.target.value)} />
+            <input required readOnly={!!user} type="email" name="email" spellCheck={false} value={form.email} onChange={(e) => set("email", e.target.value)} />
           </label>
           <label style={{ flex: 1 }}>
             Telefone
-             <MaskedInput kind="phone" name="phone" autoComplete="tel" value={form.phone} onValueChange={(v) => set("phone", v)} />
+            <MaskedInput kind="phone" name="phone" autoComplete="tel" value={form.phone} onValueChange={(v) => set("phone", v)} />
           </label>
         </div>
         <div className="form-row">
           <label style={{ flex: 1 }}>
             CEP
-             <MaskedInput required kind="cep" name="cep" autoComplete="postal-code" value={form.cep} onValueChange={(v) => { set("cep", v); setCepState("idle"); }} />
+            <MaskedInput required kind="cep" name="cep" autoComplete="postal-code" value={form.cep} onValueChange={(v) => { set("cep", v); setCepState("idle"); }} />
           </label>
           <div style={{ alignSelf: "end" }}>
             <button type="button" className="btn" onClick={buscarCep} disabled={cepState === "loading"}>
@@ -197,11 +305,17 @@ export default function CidadaoPage() {
             </button>
           </div>
         </div>
-         {cepState === "ok" && <p role="status">Endereço localizado. Confira os dados e informe o número e complemento.</p>}
-         {cepState === "error" && <p role="status">A consulta de CEP está indisponível ou o endereço não foi localizado. Preencha os dados manualmente.</p>}
-         <div className="form-row">
-           <label style={{ flex: 3 }}>
-             Logradouro
+        {cepState === "ok" && (
+          <p role="status">
+            {cepGeneral
+              ? `CEP geral do município localizado (${form.city}/${form.state}). Informe o logradouro, bairro e número.`
+              : "Endereço localizado. Confira os dados e informe o número e complemento."}
+          </p>
+        )}
+        {cepState === "error" && <p role="status">A consulta de CEP está indisponível ou o endereço não foi localizado. Preencha os dados manualmente.</p>}
+        <div className="form-row">
+          <label style={{ flex: 3 }}>
+            Logradouro
             <input value={form.street} onChange={(e) => set("street", e.target.value)} />
           </label>
           <label style={{ flex: 1 }}>
@@ -222,11 +336,11 @@ export default function CidadaoPage() {
         <div className="form-row">
           <label style={{ flex: 3 }}>
             Cidade
-             <input required value={form.city} onChange={(e) => set("city", e.target.value)} />
+            <input required value={form.city} onChange={(e) => set("city", e.target.value)} />
           </label>
           <label style={{ flex: 1 }}>
             UF
-             <input required minLength={2} maxLength={2} value={form.state} onChange={(e) => set("state", e.target.value.toUpperCase())} />
+            <input required minLength={2} maxLength={2} value={form.state} onChange={(e) => set("state", e.target.value.toUpperCase())} />
           </label>
         </div>
 
@@ -244,7 +358,7 @@ export default function CidadaoPage() {
         </label>
         <label>
           Descrição
-           <textarea required minLength={10} rows={5} value={form.description} onChange={(e) => set("description", e.target.value)} />
+          <textarea required minLength={10} rows={5} value={form.description} onChange={(e) => set("description", e.target.value)} />
         </label>
         <button type="submit" className="btn btn-primary" disabled={saving || user === undefined || !profileLoaded || profileRequired && !!user?.emailVerified && !registrationReady}>
           {saving ? "Enviando…" : "Enviar requerimento"}
@@ -261,8 +375,8 @@ export default function CidadaoPage() {
             value={trackKey}
             onChange={(e) => setTrackKey(e.target.value)}
           />
-           <button type="submit" className="btn" disabled={tracking || !trackKey.trim()}>
-             {tracking ? "Consultando…" : "Consultar"}
+          <button type="submit" className="btn" disabled={tracking || !trackKey.trim()}>
+            {tracking ? "Consultando…" : "Consultar"}
           </button>
         </form>
         {tracked && (
@@ -271,13 +385,13 @@ export default function CidadaoPage() {
               <strong>{tracked.protocolNumber}</strong> — {tracked.requestType} · status{" "}
               {tracked.status}
             </p>
-             {tracked.citizen && <p className="muted">CPF/CNPJ protegido: {tracked.citizen.cpfCnpj}</p>}
+            {tracked.citizen && <p className="muted">CPF/CNPJ protegido: {tracked.citizen.cpfCnpj}</p>}
             <ol className="timeline">
               {tracked.history.map((h, i) => (
                 <li key={i}>
                   <span className="t-action">{h.action}</span>
-                   <div className="t-meta">{new Date(h.at).toLocaleString("pt-BR")}</div>
-                   {h.action === "CITIZEN_REPLY" && h.note && <p>{h.note}</p>}
+                  <div className="t-meta">{new Date(h.at).toLocaleString("pt-BR")}</div>
+                  {h.action === "CITIZEN_REPLY" && h.note && <p>{h.note}</p>}
                 </li>
               ))}
             </ol>

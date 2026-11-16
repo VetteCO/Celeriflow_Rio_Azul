@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+import { ROLE_LABELS, useSession } from "@/components/session";
 
 // Mesa de trabalho: módulos do sistema em linguagem de produto.
 const MODULES = [
@@ -38,15 +40,27 @@ const MODULES = [
 ];
 
 export default function Home() {
+  const { role, permissions } = useSession();
+  const canAdmin = !role || permissions.includes("*") || permissions.includes("admin:users");
+  const canCreate = !role || permissions.includes("*") || permissions.includes("doc:create");
+  const roleLabel = role ? (ROLE_LABELS[role] ?? role) : null;
+  const visibleModules = MODULES.filter((m) => m.href !== "/admin" || canAdmin);
+
   return (
     <div>
       <h1>Mesa de trabalho</h1>
       <p className="muted">
         Gestão eletrônica de documentos, tramitação e
         atendimento ao cidadão.
+        {roleLabel && (
+          <>
+            {" "}
+            · <span className="badge badge-role">{roleLabel}</span>
+          </>
+        )}
       </p>
       <div className="grid-3">
-        {MODULES.map((m) => (
+        {visibleModules.map((m) => (
           <div key={m.titulo} className="card plain">
             <h2 style={{ fontSize: 20, margin: "0 0 4px" }}>{m.titulo}</h2>
             <p className="muted" style={{ marginTop: 0 }}>
@@ -60,13 +74,22 @@ export default function Home() {
       </div>
       <div className="card">
         <strong>Ações rápidas</strong>
-        <div className="form-row" style={{ marginTop: 8 }}>
-          <Link href="/documentos/novo" className="btn btn-primary">
-            Novo documento
-          </Link>
-          <Link href="/circulares/nova" className="btn">
-            Nova circular
-          </Link>
+        <div className="form-row" style={{ marginTop: 8, alignItems: "center" }}>
+          {canCreate && (
+            <>
+              <Link href="/documentos/novo" className="btn btn-primary">
+                Novo documento
+              </Link>
+              <Link href="/circulares/nova" className="btn">
+                Nova circular
+              </Link>
+            </>
+          )}
+          {role && !canCreate && (
+            <span className="muted">
+              Perfil somente visualização ({roleLabel}): criação de documentos e circulares restrita aos servidores autorizados.
+            </span>
+          )}
           <Link href="/cidadao" className="btn">
             Novo requerimento
           </Link>

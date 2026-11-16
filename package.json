@@ -86,9 +86,13 @@
     "typescript": "^5.5.4"
   },
   "overrides": {
+    "@fastify/busboy": "3.2.2",
     "@grpc/grpc-js": "1.14.7",
     "@vercel/oidc": "4.0.8",
     "esbuild@<=0.24.2": "0.25.12",
+    "jwks-rsa": {
+      "jose": "4.15.9"
+    },
     "postcss": "8.5.32",
     "@typescript-eslint/typescript-estree": {
       "minimatch": "11.0.8"

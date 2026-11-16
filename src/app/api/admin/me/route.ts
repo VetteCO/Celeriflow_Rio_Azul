@@ -10,9 +10,19 @@ export async function GET(req: Request) {
   const session = await getSession(req);
   if (!session) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const [user] = await db.select({ name: appUser.name, email: appUser.email, cpf: appUser.cpf }).from(appUser).where(eq(appUser.id, session.userId));
-  const [profile] = await db.select().from(userProfile).where(eq(userProfile.userId, session.userId));
-  const secondary = await db.select().from(userDepartment).where(eq(userDepartment.userId, session.userId));
-  return NextResponse.json({ ...session, ...user, phone: profile?.phone ?? null, registration: profile?.registration ?? null, position: profile?.position ?? null, preferences: profile?.preferences ?? {}, leaveStart: profile?.leaveStart ?? null, leaveEnd: profile?.leaveEnd ?? null, lastAccessAt: profile?.lastAccessAt ?? null, secondaryDepartmentIds: secondary.map(s => s.departmentId), permissions: Array.from(new Set(session.roles.flatMap(r => Array.from(PERMS[r])))), profile: profile ?? null }, { headers: { "cache-control": "no-store" } });
+  let profile: typeof userProfile.$inferSelect | undefined;
+  let secondary: Array<typeof userDepartment.$inferSelect> = [];
+  try {
+    [profile] = await db.select().from(userProfile).where(eq(userProfile.userId, session.userId));
+  } catch {
+    profile = undefined;
+  }
+  try {
+    secondary = await db.select().from(userDepartment).where(eq(userDepartment.userId, session.userId));
+  } catch {
+    secondary = [];
+  }
+  return NextResponse.json({ ...session, ...user, role: session.role ?? session.roles[0] ?? null, roles: session.roles, emailConfirmed: true, phone: profile?.phone ?? null, registration: profile?.registration ?? null, position: profile?.position ?? null, preferences: profile?.preferences ?? {}, leaveStart: profile?.leaveStart ?? null, leaveEnd: profile?.leaveEnd ?? null, lastAccessAt: profile?.lastAccessAt ?? null, secondaryDepartmentIds: secondary.map(s => s.departmentId), permissions: Array.from(new Set(session.roles.flatMap(r => Array.from(PERMS[r])))), profile: profile ?? null }, { headers: { "cache-control": "no-store" } });
 }
 
 // Self-service never accepts roles, identity, leave, department or activation fields.
